@@ -104,8 +104,8 @@ export default function Home() {
     () => ({
       background: isDark ? "#000000" : "#f9fbff",
       grid: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(15, 23, 42, 0.04)",
-      gridGlow: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(71, 85, 105, 0.12)",
-      spotlight: isDark ? "rgba(255, 255, 255, 0.15)" : "rgba(51, 65, 85, 0.08)",
+      gridGlow: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(71, 85, 105, 0.22)",
+      spotlight: isDark ? "rgba(255, 255, 255, 0.15)" : "transparent",
       prefix: isDark ? "#9ca3af" : "#334155",
       word: isDark ? "#ffffff" : "#0f172a",
       navMuted: isDark ? "#d1d5db" : "#475569",
@@ -120,7 +120,8 @@ export default function Home() {
     () => (isDark ? colors.word : NEON_COLORS[currentIndex % NEON_COLORS.length]),
     [colors.word, currentIndex, isDark],
   );
-  const spotlightRadius = useMemo(() => (isDark ? 600 : 360), [isDark]);
+  const spotlightRadius = useMemo(() => (isDark ? 800 : 360), [isDark]);
+  const gridMaskRadius = useMemo(() => (isDark ? 400 : 320), [isDark]);
 
   const enterLink = useCallback(() => setCursorVariant("link"), []);
   const leaveLink = useCallback(() => setCursorVariant("default"), []);
@@ -287,15 +288,17 @@ export default function Home() {
         }}
       />
       
-      {/* Gradient spotlight following cursor */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(${spotlightRadius}px circle at ${cursorPosition.x}px ${cursorPosition.y}px, ${colors.spotlight}, transparent 32%)`,
-        }}
-      />
+      {/* Gradient spotlight following cursor (dark mode only) */}
+      {isDark && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `radial-gradient(${spotlightRadius}px circle at ${cursorPosition.x}px ${cursorPosition.y}px, ${colors.spotlight}, transparent 32%)`,
+          }}
+        />
+      )}
 
-      {/* Illuminated grid overlay */}
+      {/* Illuminated grid overlay (strong near cursor, fades out) */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -304,8 +307,10 @@ export default function Home() {
             linear-gradient(90deg, ${colors.gridGlow} 1px, transparent 1px)
           `,
           backgroundSize: "50px 50px",
-          maskImage: `radial-gradient(400px circle at ${cursorPosition.x}px ${cursorPosition.y}px, black, transparent 70%)`,
-          WebkitMaskImage: `radial-gradient(400px circle at ${cursorPosition.x}px ${cursorPosition.y}px, black, transparent 70%)`,
+          maskImage: `radial-gradient(${gridMaskRadius}px circle at ${cursorPosition.x}px ${cursorPosition.y}px,
+            rgba(0,0,0,1) 0%, rgba(0,0,0,0.65) 40%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0) 100%)`,
+          WebkitMaskImage: `radial-gradient(${gridMaskRadius}px circle at ${cursorPosition.x}px ${cursorPosition.y}px,
+            rgba(0,0,0,1) 0%, rgba(0,0,0,0.65) 40%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0) 100%)`,
         }}
       />
 
