@@ -161,3 +161,16 @@ body::before {
 .skill-chip img {
   filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.14));
 }
+
+/* Typing cursor fade in/out when paused at end-of-line */
+@keyframes cursorBlink {
+  0% { opacity: 0.25; }
+  50% { opacity: 1; }
+  100% { opacity: 0.25; }
+}
+
+.cursor-blink {
+  display: inline-block;
+  animation: cursorBlink 1.1s ease-in-out infinite;
+  will-change: opacity;
+}

@@ -7,15 +7,21 @@ import { useTheme } from "@/components/providers/theme-provider";
 type Point = { x: number; y: number };
 
 const PHRASES = [
-  { prefix: "I'm a ", word: "developer" },
-  { prefix: "I'm a ", word: "creator" },
-  { prefix: "I'm an ", word: "entrepreneur" },
-  { prefix: "I'm a ", word: "problem solver" },
-  { prefix: "I'm an ", word: "engineer" },
-  { prefix: "I'm ", word: "Sebastian Peña" },
+  { prefix: "I build ", highlight: "intelligent systems", suffix: "" },
+  { prefix: "I turn ideas into ", highlight: "real products", suffix: "" },
+  { prefix: "I solve ", highlight: "problems", suffix: " through technology" },
+  { prefix: "I care about ", highlight: "design and impact", suffix: "" },
+  { prefix: "I'm ", highlight: "Sebastian Peña", suffix: "" },
 ];
 
-const NEON_COLORS = ["#a855f7", "#22c55e", "#38bdf8", "#fb923c", "#67e8f9", "#f472b6"];
+const HIGHLIGHT_LIGHT_COLORS = [
+  "#a855f7", // purple
+  "#22c55e", // green
+  "#38bdf8", // sky
+  "#fb923c", // orange
+  "#67e8f9", // cyan
+  "#f472b6", // pink
+];
 const NAV_ITEMS = [
   { href: "#home", label: "home" },
   { href: "#about", label: "about" },
@@ -23,6 +29,23 @@ const NAV_ITEMS = [
   { href: "#projects", label: "projects" },
   { href: "#contact", label: "contact" },
 ];
+
+const SPEEDS = {
+  type: 110,
+  delete: 50,
+  pause: 1200,
+};
+
+function getFullText(p: { prefix: string; highlight: string; suffix: string }) {
+  return p.prefix + p.highlight + p.suffix;
+}
+
+function lcpLength(a: string, b: string) {
+  const len = Math.min(a.length, b.length);
+  let i = 0;
+  while (i < len && a[i] === b[i]) i++;
+  return i;
+}
 
 export default function Home() {
   const { theme, toggleTheme } = useTheme();
@@ -39,29 +62,33 @@ export default function Home() {
 
   const currentPhrase = useMemo(() => PHRASES[loopNum % PHRASES.length], [loopNum]);
   const currentIndex = useMemo(() => loopNum % PHRASES.length, [loopNum]);
+  const currentFullText = useMemo(() => getFullText(currentPhrase), [currentPhrase]);
 
   useEffect(() => {
-    const fullText = currentPhrase.prefix + currentPhrase.word;
+    const fullText = getFullText(currentPhrase);
+    const nextIndex = (loopNum + 1) % PHRASES.length;
+    const nextPhrase = PHRASES[nextIndex];
+    const nextFullText = getFullText(nextPhrase);
+    const baselineLen = lcpLength(fullText, nextFullText);
 
     const handleTyping = () => {
       if (!isDeleting) {
         if (text !== fullText) {
           setText(fullText.substring(0, text.length + 1));
-          setTypingSpeed(150);
+          setTypingSpeed(SPEEDS.type);
         } else {
-          setTimeout(() => setIsDeleting(true), 2000);
+          setTimeout(() => setIsDeleting(true), SPEEDS.pause);
         }
       } else {
-        if (text !== currentPhrase.prefix) {
-          setText(fullText.substring(0, text.length - 1));
-          setTypingSpeed(75);
+        if (text.length > baselineLen) {
+          setText(text.substring(0, text.length - 1));
+          setTypingSpeed(SPEEDS.delete);
         } else {
-          const nextIndex = (loopNum + 1) % PHRASES.length;
-          const nextPhrase = PHRASES[nextIndex];
+          // We reached the shared prefix (or none). Switch to next phrase and continue typing
           setIsDeleting(false);
           setLoopNum((prev) => prev + 1);
-          setTypingSpeed(500);
-          setText(nextPhrase.prefix);
+          setTypingSpeed(SPEEDS.type);
+          // text already equals the baseline; continue typing in next effect cycle
         }
       }
     };
@@ -97,8 +124,20 @@ export default function Home() {
 
   // Derived display values
   const prefixLength = currentPhrase.prefix.length;
-  const displayPrefix = text.substring(0, prefixLength);
-  const displayWord = text.substring(prefixLength);
+  const highlightLength = currentPhrase.highlight.length;
+  const displayPrefix = text.substring(0, Math.min(prefixLength, text.length));
+  const displayHighlight = text.substring(
+    prefixLength,
+    Math.min(prefixLength + highlightLength, text.length),
+  );
+  const displaySuffix = text.substring(
+    Math.min(prefixLength + highlightLength, text.length),
+    text.length,
+  );
+  const typedLen = text.length;
+  const cursorInHighlight =
+    typedLen > prefixLength && typedLen <= prefixLength + highlightLength;
+  const isEndLine = !isDeleting && text === currentFullText;
 
   const colors = useMemo(
     () => ({
@@ -116,8 +155,8 @@ export default function Home() {
   );
 
   const navHoverColor = useMemo(() => (isDark ? "#ffffff" : "#0f172a"), [isDark]);
-  const wordColor = useMemo(
-    () => (isDark ? colors.word : NEON_COLORS[currentIndex % NEON_COLORS.length]),
+  const highlightColor = useMemo(
+    () => (isDark ? colors.word : HIGHLIGHT_LIGHT_COLORS[currentIndex % HIGHLIGHT_LIGHT_COLORS.length]),
     [colors.word, currentIndex, isDark],
   );
   const spotlightRadius = useMemo(() => (isDark ? 800 : 360), [isDark]);
@@ -314,21 +353,46 @@ export default function Home() {
         }}
       />
 
-      {/* Text content */}
-      <div className="text-5xl font-mono relative z-10" style={{ color: wordColor }}>
-        <span style={{ color: colors.prefix }}>{displayPrefix}</span>
+      {/* Text content with partial highlight */}
+      <div className="text-5xl font-mono relative z-10">
+        {/* Neutral prefix */}
+        <span style={{ color: colors.word, opacity: 0.75 }}>{displayPrefix}</span>
+
+        {/* Highlighted phrase (skip glow for last phrase) */}
         <span
-          className="font-bold"
           style={{
-            color: wordColor,
-            textShadow: isDark
-              ? "0 0 20px #fff, 0 0 30px #fff, 0 0 40px #fff"
-              : `0 0 18px ${wordColor}88`,
+            color: currentIndex === PHRASES.length - 1 ? colors.word : highlightColor,
+            opacity: 1,
+            filter: currentIndex === PHRASES.length - 1 ? "none" : "brightness(1.06)",
+            textShadow:
+              currentIndex === PHRASES.length - 1
+                ? "none"
+                : isDark
+                ? "0 0 16px rgba(255,255,255,0.28)"
+                : "0 0 12px rgba(15,23,42,0.22)",
+            transition: "opacity 200ms ease, text-shadow 200ms ease",
           }}
         >
-          {displayWord}
+          {displayHighlight}
         </span>
-        <span className="animate-pulse" style={{ color: wordColor }}>|</span>
+
+        {/* Neutral suffix */}
+        <span style={{ color: colors.word, opacity: 0.75 }}>{displaySuffix}</span>
+
+        {/* Cursor: fade/blink only when paused at end-of-line */}
+        <span
+          className={isEndLine ? "cursor-blink" : ""}
+          style={{
+            color:
+              currentIndex === PHRASES.length - 1
+                ? colors.word
+                : cursorInHighlight
+                ? highlightColor
+                : colors.word,
+          }}
+        >
+          |
+        </span>
       </div>
     </div>
   );
