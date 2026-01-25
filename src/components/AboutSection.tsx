@@ -5,9 +5,9 @@ import Image from "next/image";
 import { useTheme } from "@/components/providers/theme-provider";
 
 const info = [
-  { label: "Now", value: "Based in Madrid" },
+  { label: "Now", value: "Madrid" },
   { label: "Focus", value: "Software · AI · Product" },
-  { label: "Values", value: "Human-centered · Responsible · Clear execution" },
+  { label: "Values", value: "Human-centered · Systems-minded" },
 ];
 
 export default function AboutSection() {
@@ -25,15 +25,15 @@ export default function AboutSection() {
   const badgeStyle = (): CSSProperties => ({
     border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.08)",
     background: isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,42,0.04)",
-    padding: "10px",
+    padding: "10px 11px",
     borderRadius: 10,
-    lineHeight: 1.35,
+    lineHeight: 1.3,
   });
 
   return (
     <section
       id="about"
-      className="relative min-h-[68vh] flex items-center justify-center px-4 md:px-5 py-10 md:py-14 overflow-hidden"
+      className="relative min-h-[68vh] flex items-center justify-center px-4 md:px-5 py-9 md:py-12 overflow-hidden"
       style={{ cursor: "none" }}
     >
       {/* Subtle grid overlay inside the section to keep identity consistent */}
@@ -44,7 +44,7 @@ export default function AboutSection() {
           backgroundImage: "var(--grid-pattern)",
           backgroundSize: "var(--grid-size) var(--grid-size)",
           backgroundPosition: "var(--grid-offset-x) var(--grid-offset-y)",
-          opacity: isDark ? 0.05 : 0.07,
+          opacity: isDark ? 0.05 : 0.06,
           maskImage: "radial-gradient(120% 120% at 50% 50%, black 55%, transparent 100%)",
           WebkitMaskImage: "radial-gradient(120% 120% at 50% 50%, black 55%, transparent 100%)",
         }}
@@ -52,7 +52,7 @@ export default function AboutSection() {
 
       <div className="relative w-full max-w-5xl mx-auto">
         <div
-          className="relative overflow-hidden rounded-[22px] shadow-xl"
+          className="relative overflow-hidden rounded-[20px] shadow-xl"
           style={cardStyle}
         >
           <div
@@ -65,8 +65,8 @@ export default function AboutSection() {
             }}
           />
 
-          <div className="relative grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 p-6 md:p-8 items-start">
-            <div className="md:col-span-8 flex flex-col gap-4 md:gap-5 md:pr-4">
+          <div className="relative grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 p-5 md:p-7 items-start">
+            <div className="md:col-span-8 flex flex-col gap-3.5 md:gap-4 md:pr-4">
               <div className="flex items-center gap-3">
                 <div
                   className="text-xs uppercase tracking-[0.32em]"
@@ -81,14 +81,14 @@ export default function AboutSection() {
               </div>
 
               <h2
-                className="text-2xl md:text-3xl font-semibold leading-tight"
+                className="text-xl md:text-2xl font-semibold leading-tight"
                 style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
               >
                 Building clear systems where software, design, and data meet.
               </h2>
 
               <p
-                className="text-sm md:text-[15px] leading-relaxed max-w-prose"
+                className="text-[12.8px] md:text-[13.8px] leading-[1.7] max-w-prose"
                 style={{ color: isDark ? "rgba(229,231,235,0.9)" : "rgba(15,23,42,0.85)" }}
               >
                 I’m Sebastián Peña, a Colombian builder based in Madrid, pursuing a degree in Computer Science and
@@ -96,7 +96,7 @@ export default function AboutSection() {
                 technical excellence matters most when it improves outcomes for real people and real contexts.
               </p>
 
-              <ul className="space-y-1.5 text-sm md:text-[15px] leading-snug max-w-prose">
+              <ul className="space-y-1.5 text-sm md:text-[14px] leading-snug max-w-prose">
                 {[
                   "Software engineering with product judgment",
                   "Data-aware systems and practical AI",
@@ -117,15 +117,23 @@ export default function AboutSection() {
               </ul>
 
               <p
-                className="text-xs md:text-sm max-w-prose"
+                className="text-xs md:text-[12.5px] leading-[1.6] max-w-prose"
                 style={{ color: isDark ? "rgba(203,213,225,0.9)" : "rgba(71,85,105,0.95)" }}
               >
                 Outside of work, salsa and bachata shape how I think about adaptability, collaboration, and connection.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-                {info.map((item) => (
-                  <div key={item.label} style={badgeStyle()}>
+              <div className="flex flex-col sm:flex-row sm:items-stretch gap-2.5 sm:gap-3 pt-1 sm:flex-nowrap sm:self-start">
+                {info.map((item, idx) => (
+                  <div
+                    key={item.label}
+                    className={`w-full inline-flex flex-col justify-between h-full sm:w-auto sm:flex-none ${
+                      idx === 2
+                        ? "sm:min-w-[190px] sm:max-w-[240px]"
+                        : "sm:min-w-[150px] sm:max-w-[200px]"
+                    }`}
+                    style={badgeStyle()}
+                  >
                     <div
                       className="text-[11px] font-semibold uppercase tracking-wide mb-0.5"
                       style={{ color: isDark ? "rgba(226,232,240,0.85)" : "rgba(15,23,42,0.75)" }}
@@ -133,7 +141,7 @@ export default function AboutSection() {
                       {item.label}
                     </div>
                     <div
-                      className="text-sm leading-snug line-clamp-2"
+                      className="text-[11.5px] leading-snug line-clamp-2"
                       style={{ color: isDark ? "rgba(226,232,240,0.88)" : "rgba(15,23,42,0.85)" }}
                     >
                       {item.value}
@@ -145,8 +153,9 @@ export default function AboutSection() {
 
             <div className="md:col-span-4 flex items-start justify-end self-stretch h-full">
               <div
-                className="relative w-full max-w-xs md:max-w-sm aspect-[3/4] rounded-xl overflow-hidden h-full max-h-[520px]"
+                className="relative w-full max-w-xs md:max-w-sm h-full min-h-[320px] max-h-[520px] rounded-lg overflow-hidden"
                 style={{
+                  aspectRatio: "4 / 5",
                   border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.08)",
                   boxShadow: isDark ? "0 18px 50px rgba(0,0,0,0.35)" : "0 18px 50px rgba(15,23,42,0.15)",
                   background: isDark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.9)",
