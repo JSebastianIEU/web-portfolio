@@ -18,7 +18,7 @@ const body = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "Juan Sebastian Peña | Portfolio",
+  title: "Juan Sebastián Peña | Portfolio",
   description:
     "Portafolio web con experiencias 3D, animaciones on-scroll, modo claro/oscuro y contenido bilingüe.",
 };

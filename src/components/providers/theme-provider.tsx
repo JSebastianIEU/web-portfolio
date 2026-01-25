@@ -22,12 +22,13 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
-  // Hydrate theme on client to avoid SSR/client mismatch and then sync attributes.
+  // Hydrate theme on client to avoid SSR/client mismatch; ignore lint about setState here.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const stored = window.localStorage.getItem("theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const next = stored === "light" || stored === "dark" ? stored : prefersDark ? "dark" : "light";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(next);
   }, []);
 

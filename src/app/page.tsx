@@ -1,8 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { MouseEvent as ReactMouseEvent } from "react";
 import { useTheme } from "@/components/providers/theme-provider";
+import BackgroundGridSpotlight from "@/components/BackgroundGridSpotlight";
+import AboutSection from "@/components/AboutSection";
+import SpotlightOverlay from "@/components/SpotlightOverlay";
+import PersistentHeader from "@/components/PersistentHeader";
 
 type Point = { x: number; y: number };
 
@@ -11,23 +14,16 @@ const PHRASES = [
   { prefix: "I turn ideas into ", highlight: "real products", suffix: "" },
   { prefix: "I solve ", highlight: "problems", suffix: " through technology" },
   { prefix: "I care about ", highlight: "design and impact", suffix: "" },
-  { prefix: "I'm ", highlight: "Sebastian Peña", suffix: "" },
+  { prefix: "I'm ", highlight: "Sebastián Peña", suffix: "" },
 ];
 
 const HIGHLIGHT_LIGHT_COLORS = [
-  "#a855f7", // purple
-  "#22c55e", // green
-  "#38bdf8", // sky
-  "#fb923c", // orange
-  "#67e8f9", // cyan
-  "#f472b6", // pink
-];
-const NAV_ITEMS = [
-  { href: "#home", label: "home" },
-  { href: "#about", label: "about" },
-  { href: "#skills", label: "skills" },
-  { href: "#projects", label: "projects" },
-  { href: "#contact", label: "contact" },
+  "#a855f7",
+  "#22c55e",
+  "#38bdf8",
+  "#fb923c",
+  "#67e8f9",
+  "#f472b6",
 ];
 
 const SPEEDS = {
@@ -48,7 +44,7 @@ function lcpLength(a: string, b: string) {
 }
 
 export default function Home() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const isDark = theme === "dark";
   const [text, setText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -56,6 +52,7 @@ export default function Home() {
   const [typingSpeed, setTypingSpeed] = useState(150);
   const [cursorPosition, setCursorPosition] = useState<Point>({ x: 0, y: 0 });
   const [cursorVariant, setCursorVariant] = useState<"default" | "link">("default");
+  const showSpotlight = true;
 
   const mouseRef = useRef<Point>({ x: 0, y: 0 });
   const frameRef = useRef<number | null>(null);
@@ -84,11 +81,9 @@ export default function Home() {
           setText(text.substring(0, text.length - 1));
           setTypingSpeed(SPEEDS.delete);
         } else {
-          // We reached the shared prefix (or none). Switch to next phrase and continue typing
           setIsDeleting(false);
           setLoopNum((prev) => prev + 1);
           setTypingSpeed(SPEEDS.type);
-          // text already equals the baseline; continue typing in next effect cycle
         }
       }
     };
@@ -106,7 +101,6 @@ export default function Home() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Smooth cursor follow with delay
   useEffect(() => {
     const tick = () => {
       setCursorPosition((prev) => ({
@@ -122,7 +116,12 @@ export default function Home() {
     };
   }, []);
 
-  // Derived display values
+  useEffect(() => {
+    const root = document.documentElement.style;
+    root.setProperty("--mx", `${cursorPosition.x}px`);
+    root.setProperty("--my", `${cursorPosition.y}px`);
+  }, [cursorPosition]);
+
   const prefixLength = currentPhrase.prefix.length;
   const highlightLength = currentPhrase.highlight.length;
   const displayPrefix = text.substring(0, Math.min(prefixLength, text.length));
@@ -141,141 +140,70 @@ export default function Home() {
 
   const colors = useMemo(
     () => ({
-      background: isDark ? "#000000" : "#f9fbff",
-      grid: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(15, 23, 42, 0.04)",
-      gridGlow: isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(71, 85, 105, 0.22)",
-      spotlight: isDark ? "rgba(255, 255, 255, 0.15)" : "transparent",
-      prefix: isDark ? "#9ca3af" : "#334155",
       word: isDark ? "#ffffff" : "#0f172a",
-      navMuted: isDark ? "#d1d5db" : "#475569",
-      bubbleBorder: isDark ? "rgba(255, 255, 255, 0.18)" : "rgba(15, 23, 42, 0.08)",
-      bubbleBg: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.88)",
     }),
     [isDark],
   );
 
-  const navHoverColor = useMemo(() => (isDark ? "#ffffff" : "#0f172a"), [isDark]);
   const highlightColor = useMemo(
     () => (isDark ? colors.word : HIGHLIGHT_LIGHT_COLORS[currentIndex % HIGHLIGHT_LIGHT_COLORS.length]),
     [colors.word, currentIndex, isDark],
   );
-  const spotlightRadius = useMemo(() => (isDark ? 800 : 360), [isDark]);
-  const gridMaskRadius = useMemo(() => (isDark ? 400 : 320), [isDark]);
 
   const enterLink = useCallback(() => setCursorVariant("link"), []);
   const leaveLink = useCallback(() => setCursorVariant("default"), []);
 
-  const handleNavEnter = useCallback(
-    (e: ReactMouseEvent<HTMLAnchorElement>) => {
-      enterLink();
-      e.currentTarget.style.color = navHoverColor;
-      e.currentTarget.style.textShadow = isDark
-        ? "0 0 18px rgba(255,255,255,0.6)"
-        : "0 0 12px rgba(15,23,42,0.35)";
-    },
-    [enterLink, isDark, navHoverColor],
-  );
-
-  const handleNavLeave = useCallback(
-    (e: ReactMouseEvent<HTMLAnchorElement>) => {
-      leaveLink();
-      e.currentTarget.style.color = colors.navMuted;
-      e.currentTarget.style.textShadow = "none";
-    },
-    [colors.navMuted, leaveLink],
-  );
-
   return (
-    <div
-      className="w-full h-screen flex items-center justify-center relative overflow-hidden"
-      style={{ cursor: "none", background: colors.background, transition: "background 200ms ease" }}
-    >
-      {/* Floating Glass Navbar */}
-      <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-40">
-        <div 
-          className="flex items-center gap-8 px-8 py-3 rounded-full"
-          style={{
-            background: "rgba(255, 255, 255, 0.05)",
-            backdropFilter: "blur(10px)",
-            WebkitBackdropFilter: "blur(10px)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
-            cursor: "none",
-          }}
+    <>
+      <BackgroundGridSpotlight />
+      <PersistentHeader enterLink={enterLink} leaveLink={leaveLink} />
+      <SpotlightOverlay cursorPosition={cursorPosition} showSpotlight={showSpotlight} />
+
+      <main className="relative z-[10]" style={{ cursor: "none" }}>
+        <section
+          id="hero"
+          className="relative min-h-screen flex items-center justify-center overflow-hidden"
         >
-          {NAV_ITEMS.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="text-sm font-medium transition-colors duration-200"
-              style={{ cursor: "none", color: colors.navMuted }}
-              onMouseEnter={handleNavEnter}
-              onMouseLeave={handleNavLeave}
+          <div className="relative z-10 text-5xl font-mono">
+            <span style={{ color: colors.word, opacity: 0.75 }}>{displayPrefix}</span>
+            <span
+              style={{
+                color: currentIndex === PHRASES.length - 1 ? colors.word : highlightColor,
+                opacity: 1,
+                filter: currentIndex === PHRASES.length - 1 ? "none" : "brightness(1.06)",
+                textShadow:
+                  currentIndex === PHRASES.length - 1
+                    ? "none"
+                    : isDark
+                    ? "0 0 16px rgba(255,255,255,0.28)"
+                    : "0 0 12px rgba(15,23,42,0.22)",
+                transition: "opacity 200ms ease, text-shadow 200ms ease",
+              }}
             >
-              {item.label}
-            </a>
-          ))}
-        </div>
-      </nav>
+              {displayHighlight}
+            </span>
+            <span style={{ color: colors.word, opacity: 0.75 }}>{displaySuffix}</span>
+            <span
+              className={isEndLine ? "cursor-blink" : ""}
+              style={{
+                color:
+                  currentIndex === PHRASES.length - 1
+                    ? colors.word
+                    : cursorInHighlight
+                    ? highlightColor
+                    : colors.word,
+              }}
+            >
+              |
+            </span>
+          </div>
+        </section>
 
-      {/* Floating theme bubble */}
-      <button
-        type="button"
-        aria-label="Cambiar tema"
-        onClick={toggleTheme}
-        className="fixed top-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition hover:-translate-y-0.5"
-        style={{
-          background: colors.bubbleBg,
-          border: `1px solid ${colors.bubbleBorder}`,
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.18)",
-          cursor: "none",
-        }}
-        onMouseEnter={enterLink}
-        onMouseLeave={leaveLink}
-      >
-        {isDark ? (
-          <svg
-            width="26"
-            height="26"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 6.5c-3.03 0-5.5 2.47-5.5 5.5s2.47 5.5 5.5 5.5c2.79 0 5.12-2.06 5.45-4.76-1.48.6-3.21.29-4.4-.9-1.19-1.19-1.5-2.92-.9-4.4C14.06 6.38 12.79 6.5 12 6.5Z"
-              fill="#f8fafc"
-              stroke="#cbd5e1"
-              strokeWidth="0.8"
-            />
-          </svg>
-        ) : (
-          <svg
-            width="26"
-            height="26"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="12" cy="12" r="4.5" fill="#0f172a" stroke="#0f172a" strokeWidth="0.8" />
-            <g stroke="#0f172a" strokeWidth="0.8" strokeLinecap="round">
-              <line x1="12" y1="2.5" x2="12" y2="4.2" />
-              <line x1="12" y1="19.8" x2="12" y2="21.5" />
-              <line x1="4.2" y1="12" x2="2.5" y2="12" />
-              <line x1="21.5" y1="12" x2="19.8" y2="12" />
-              <line x1="5.7" y1="5.7" x2="4.3" y2="4.3" />
-              <line x1="18.3" y1="18.3" x2="19.7" y2="19.7" />
-              <line x1="5.7" y1="18.3" x2="4.3" y2="19.7" />
-              <line x1="18.3" y1="5.7" x2="19.7" y2="4.3" />
-            </g>
-          </svg>
-        )}
-      </button>
+        <AboutSection />
+      </main>
 
-      {/* Custom cursor - Arrow pointer */}
       <div
-        className="fixed pointer-events-none z-[9999]"
+        className="fixed pointer-events-none z-[25000]"
         style={{
           left: `${cursorPosition.x}px`,
           top: `${cursorPosition.y}px`,
@@ -289,9 +217,7 @@ export default function Home() {
             viewBox="0 0 20 20"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            style={{
-              filter: "drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8))",
-            }}
+            style={{ filter: "drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8))" }}
           >
             <path
               d="M3 2 L3 17 L7.5 12.5 L10 18 L12 17 L9.5 11.5 L16 11.5 L3 2Z"
@@ -314,86 +240,6 @@ export default function Home() {
           />
         )}
       </div>
-
-      {/* Grid background */}
-      <div 
-        className="absolute inset-0 opacity-30"
-        style={{
-          backgroundImage: `
-            linear-gradient(${colors.grid} 1px, transparent 1px),
-            linear-gradient(90deg, ${colors.grid} 1px, transparent 1px)
-          `,
-          backgroundSize: "50px 50px",
-        }}
-      />
-      
-      {/* Gradient spotlight following cursor (dark mode only) */}
-      {isDark && (
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(${spotlightRadius}px circle at ${cursorPosition.x}px ${cursorPosition.y}px, ${colors.spotlight}, transparent 32%)`,
-          }}
-        />
-      )}
-
-      {/* Illuminated grid overlay (strong near cursor, fades out) */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(${colors.gridGlow} 1px, transparent 1px),
-            linear-gradient(90deg, ${colors.gridGlow} 1px, transparent 1px)
-          `,
-          backgroundSize: "50px 50px",
-          maskImage: `radial-gradient(${gridMaskRadius}px circle at ${cursorPosition.x}px ${cursorPosition.y}px,
-            rgba(0,0,0,1) 0%, rgba(0,0,0,0.65) 40%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0) 100%)`,
-          WebkitMaskImage: `radial-gradient(${gridMaskRadius}px circle at ${cursorPosition.x}px ${cursorPosition.y}px,
-            rgba(0,0,0,1) 0%, rgba(0,0,0,0.65) 40%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0) 100%)`,
-        }}
-      />
-
-      {/* Text content with partial highlight */}
-      <div className="text-5xl font-mono relative z-10">
-        {/* Neutral prefix */}
-        <span style={{ color: colors.word, opacity: 0.75 }}>{displayPrefix}</span>
-
-        {/* Highlighted phrase (skip glow for last phrase) */}
-        <span
-          style={{
-            color: currentIndex === PHRASES.length - 1 ? colors.word : highlightColor,
-            opacity: 1,
-            filter: currentIndex === PHRASES.length - 1 ? "none" : "brightness(1.06)",
-            textShadow:
-              currentIndex === PHRASES.length - 1
-                ? "none"
-                : isDark
-                ? "0 0 16px rgba(255,255,255,0.28)"
-                : "0 0 12px rgba(15,23,42,0.22)",
-            transition: "opacity 200ms ease, text-shadow 200ms ease",
-          }}
-        >
-          {displayHighlight}
-        </span>
-
-        {/* Neutral suffix */}
-        <span style={{ color: colors.word, opacity: 0.75 }}>{displaySuffix}</span>
-
-        {/* Cursor: fade/blink only when paused at end-of-line */}
-        <span
-          className={isEndLine ? "cursor-blink" : ""}
-          style={{
-            color:
-              currentIndex === PHRASES.length - 1
-                ? colors.word
-                : cursorInHighlight
-                ? highlightColor
-                : colors.word,
-          }}
-        >
-          |
-        </span>
-      </div>
-    </div>
+    </>
   );
 }
