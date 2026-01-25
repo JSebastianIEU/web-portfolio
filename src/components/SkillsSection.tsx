@@ -4,8 +4,9 @@ import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useI18n } from "@/components/providers/language-provider";
-import { skillCategories, skillCrossLinks, skillNodes } from "@/data/skillsData";
+import { skillCategories, skillCrossLinks, skillNodes, type SkillLink } from "@/data/skillsData";
 import { useNetworkSimulation } from "@/hooks/useNetworkSimulation";
+import { buildCategoryBackbone, buildSkillEdges } from "@/utils/skillsGraph";
 
 type TooltipState = {
   id: string;
@@ -23,13 +24,39 @@ export default function SkillsSection() {
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [isMobile, setIsMobile] = useState(false);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const [categoryRects, setCategoryRects] = useState<Array<{ id: string; width: number; height: number }>>(
+    skillCategories.map((c) => ({ id: c.id, width: 220, height: 60 })),
+  );
+  const edgesRef = useRef<{ cross: SkillLink[]; intra: SkillLink[] }>({ cross: [], intra: [] });
+  const lastEdgeBuild = useRef<number>(0);
   const pointerRef = useRef<{ x: number; y: number } | null>(null);
+  const titleRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const iconCache = useRef<Record<string, HTMLImageElement>>({});
 
   const nodes = useMemo(() => skillNodes, []);
   const categories = useMemo(() => skillCategories, []);
   const links = useMemo(() => skillCrossLinks, []);
-
+  const meshEdges = useMemo(() => {
+    const sorted = [...skillNodes].sort((a, b) => (a.id < b.id ? -1 : 1));
+    const edges: SkillLink[] = [];
+    for (let i = 0; i < sorted.length; i++) {
+      const a = sorted[i];
+      const b = sorted[(i + 1) % sorted.length];
+      edges.push({ sourceId: a.id, targetId: b.id });
+    }
+    return edges;
+  }, []);
+  const titleLines = useMemo(
+    () => ({
+      software: ["SOFTWARE", "ENGINEERING"],
+      frontend: ["FRONTEND", "& PRODUCT", "UI"],
+      data: ["DATA", "& ML"],
+      db: ["DATABASES"],
+      cloud: ["CLOUD &", "DEVOPS"],
+      automation: ["AUTOMATION", "& SCRIPTING"],
+    }),
+    [],
+  );
   // Preload icons
   useEffect(() => {
     const cache: Record<string, HTMLImageElement> = {};
@@ -55,17 +82,57 @@ export default function SkillsSection() {
     return () => window.removeEventListener("resize", resize);
   }, []);
 
+  useEffect(() => {
+    lastEdgeBuild.current = 0;
+  }, [size.w, size.h, isMobile]);
+
+  // measure category label sizes for no-go rectangles using real DOM sizes
+  useEffect(() => {
+    const measure = () => {
+      const padX = isMobile ? 44 : 60;
+      const padY = isMobile ? 28 : 34;
+      const rects = categories.map((c) => {
+        const el = titleRefs.current[c.id];
+        if (el) {
+          const r = el.getBoundingClientRect();
+          return { id: c.id, width: r.width + padX, height: r.height + padY };
+        }
+        return { id: c.id, width: 220, height: 60 };
+      });
+      setCategoryRects(rects);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [categories, isMobile, lang, size.w, size.h]);
+
+  const categoryBackbone = useMemo(() => {
+    const totalPairs = (categories.length * (categories.length - 1)) / 2;
+    return buildCategoryBackbone(categories, nodes, links, totalPairs, true);
+  }, [categories, links, nodes]);
+
+  const titleAnchorMap = useMemo(() => {
+    if (!size.w || !size.h) return {};
+    const map: Record<string, { x: number; y: number }> = {};
+    categories.forEach((c) => {
+      map[c.id] = { x: c.anchor.x * size.w, y: c.anchor.y * size.h };
+    });
+    return map;
+  }, [categories, size.h, size.w]);
+
   const { hoverId, nodesRef } = useNetworkSimulation({
     nodes,
     categories,
+    categoryRects,
     links,
     width: size.w,
     height: size.h,
     pointerRef,
     isMobile,
-    onFrame: ({ nodes: state }) => {
+    titleAnchors: titleAnchorMap,
+    onFrame: ({ nodes: state, hoverId: frameHover, time }) => {
       const canvas = canvasRef.current;
-      if (!canvas) return;
+      if (!canvas || !size.w || !size.h) return;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
@@ -76,53 +143,186 @@ export default function SkillsSection() {
       ctx.scale(dpr, dpr);
 
       ctx.clearRect(0, 0, size.w, size.h);
-      const lineColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)";
-      const glowColor = isDark ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.14)";
+      const paddedRects = categories.map((c) => {
+        const rect = categoryRects.find((r) => r.id === c.id);
+        const w = rect?.width ?? 220;
+        const h = rect?.height ?? 60;
+        const cx = c.anchor.x * size.w;
+        const cy = c.anchor.y * size.h;
+        return { id: c.id, x: cx - w / 2, y: cy - h / 2, width: w, height: h };
+      });
 
-      // Lines (sparse)
-      ctx.strokeStyle = lineColor;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (const link of links) {
-        const a = state.find((n) => n.node.id === link.sourceId);
-        const b = state.find((n) => n.node.id === link.targetId);
+      const positions = state.map((n) => ({
+        id: n.node.id,
+        x: n.x,
+        y: n.y,
+        category: n.node.category,
+        tier: n.node.tier,
+      }));
+
+      // rebuild edges occasionally (not every frame) to reduce churn
+      if (!lastEdgeBuild.current || time - lastEdgeBuild.current > 1200) {
+        edgesRef.current = buildSkillEdges(positions, links, {
+          maxCross: isMobile ? 80 : 160,
+          kPrimary: isMobile ? 2 : 4,
+          kSecondary: isMobile ? 1 : 3,
+          paddedRects,
+          categories,
+        });
+        lastEdgeBuild.current = time;
+      }
+
+      const { cross: crossEdges, intra: intraEdges } = edgesRef.current;
+      const allEdges = [...crossEdges, ...intraEdges];
+      const posMap = new Map(state.map((n) => [n.node.id, n]));
+      const neighborMap: Record<string, Set<string>> = {};
+      const addNeighbor = (a: string, b: string) => {
+        if (!neighborMap[a]) neighborMap[a] = new Set();
+        neighborMap[a].add(b);
+      };
+      allEdges.forEach((l) => {
+        addNeighbor(l.sourceId, l.targetId);
+        addNeighbor(l.targetId, l.sourceId);
+      });
+
+      const activeHover = frameHover ?? hoverId;
+      const connectedSet =
+        activeHover && neighborMap[activeHover]
+          ? new Set<string>([activeHover, ...Array.from(neighborMap[activeHover])])
+          : activeHover
+          ? new Set<string>([activeHover])
+          : null;
+
+      const longThreshold = size.w * 0.45;
+
+      // Global mesh (very faint, behind everything, deterministic)
+      ctx.lineWidth = 0.6;
+      for (const link of meshEdges) {
+        const a = posMap.get(link.sourceId);
+        const b = posMap.get(link.targetId);
         if (!a || !b) continue;
+        const intersects = paddedRects.some((r) => segmentIntersectsRect(a.x, a.y, b.x, b.y, r.x, r.y, r.width, r.height));
+        if (intersects) continue;
+        ctx.strokeStyle = isDark ? "rgba(255,255,255,0.025)" : "rgba(15,23,42,0.03)";
+        ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
+        ctx.stroke();
       }
-      ctx.stroke();
+
+      // Backbone between hubs
+      for (const edge of categoryBackbone) {
+        const a = categories.find((c) => c.id === edge.a);
+        const b = categories.find((c) => c.id === edge.b);
+        if (!a || !b) continue;
+        const ax = a.anchor.x * size.w;
+        const ay = a.anchor.y * size.h;
+        const bx = b.anchor.x * size.w;
+        const by = b.anchor.y * size.h;
+        const intersects = paddedRects.some((r) => segmentIntersectsRect(ax, ay, bx, by, r.x, r.y, r.width, r.height));
+        const len = Math.hypot(ax - bx, ay - by);
+        const alphaBase = 0.16 + (edge.norm ?? 0.5) * 0.1;
+        let alpha = alphaBase * (intersects ? 0.12 : 1);
+        if (len > longThreshold) alpha *= 0.65;
+        const widthL = 0.9 + (edge.norm ?? 0.5) * 0.8;
+        ctx.strokeStyle = isDark ? `rgba(255,255,255,${alpha})` : `rgba(15,23,42,${alpha + 0.05})`;
+        ctx.lineWidth = widthL;
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(bx, by);
+        ctx.stroke();
+      }
+
+      // Cross edges (medium)
+      ctx.lineWidth = 0.85;
+      for (const link of crossEdges) {
+        const a = posMap.get(link.sourceId);
+        const b = posMap.get(link.targetId);
+        if (!a || !b) continue;
+        const intersects = paddedRects.some((r) => segmentIntersectsRect(a.x, a.y, b.x, b.y, r.x, r.y, r.width, r.height));
+        const isHovered = activeHover && (a.node.id === activeHover || b.node.id === activeHover);
+        const deEmphasize = connectedSet && !(connectedSet.has(a.node.id) || connectedSet.has(b.node.id));
+        const len = Math.hypot(a.x - b.x, a.y - b.y);
+        const tierFactor =
+          (a.node.tier === "primary" ? 1.0 : 0.75) * (b.node.tier === "primary" ? 1.0 : 0.75);
+        let alphaBase = isHovered ? 0.18 : deEmphasize ? 0.05 : 0.1;
+        alphaBase *= isHovered ? 1.8 : deEmphasize ? 0.55 : 1;
+        let alpha = alphaBase * tierFactor * (intersects ? 0.12 : 1);
+        if (len > longThreshold) alpha *= 0.65;
+        ctx.strokeStyle = isDark ? `rgba(255,255,255,${alpha})` : `rgba(15,23,42,${alpha + 0.03})`;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+
+      // Intra edges (weak mesh)
+      const breathe = 0.04 * Math.sin(time * 0.0015);
+      ctx.lineWidth = 0.65;
+      for (const link of intraEdges) {
+        const a = posMap.get(link.sourceId);
+        const b = posMap.get(link.targetId);
+        if (!a || !b) continue;
+        const isHovered = activeHover && (a.node.id === activeHover || b.node.id === activeHover);
+        const deEmphasize = connectedSet && !(connectedSet.has(a.node.id) || connectedSet.has(b.node.id));
+        const len = Math.hypot(a.x - b.x, a.y - b.y);
+        const tierFactor =
+          (a.node.tier === "primary" ? 1.0 : 0.7) * (b.node.tier === "primary" ? 1.0 : 0.7);
+        let alphaBase = isHovered ? 0.08 : deEmphasize ? 0.025 : 0.04;
+        alphaBase *= isHovered ? 1.8 : deEmphasize ? 0.55 : 1;
+        let alpha = Math.max(0, Math.min(0.12, alphaBase * tierFactor + breathe));
+        if (len > longThreshold) alpha *= 0.65;
+        ctx.strokeStyle = isDark ? `rgba(255,255,255,${alpha})` : `rgba(15,23,42,${alpha})`;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
 
       // Nodes
       for (const n of state) {
-        const isHover = n.node.id === hoverId;
-        const r = isHover ? n.r * 1.18 : n.r;
+        const isHover = n.node.id === activeHover;
+        const rBase = n.r * (n.node.tier === "primary" ? 1.05 : 0.95);
+        const r = isHover ? rBase * 1.18 : rBase;
+        const dim = connectedSet && !connectedSet.has(n.node.id) ? 0.45 : 1;
         ctx.save();
         ctx.translate(n.x, n.y);
-        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, r * 1.4);
-        grad.addColorStop(0, isDark ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.12)");
-        grad.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(0, 0, r * 1.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = isDark ? "rgba(255,255,255,0.14)" : "rgba(15,23,42,0.12)";
+        const shadowBlur = n.node.tier === "primary" ? (isMobile ? 12 : 18) : isMobile ? 8 : 12;
+        ctx.shadowColor = isDark ? `rgba(255,255,255,${0.14 * dim})` : `rgba(15,23,42,${0.16 * dim})`;
+        ctx.shadowBlur = shadowBlur;
+        ctx.fillStyle = isDark ? `rgba(255,255,255,${0.07 * dim})` : `rgba(15,23,42,${0.07 * dim})`;
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = glowColor;
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = isDark ? `rgba(255,255,255,${0.22 * dim})` : `rgba(15,23,42,${0.2 * dim})`;
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        // icon
+        // icon clipped
         const img = iconCache.current[n.node.id];
         if (img && img.complete) {
-          const sizePx = r * 1.35;
-          ctx.globalCompositeOperation = "source-over";
-          ctx.drawImage(img, -sizePx / 2, -sizePx / 2, sizePx, sizePx);
+          const target = r * 1.1;
+          const iw = img.naturalWidth || target;
+          const ih = img.naturalHeight || target;
+          const aspect = iw / ih || 1;
+          let drawW = target;
+          let drawH = target;
+          if (aspect > 1) {
+            drawH = target / aspect;
+          } else {
+            drawW = target * aspect;
+          }
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(0, 0, r - 2, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+          ctx.restore();
         }
         ctx.restore();
       }
+
     },
   });
 
@@ -167,6 +367,29 @@ export default function SkillsSection() {
     </div>
   );
 
+  // helper: segment-rect intersection
+  function segmentIntersectsRect(x1: number, y1: number, x2: number, y2: number, rx: number, ry: number, rw: number, rh: number) {
+    const inside = (x: number, y: number) => x >= rx && x <= rx + rw && y >= ry && y <= ry + rh;
+    if (inside(x1, y1) || inside(x2, y2)) return true;
+    const lines = [
+      [rx, ry, rx + rw, ry],
+      [rx + rw, ry, rx + rw, ry + rh],
+      [rx + rw, ry + rh, rx, ry + rh],
+      [rx, ry + rh, rx, ry],
+    ];
+    const cross = (ax: number, ay: number, bx: number, by: number, cx: number, cy: number, dx: number, dy: number) => {
+      const det = (bx - ax) * (dy - cy) - (by - ay) * (dx - cx);
+      if (det === 0) return false;
+      const t = ((cx - ax) * (dy - cy) - (cy - ay) * (dx - cx)) / det;
+      const u = ((cx - ax) * (by - ay) - (cy - ay) * (bx - ax)) / det;
+      return t >= 0 && t <= 1 && u >= 0 && u <= 1;
+    };
+    for (const [ax, ay, bx, by] of lines) {
+      if (cross(x1, y1, x2, y2, ax, ay, bx, by)) return true;
+    }
+    return false;
+  }
+
   return (
     <section
       id="skills"
@@ -198,22 +421,43 @@ export default function SkillsSection() {
         >
           <canvas ref={canvasRef} className="block w-full h-full" style={{ minHeight: "360px" }} />
 
-          {/* Cluster labels */}
+          {/* Category titles overlay */}
           <div className="pointer-events-none absolute inset-0">
-            {categories.map((c) => (
-              <div
-                key={c.id}
-                className="absolute text-[10px] md:text-xs uppercase tracking-[0.24em]"
-                style={{
-                  left: `${c.anchor.x * 100}%`,
-                  top: `${c.anchor.y * 100}%`,
-                  transform: "translate(-50%, -50%)",
-                  color: isDark ? "rgba(226,232,240,0.7)" : "rgba(15,23,42,0.55)",
-                }}
-              >
-                {lang === "es" ? c.labelES : c.labelEN}
-              </div>
-            ))}
+            {categories.map((c) => {
+              const label = (lang === "es" ? c.labelES : c.labelEN).toUpperCase();
+              const lines = titleLines[c.id as keyof typeof titleLines] ?? [label];
+              return (
+                <div
+                  key={c.id}
+                  ref={(el) => {
+                    titleRefs.current[c.id] = el;
+                  }}
+                  className="absolute flex flex-col items-center"
+                  style={{
+                    left: `${c.anchor.x * 100}%`,
+                    top: `${c.anchor.y * 100}%`,
+                    transform: "translate(-50%, -50%)",
+                  }}
+                >
+                  <div className="flex flex-col items-center leading-[1.05]">
+                    {lines.map((line, idx) => (
+                      <span
+                        key={idx}
+                        className="block text-[12px] md:text-[17px] font-semibold uppercase"
+                        style={{
+                          letterSpacing: "0.1em",
+                          color: isDark ? "rgba(226,232,240,0.9)" : "rgba(15,23,42,0.88)",
+                          textShadow: isDark ? "0 6px 20px rgba(0,0,0,0.25)" : "0 6px 18px rgba(0,0,0,0.08)",
+                          fontSize: "clamp(14px,2vw,22px)",
+                        }}
+                      >
+                        {line}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* Tooltip */}
