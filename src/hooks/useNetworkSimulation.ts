@@ -249,11 +249,11 @@ export function useNetworkSimulation({
         const rect = rectMap[n.node.category];
         const titleCenter = titleCenters[n.node.category];
         if (rect && titleCenter) {
-          const halfW = rect.w * 0.5 + 70;
-          const halfH = rect.h * 0.5 + 40;
+          const halfW = rect.w * 0.5 + padX;
+          const halfH = rect.h * 0.5 + padY;
           if (Math.abs(n.x - titleCenter.x) < halfW && Math.abs(n.y - titleCenter.y) < halfH) {
-            const pushX = (halfW - Math.abs(n.x - titleCenter.x)) * 0.12;
-            const pushY = (halfH - Math.abs(n.y - titleCenter.y)) * 0.12;
+            const pushX = (halfW - Math.abs(n.x - titleCenter.x)) * titleRepelStrength;
+            const pushY = (halfH - Math.abs(n.y - titleCenter.y)) * titleRepelStrength;
             ax += n.x > titleCenter.x ? pushX : -pushX;
             ay += n.y > titleCenter.y ? pushY : -pushY;
           }
