@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Space_Grotesk, Sora } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 import SocialRail from "@/components/SocialRail";
+import Footer from "@/components/Footer";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -19,9 +20,9 @@ const body = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "Juan Sebastián Peña | Portfolio",
+  title: "Juan Sebastian Peña | Portfolio",
   description:
-    "Portafolio web con experiencias 3D, animaciones on-scroll, modo claro/oscuro y contenido bilingüe.",
+    "Portafolio web con experiencias 3D, animaciones on-scroll, modo claro/oscuro y contenido bilingÃ¼e.",
 };
 
 export default function RootLayout({
@@ -30,14 +31,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning style={{ cursor: "none" }}>
       <body
         suppressHydrationWarning
         className={`${display.variable} ${body.variable} antialiased`}
+        style={{ cursor: "none" }}
       >
         <Providers>
           <SocialRail />
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>

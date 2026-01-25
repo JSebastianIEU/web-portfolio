@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import type { CSSProperties } from "react";
 import Image from "next/image";
@@ -182,7 +182,7 @@ export default function AboutSection() {
               >
                 <Image
                   src="/images/me.jpg"
-                  alt="Portrait of Sebastián Peña"
+                  alt="Portrait of Sebastian Peña"
                   fill
                   sizes="(max-width: 768px) 100vw, 360px"
                   className="object-cover"

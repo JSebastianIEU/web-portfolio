@@ -414,6 +414,7 @@ export default function ProjectsSection() {
   const groupWidthRef = useRef(0);
   const tickingRef = useRef(false);
   const scalesRef = useRef<number[]>([]);
+  const wrapCooldownRef = useRef(0);
 
   // Measure group width and initialize scroll position at middle copy
   useEffect(() => {
@@ -440,11 +441,19 @@ export default function ProjectsSection() {
       }
       const left = scroller.scrollLeft;
       const gw = groupWidthRef.current || 1;
-      // Wrap seamlessly
-      if (left < gw * 0.3) {
-        scroller.scrollLeft = left + gw;
-      } else if (left > gw * 2.7) {
-        scroller.scrollLeft = left - gw;
+      
+      // Wrap seamlessly with cooldown to prevent multiple wraps per scroll
+      const now = performance.now();
+      if (wrapCooldownRef.current < now) {
+        if (left < gw * 0.25) {
+          // Hit left boundary: wrap to right copy
+          scroller.scrollLeft = left + gw;
+          wrapCooldownRef.current = now + 50; // 50ms cooldown
+        } else if (left > gw * 2.75) {
+          // Hit right boundary: wrap to left copy
+          scroller.scrollLeft = left - gw;
+          wrapCooldownRef.current = now + 50; // 50ms cooldown
+        }
       }
 
       // Edge scaling using offset math + lerp for smoother animation
@@ -476,6 +485,7 @@ export default function ProjectsSection() {
     scroller.addEventListener("scroll", onScroll, { passive: true });
     // Initial apply
     scalesRef.current = [];
+    wrapCooldownRef.current = 0;
     update();
     return () => scroller.removeEventListener("scroll", onScroll);
   }, [lang]);

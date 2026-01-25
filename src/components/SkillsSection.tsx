@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useI18n } from "@/components/providers/language-provider";
 import { skillCategories, skillCrossLinks, skillNodes, type SkillLink } from "@/data/skillsData";
@@ -377,6 +378,48 @@ export default function SkillsSection() {
     pointerRef.current = null;
   };
 
+  const tooltipNode =
+    tooltip && typeof window !== "undefined"
+      ? createPortal(
+          (() => {
+            const padding = 12;
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            let x = tooltip.x;
+            let y = tooltip.y - 18;
+            const rect = canvasRef.current?.getBoundingClientRect();
+            if (rect) {
+              x = rect.left + tooltip.x;
+              y = rect.top + tooltip.y - 18;
+            }
+            if (y < padding) {
+              y = (rect ? rect.top + tooltip.y : tooltip.y) + 18;
+            }
+            x = Math.min(vw - padding, Math.max(padding, x));
+            y = Math.min(vh - padding, Math.max(padding, y));
+
+            return (
+              <div
+                className="pointer-events-none fixed px-2.5 py-1.5 rounded-full text-xs font-medium"
+                style={{
+                  left: x,
+                  top: y,
+                  transform: "translate(-50%, -100%)",
+                  background: isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.08)",
+                  border: isDark ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(15,23,42,0.12)",
+                  boxShadow: "0 10px 24px rgba(0,0,0,0.15)",
+                  color: isDark ? "#e5e7eb" : "#0f172a",
+                  zIndex: 30000,
+                }}
+              >
+                {tooltip.name}
+              </div>
+            );
+          })(),
+          document.body,
+        )
+      : null;
+
   const srList = (
     <div className="sr-only" aria-hidden="false">
       <p>{t("skills.label")}</p>
@@ -420,36 +463,11 @@ export default function SkillsSection() {
       <div className="absolute inset-0 pointer-events-none" />
 
       <div className="relative w-full max-w-5xl mx-auto">
-        <div
-          className="flex items-start justify-between mb-6 md:mb-8 px-1"
-          style={{ color: isDark ? "#e5e7eb" : "#0f172a" }}
-        >
-          <h2 className="text-lg md:text-xl font-semibold tracking-tight">
-            <span
-              className="inline-block"
-              style={
-                isDark
-                  ? {
-                      color: "rgba(255,255,255,0.96)",
-                      textShadow: "0 0 22px rgba(255,255,255,0.35)",
-                      backgroundImage: "none",
-                      WebkitTextFillColor: "initial",
-                      backgroundClip: "border-box",
-                    }
-                  : {
-                      backgroundImage: "linear-gradient(90deg, rgba(6,95,186,0.9), rgba(109,40,217,0.8))",
-                      backgroundRepeat: "no-repeat",
-                      WebkitBackgroundClip: "text",
-                      backgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      color: "transparent",
-                      textShadow: "0 2px 10px rgba(15,23,42,0.12)",
-                    }
-              }
-            >
-              {t("skills.label")}
-            </span>
+        <div className="flex items-start justify-between mb-6 md:mb-8 px-1">
+          <h2 className="text-2xl md:text-3xl font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+            {t("skills.label")}
           </h2>
+          <div aria-hidden className="hidden" />
         </div>
 
         <div
@@ -515,27 +533,11 @@ export default function SkillsSection() {
             })}
           </div>
 
-          {/* Tooltip */}
-          {tooltip && (
-            <div
-              className="pointer-events-none absolute px-2.5 py-1.5 rounded-full text-xs font-medium"
-              style={{
-                left: tooltip.x,
-                top: tooltip.y - 18,
-                transform: "translate(-50%, -100%)",
-                background: isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.08)",
-                border: isDark ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(15,23,42,0.12)",
-                boxShadow: "0 10px 24px rgba(0,0,0,0.15)",
-                color: isDark ? "#e5e7eb" : "#0f172a",
-              }}
-            >
-              {tooltip.name}
-            </div>
-          )}
         </div>
       </div>
 
       {srList}
+      {tooltipNode}
     </section>
   );
 }

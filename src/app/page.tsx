@@ -43,7 +43,7 @@ export default function Home() {
   const [loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(150);
   const [cursorPosition, setCursorPosition] = useState<Point>({ x: 0, y: 0 });
-  const [cursorVariant, setCursorVariant] = useState<"default" | "link">("default");
+  const [cursorVariant, setCursorVariant] = useState<"default" | "link" | "text">("default");
   const showSpotlight = true;
 
   const mouseRef = useRef<Point>({ x: 0, y: 0 });
@@ -101,12 +101,50 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const handleMouseMove: (event: MouseEvent) => void = (event) => {
-      mouseRef.current = { x: event.clientX, y: event.clientY };
+    const detectInteractive = (target: EventTarget | null) => {
+      if (!(target instanceof Element)) return false;
+      return Boolean(target.closest(interactiveSelector));
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    const detectText = (target: EventTarget | null) => {
+      if (!(target instanceof Element)) return false;
+      return Boolean(target.closest(textSelector));
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      mouseRef.current = { x: event.clientX, y: event.clientY };
+      if (detectText(event.target)) {
+        setCursorVariant("text");
+      } else {
+        setCursorVariant(detectInteractive(event.target) ? "link" : "default");
+      }
+    };
+    const handlePointerDown = (event: PointerEvent) => {
+      if (detectText(event.target)) {
+        setCursorVariant("text");
+      } else {
+        setCursorVariant(detectInteractive(event.target) ? "link" : "default");
+      }
+    };
+    const handlePointerUp = (event: PointerEvent) => {
+      if (detectText(event.target)) {
+        setCursorVariant("text");
+      } else {
+        setCursorVariant(detectInteractive(event.target) ? "link" : "default");
+      }
+    };
+    const handlePointerCancel = () => setCursorVariant("default");
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerdown", handlePointerDown, { passive: true });
+    window.addEventListener("pointerup", handlePointerUp, { passive: true });
+    window.addEventListener("pointercancel", handlePointerCancel, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerCancel);
+    };
   }, []);
 
   useEffect(() => {
@@ -118,11 +156,11 @@ export default function Home() {
       frameRef.current = requestAnimationFrame(tick);
     };
 
-    frameRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
-    };
-  }, []);
+        frameRef.current = requestAnimationFrame(tick);
+        return () => {
+          if (frameRef.current) cancelAnimationFrame(frameRef.current);
+        };
+      }, []);
 
   useEffect(() => {
     const root = document.documentElement.style;
@@ -153,6 +191,10 @@ export default function Home() {
 
   const enterLink = useCallback(() => setCursorVariant("link"), []);
   const leaveLink = useCallback(() => setCursorVariant("default"), []);
+
+  const interactiveSelector =
+    "a, button, [role='button'], input, textarea, select, summary, [data-cursor='pointer']";
+  const textSelector = "input[type='text'], input[type='email'], input[type='search'], input[type='tel'], input[type='url'], input[type='password'], textarea, [contenteditable='true']";
 
   return (
     <>
@@ -230,7 +272,7 @@ export default function Home() {
               strokeLinejoin="round"
             />
           </svg>
-        ) : (
+        ) : cursorVariant === "link" ? (
           <div
             className="w-4 h-4 rounded-full border border-white/70 bg-white/10"
             style={{
@@ -239,6 +281,14 @@ export default function Home() {
               boxShadow: isDark
                 ? "0 0 12px rgba(255,255,255,0.35)"
                 : "0 0 10px rgba(15,23,42,0.25)",
+            }}
+          />
+        ) : (
+          <div
+            className="w-0.5 h-6 rounded-full"
+            style={{
+              background: isDark ? "rgba(255,255,255,0.85)" : "rgba(15,23,42,0.9)",
+              boxShadow: isDark ? "0 0 10px rgba(255,255,255,0.35)" : "0 0 8px rgba(15,23,42,0.22)",
             }}
           />
         )}

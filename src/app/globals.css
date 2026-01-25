@@ -3,6 +3,7 @@
 html,
 body {
   scroll-behavior: smooth;
+  cursor: none !important;
 }
 
 html {
@@ -82,6 +83,7 @@ html {
 
 * {
   box-sizing: border-box;
+  cursor: none !important;
 }
 
 body {
@@ -89,6 +91,15 @@ body {
   color: var(--text);
   font-family: var(--font-body), system-ui, -apple-system, sans-serif;
   min-height: 100vh;
+  cursor: none !important;
+}
+
+a,
+button,
+input,
+textarea,
+select {
+  cursor: none !important;
 }
 
 ::selection {

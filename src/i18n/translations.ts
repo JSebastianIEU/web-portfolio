@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 export type Locale = "en" | "es";
 
@@ -33,6 +33,10 @@ type Translations = {
   skills: {
     label: string;
   };
+  footer: {
+    tagline: string;
+    copyright: string;
+  };
 };
 
 export const translations: Record<Locale, Translations> = {
@@ -50,14 +54,14 @@ export const translations: Record<Locale, Translations> = {
         { prefix: "I turn ideas into ", highlight: "real products", suffix: "" },
         { prefix: "I solve ", highlight: "problems", suffix: " through technology" },
         { prefix: "I care about ", highlight: "design and impact", suffix: "" },
-        { prefix: "I'm ", highlight: "Sebastián Peña", suffix: "" },
+        { prefix: "I'm ", highlight: "Sebastian Peña", suffix: "" },
       ],
     },
     about: {
       label: "About",
       headline: "Building clear systems where software, design, and data meet.",
       body:
-        "I’m Sebastián Peña, a Colombian builder based in Madrid, pursuing a degree in Computer Science and Artificial Intelligence. I design and build clear, useful systems with a bias for clarity—because technical excellence matters most when it improves outcomes for real people and real contexts. Outside of work, salsa and bachata shape how I think about adaptability, collaboration, and connection.",
+        "I’m Sebastian Peña, a Colombian builder based in Madrid, pursuing a degree in Computer Science and Artificial Intelligence. I design and build clear, useful systems with a bias for clarity—because technical excellence matters most when it improves outcomes for real people and real contexts. Outside of work, salsa and bachata shape how I think about adaptability, collaboration, and connection.",
       bullets: [
         "Software engineering with product judgment",
         "Data-aware systems and practical AI",
@@ -77,6 +81,10 @@ export const translations: Record<Locale, Translations> = {
     skills: {
       label: "Skills",
     },
+    footer: {
+      tagline: "AI, Data & Intelligent Systems",
+      copyright: "© {year} Juan Sebastian Peña",
+    },
   },
   es: {
     nav: {
@@ -92,14 +100,14 @@ export const translations: Record<Locale, Translations> = {
         { prefix: "Transformo ideas en ", highlight: "productos reales", suffix: "" },
         { prefix: "Resuelvo ", highlight: "problemas", suffix: " con tecnología" },
         { prefix: "Me importan el ", highlight: "diseño y el impacto", suffix: "" },
-        { prefix: "Soy ", highlight: "Sebastián Peña", suffix: "" },
+        { prefix: "Soy ", highlight: "Sebastian Peña", suffix: "" },
       ],
     },
     about: {
       label: "Sobre mí",
       headline: "Construyo sistemas claros donde el software, el diseño y los datos se encuentran.",
       body:
-        "Soy Sebastián Peña, un creador colombiano basado en Madrid, y estoy cursando un grado en Ciencias de la Computación e Inteligencia Artificial. Diseño y construyo sistemas claros y útiles, con una obsesión sana por la claridad—porque la excelencia técnica solo importa cuando mejora resultados para personas reales y contextos reales. Fuera del trabajo, la salsa y la bachata moldean cómo pienso sobre adaptabilidad, colaboración y conexión.",
+        "Soy Sebastian Peña, un creador colombiano basado en Madrid, y estoy cursando un grado en Ciencias de la Computación e Inteligencia Artificial. Diseño y construyo sistemas claros y útiles, con una obsesión sana por la claridad—porque la excelencia técnica solo importa cuando mejora resultados para personas reales y contextos reales. Fuera del trabajo, la salsa y la bachata moldean cómo pienso sobre adaptabilidad, colaboración y conexión.",
       bullets: [
         "Ingeniería de software con criterio de producto",
         "Sistemas orientados a datos e IA práctica",
@@ -118,6 +126,10 @@ export const translations: Record<Locale, Translations> = {
     },
     skills: {
       label: "Habilidades",
+    },
+    footer: {
+      tagline: "IA, Datos y Sistemas Inteligentes",
+      copyright: "© {year} Juan Sebastian Peña",
     },
   },
 };
