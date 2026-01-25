@@ -3,14 +3,10 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { useTheme } from "@/components/providers/theme-provider";
-
-const info = [
-  { label: "Now", value: "Madrid" },
-  { label: "Focus", value: "Software · AI · Product" },
-  { label: "Values", value: "Human-centered · Systems-minded" },
-];
+import { useI18n } from "@/components/providers/language-provider";
 
 export default function AboutSection() {
+  const { dictionary, lang } = useI18n();
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
@@ -72,7 +68,9 @@ export default function AboutSection() {
                   className="text-xs uppercase tracking-[0.32em]"
                   style={{ color: isDark ? "rgba(226,232,240,0.75)" : "rgba(15,23,42,0.6)" }}
                 >
-                  About
+                  <span className="transition-opacity duration-200" key={`label-${lang}`}>
+                    {dictionary.about.label}
+                  </span>
                 </div>
                 <div
                   className="h-px flex-1"
@@ -84,26 +82,24 @@ export default function AboutSection() {
                 className="text-xl md:text-2xl font-semibold leading-tight"
                 style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
               >
-                Building clear systems where software, design, and data meet.
+                <span className="transition-opacity duration-200" key={`headline-${lang}`}>
+                  {dictionary.about.headline}
+                </span>
               </h2>
 
               <p
                 className="text-[12.8px] md:text-[13.8px] leading-[1.7] max-w-prose"
                 style={{ color: isDark ? "rgba(229,231,235,0.9)" : "rgba(15,23,42,0.85)" }}
               >
-                I’m Sebastián Peña, a Colombian builder based in Madrid, pursuing a degree in Computer Science and
-                Artificial Intelligence. I design and build clear, useful systems with a bias for clarity—because
-                technical excellence matters most when it improves outcomes for real people and real contexts.
+                <span className="transition-opacity duration-200" key={`body-${lang}`}>
+                  {dictionary.about.body}
+                </span>
               </p>
 
               <ul className="space-y-1.5 text-sm md:text-[14px] leading-snug max-w-prose">
-                {[
-                  "Software engineering with product judgment",
-                  "Data-aware systems and practical AI",
-                  "Human-centered thinking in complex environments",
-                ].map((item) => (
+                {dictionary.about.bullets.map((item) => (
                   <li
-                    key={item}
+                    key={`${item}-${lang}`}
                     className="flex items-start gap-2"
                     style={{ color: isDark ? "rgba(229,231,235,0.9)" : "rgba(15,23,42,0.85)" }}
                   >
@@ -120,34 +116,50 @@ export default function AboutSection() {
                 className="text-xs md:text-[12.5px] leading-[1.6] max-w-prose"
                 style={{ color: isDark ? "rgba(203,213,225,0.9)" : "rgba(71,85,105,0.95)" }}
               >
-                Outside of work, salsa and bachata shape how I think about adaptability, collaboration, and connection.
+                <span className="transition-opacity duration-200" key={`human-${lang}`}>
+                  {dictionary.about.humanLine}
+                </span>
               </p>
 
               <div className="flex flex-col sm:flex-row sm:items-stretch gap-2.5 sm:gap-3 pt-1 sm:flex-nowrap sm:self-start">
-                {info.map((item, idx) => (
-                  <div
-                    key={item.label}
-                    className={`w-full inline-flex flex-col justify-between h-full sm:w-auto sm:flex-none ${
-                      idx === 2
-                        ? "sm:min-w-[190px] sm:max-w-[240px]"
-                        : "sm:min-w-[150px] sm:max-w-[200px]"
-                    }`}
-                    style={badgeStyle()}
-                  >
-                    <div
-                      className="text-[11px] font-semibold uppercase tracking-wide mb-0.5"
-                      style={{ color: isDark ? "rgba(226,232,240,0.85)" : "rgba(15,23,42,0.75)" }}
-                    >
-                      {item.label}
-                    </div>
-                    <div
-                      className="text-[11.5px] leading-snug line-clamp-2"
-                      style={{ color: isDark ? "rgba(226,232,240,0.88)" : "rgba(15,23,42,0.85)" }}
-                    >
-                      {item.value}
-                    </div>
-                  </div>
-                ))}
+                {[dictionary.about.cards.nowLabel, dictionary.about.cards.focusLabel, dictionary.about.cards.valuesLabel].map(
+                  (label, idx) => {
+                    const values = [
+                      dictionary.about.cards.nowValue,
+                      dictionary.about.cards.focusValue,
+                      dictionary.about.cards.valuesValue,
+                    ];
+                    const value = values[idx];
+                    return (
+                      <div
+                        key={`${label}-${lang}`}
+                        className={`w-full inline-flex flex-col justify-between h-full sm:w-auto sm:flex-none ${
+                          idx === 2
+                            ? "sm:min-w-[190px] sm:max-w-[240px]"
+                            : "sm:min-w-[150px] sm:max-w-[200px]"
+                        }`}
+                        style={badgeStyle()}
+                      >
+                        <div
+                          className="text-[11px] font-semibold uppercase tracking-wide mb-0.5"
+                          style={{ color: isDark ? "rgba(226,232,240,0.85)" : "rgba(15,23,42,0.75)" }}
+                        >
+                          <span className="transition-opacity duration-200" key={`label-${label}-${lang}`}>
+                            {label}
+                          </span>
+                        </div>
+                        <div
+                          className="text-[11.5px] leading-snug line-clamp-2"
+                          style={{ color: isDark ? "rgba(226,232,240,0.88)" : "rgba(15,23,42,0.85)" }}
+                        >
+                          <span className="transition-opacity duration-200" key={`value-${value}-${lang}`}>
+                            {value}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  },
+                )}
               </div>
             </div>
 

@@ -2,29 +2,16 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "@/components/providers/theme-provider";
+import { useI18n } from "@/components/providers/language-provider";
 import BackgroundGridSpotlight from "@/components/BackgroundGridSpotlight";
 import AboutSection from "@/components/AboutSection";
+import SkillsSection from "@/components/SkillsSection";
 import SpotlightOverlay from "@/components/SpotlightOverlay";
 import PersistentHeader from "@/components/PersistentHeader";
 
 type Point = { x: number; y: number };
 
-const PHRASES = [
-  { prefix: "I build ", highlight: "intelligent systems", suffix: "" },
-  { prefix: "I turn ideas into ", highlight: "real products", suffix: "" },
-  { prefix: "I solve ", highlight: "problems", suffix: " through technology" },
-  { prefix: "I care about ", highlight: "design and impact", suffix: "" },
-  { prefix: "I'm ", highlight: "Sebastián Peña", suffix: "" },
-];
-
-const HIGHLIGHT_LIGHT_COLORS = [
-  "#a855f7",
-  "#22c55e",
-  "#38bdf8",
-  "#fb923c",
-  "#67e8f9",
-  "#f472b6",
-];
+const HIGHLIGHT_LIGHT_COLORS = ["#a855f7", "#22c55e", "#38bdf8", "#fb923c", "#67e8f9", "#f472b6"];
 
 const SPEEDS = {
   type: 110,
@@ -45,6 +32,7 @@ function lcpLength(a: string, b: string) {
 
 export default function Home() {
   const { theme } = useTheme();
+  const { dictionary, lang } = useI18n();
   const isDark = theme === "dark";
   const [text, setText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -57,14 +45,15 @@ export default function Home() {
   const mouseRef = useRef<Point>({ x: 0, y: 0 });
   const frameRef = useRef<number | null>(null);
 
-  const currentPhrase = useMemo(() => PHRASES[loopNum % PHRASES.length], [loopNum]);
-  const currentIndex = useMemo(() => loopNum % PHRASES.length, [loopNum]);
+  const phrases = dictionary.hero.phrases;
+  const currentPhrase = useMemo(() => phrases[loopNum % phrases.length], [phrases, loopNum]);
+  const currentIndex = useMemo(() => loopNum % phrases.length, [phrases, loopNum]);
   const currentFullText = useMemo(() => getFullText(currentPhrase), [currentPhrase]);
 
   useEffect(() => {
     const fullText = getFullText(currentPhrase);
-    const nextIndex = (loopNum + 1) % PHRASES.length;
-    const nextPhrase = PHRASES[nextIndex];
+    const nextIndex = (loopNum + 1) % phrases.length;
+    const nextPhrase = phrases[nextIndex];
     const nextFullText = getFullText(nextPhrase);
     const baselineLen = lcpLength(fullText, nextFullText);
 
@@ -90,7 +79,13 @@ export default function Home() {
 
     const timer = setTimeout(handleTyping, typingSpeed);
     return () => clearTimeout(timer);
-  }, [currentPhrase, isDeleting, loopNum, text, typingSpeed]);
+  }, [currentPhrase, isDeleting, loopNum, phrases.length, text, typingSpeed]);
+
+  useEffect(() => {
+    setText("");
+    setIsDeleting(false);
+    setLoopNum(0);
+  }, [lang]);
 
   useEffect(() => {
     const handleMouseMove: (event: MouseEvent) => void = (event) => {
@@ -125,17 +120,10 @@ export default function Home() {
   const prefixLength = currentPhrase.prefix.length;
   const highlightLength = currentPhrase.highlight.length;
   const displayPrefix = text.substring(0, Math.min(prefixLength, text.length));
-  const displayHighlight = text.substring(
-    prefixLength,
-    Math.min(prefixLength + highlightLength, text.length),
-  );
-  const displaySuffix = text.substring(
-    Math.min(prefixLength + highlightLength, text.length),
-    text.length,
-  );
+  const displayHighlight = text.substring(prefixLength, Math.min(prefixLength + highlightLength, text.length));
+  const displaySuffix = text.substring(Math.min(prefixLength + highlightLength, text.length), text.length);
   const typedLen = text.length;
-  const cursorInHighlight =
-    typedLen > prefixLength && typedLen <= prefixLength + highlightLength;
+  const cursorInHighlight = typedLen > prefixLength && typedLen <= prefixLength + highlightLength;
   const isEndLine = !isDeleting && text === currentFullText;
 
   const colors = useMemo(
@@ -160,19 +148,16 @@ export default function Home() {
       <SpotlightOverlay cursorPosition={cursorPosition} showSpotlight={showSpotlight} />
 
       <main className="relative z-[10]" style={{ cursor: "none" }}>
-        <section
-          id="hero"
-          className="relative min-h-screen flex items-center justify-center overflow-hidden"
-        >
-          <div className="relative z-10 text-5xl font-mono">
+        <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+          <div className="relative z-10 text-5xl font-mono transition-opacity duration-200" key={`hero-${lang}`}>
             <span style={{ color: colors.word, opacity: 0.75 }}>{displayPrefix}</span>
             <span
               style={{
-                color: currentIndex === PHRASES.length - 1 ? colors.word : highlightColor,
+                color: currentIndex === phrases.length - 1 ? colors.word : highlightColor,
                 opacity: 1,
-                filter: currentIndex === PHRASES.length - 1 ? "none" : "brightness(1.06)",
+                filter: currentIndex === phrases.length - 1 ? "none" : "brightness(1.06)",
                 textShadow:
-                  currentIndex === PHRASES.length - 1
+                  currentIndex === phrases.length - 1
                     ? "none"
                     : isDark
                     ? "0 0 16px rgba(255,255,255,0.28)"
@@ -187,7 +172,7 @@ export default function Home() {
               className={isEndLine ? "cursor-blink" : ""}
               style={{
                 color:
-                  currentIndex === PHRASES.length - 1
+                  currentIndex === phrases.length - 1
                     ? colors.word
                     : cursorInHighlight
                     ? highlightColor
@@ -200,6 +185,7 @@ export default function Home() {
         </section>
 
         <AboutSection />
+        <SkillsSection />
       </main>
 
       <div
