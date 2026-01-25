@@ -35,19 +35,19 @@ const jitterDeg = 8;
 const otherAnchorRepelRadius = 220;
 const otherAnchorRepelStrength = 0.00022;
 const titleRepelStrength = 0.12;
-const maxSpeedDesktop = 0.9;
-const maxSpeedMobile = 0.75;
-const maxAccelDesktop = 0.06;
-const maxAccelMobile = 0.04;
-const dampingDesktop = 0.94;
-const dampingMobile = 0.96;
-const cursorRadiusDesktop = 120;
-const cursorRadiusMobile = 90;
-const cursorStrengthDesktop = 0.035;
-const cursorStrengthMobile = 0.025;
-const microMotionAmp = { desktop: 0.002, mobile: 0.0015 };
-const sleepThreshold = 0.002;
-const sleepFrames = 20;
+const maxSpeedDesktop = 2.4;
+const maxSpeedMobile = 1.8;
+const maxAccelDesktop = 0.15;
+const maxAccelMobile = 0.12;
+const dampingDesktop = 0.93;
+const dampingMobile = 0.94;
+const cursorRadiusDesktop = 200;
+const cursorRadiusMobile = 150;
+const cursorStrengthDesktop = 0.12;
+const cursorStrengthMobile = 0.08;
+const microMotionAmp = { desktop: 0.012, mobile: 0.008 };
+const sleepThreshold = 0;
+const sleepFrames = 9999;
 
 // deterministic hash for seed
 function hashString(str: string) {
@@ -319,10 +319,10 @@ export function useNetworkSimulation({
               const dx = n.x - o.x;
               const dy = n.y - o.y;
               const dist2 = dx * dx + dy * dy;
-              const minDist = (n.r + o.r + 26) ** 2;
+              const minDist = (n.r + o.r + 30) ** 2;
               if (dist2 < minDist && dist2 > 0.01) {
                 const dist = Math.sqrt(dist2);
-                const push = (minDist - dist2) * 0.0042;
+                const push = (minDist - dist2) * 0.0048;
                 ax += (dx / dist) * push;
                 ay += (dy / dist) * push;
               }
@@ -381,24 +381,15 @@ export function useNetworkSimulation({
         n.vy = isHovered ? 0 : (n.vy + (ay / n.mass) * fixedDt) * damp;
 
         // clamp velocity
-        const maxVel = isMobile ? maxSpeedMobile : maxSpeedDesktop;
+        const maxVel = isMobile ? 1.8 : 2.4;
         const speed = Math.hypot(n.vx, n.vy);
         if (speed > maxVel) {
           n.vx = (n.vx / speed) * maxVel;
           n.vy = (n.vy / speed) * maxVel;
         }
 
-        // sleep
-        const key = n.node.id;
-        if (speed < sleepThreshold) {
-          sleepCounter.current[key] = (sleepCounter.current[key] || 0) + 1;
-          if (sleepCounter.current[key] > sleepFrames) {
-            n.vx = 0;
-            n.vy = 0;
-          }
-        } else {
-          sleepCounter.current[key] = 0;
-        }
+        // keep gentle motion; disable sleep zeroing to avoid stuck nodes
+        sleepCounter.current[n.node.id] = 0;
 
         n.x += n.vx;
         n.y += n.vy;

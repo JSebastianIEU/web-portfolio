@@ -4,7 +4,7 @@ import { useTheme } from "@/components/providers/theme-provider";
 import { useI18n } from "@/components/providers/language-provider";
 import LanguageToggle from "@/components/LanguageToggle";
 import { Sun, Moon } from "lucide-react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import type React from "react";
 
 interface PersistentHeaderProps {
@@ -16,6 +16,104 @@ export default function PersistentHeader({ enterLink, leaveLink }: PersistentHea
   const { theme, toggleTheme } = useTheme();
   const { t, lang } = useI18n();
   const isDark = theme === "dark";
+  const [activeSection, setActiveSection] = useState("hero");
+  const [refsReady, setRefsReady] = useState(false);
+  const [indicatorVisible, setIndicatorVisible] = useState(false);
+  const navLinksRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const tickingRef = useRef(false);
+
+  const navItems = [
+    { key: "nav.home", href: "#hero", id: "hero" },
+    { key: "nav.about", href: "#about", id: "about" },
+    { key: "nav.skills", href: "#skills", id: "skills" },
+    { key: "nav.projects", href: "#projects", id: "projects" },
+    { key: "nav.contact", href: "#contact", id: "contact" },
+  ];
+
+  // Scroll spy
+  useEffect(() => {
+    const updateActiveSection = () => {
+      const sections = navItems.map((item) => document.getElementById(item.id));
+      const scrollPosition = window.scrollY + window.innerHeight / 3;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i];
+        if (section && section.offsetTop <= scrollPosition) {
+          setActiveSection(navItems[i].id);
+          break;
+        }
+      }
+      tickingRef.current = false;
+    };
+
+    const handleScroll = () => {
+      if (!tickingRef.current) {
+        tickingRef.current = true;
+        requestAnimationFrame(updateActiveSection);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    // Trigger immediately and after a short delay to ensure DOM is ready
+    handleScroll();
+    const timeout = setTimeout(handleScroll, 100);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  // Force re-render after refs are populated
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (navLinksRef.current.every((ref) => ref !== null)) {
+        setRefsReady(true);
+        requestAnimationFrame(() => setIndicatorVisible(true));
+      }
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  // Re-calculate on language change
+  useEffect(() => {
+    if (refsReady) {
+      const timeout = setTimeout(() => {
+        setActiveSection((prev) => prev);
+      }, 150);
+      return () => clearTimeout(timeout);
+    }
+  }, [lang, refsReady]);
+
+  // Calculate indicator position
+  const indicatorStyle = useMemo(() => {
+        if (!refsReady) {
+          return { opacity: 0, width: 0, left: 0 };
+        }
+
+    const activeIndex = navItems.findIndex((item) => item.id === activeSection);
+    const activeLink = navLinksRef.current[activeIndex];
+    
+    if (!activeLink) {
+      return { opacity: 0, width: 0, left: 0 };
+    }
+
+    const container = activeLink.parentElement;
+    if (!container) {
+      return { opacity: 0, width: 0, left: 0 };
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const linkRect = activeLink.getBoundingClientRect();
+    const relativeLeft = linkRect.left - containerRect.left;
+
+    return {
+      width: `${linkRect.width + 16}px`,
+      left: `${relativeLeft - 8}px`,
+      opacity: indicatorVisible ? 1 : 0,
+      transform: indicatorVisible ? "scale(1)" : "scale(0.9)",
+      transformOrigin: "left center",
+    };
+  }, [activeSection, lang, refsReady, indicatorVisible]);
 
   const colors = useMemo(
     () => ({
@@ -63,23 +161,40 @@ export default function PersistentHeader({ enterLink, leaveLink }: PersistentHea
 
         <div className="flex-1 flex justify-center pointer-events-auto">
           <nav>
-            <div className="flex items-center gap-8 px-8 py-3 rounded-full transition-opacity duration-200" style={navCapsuleStyle}>
-              {[
-                { key: "nav.home", href: "#hero" },
-                { key: "nav.about", href: "#about" },
-                { key: "nav.skills", href: "#skills" },
-                { key: "nav.projects", href: "#projects" },
-                { key: "nav.contact", href: "#contact" },
-              ].map((item) => (
+            <div className="relative flex items-center gap-8 px-8 py-3 rounded-full transition-all duration-300" style={navCapsuleStyle}>
+              {/* Active section indicator */}
+              <div
+                className="absolute top-[6px] bottom-[6px] rounded-full transition-all duration-300 ease-out pointer-events-none"
+                style={{
+                  ...indicatorStyle,
+                  background: isDark 
+                    ? "rgba(255, 255, 255, 0.08)" 
+                    : "rgba(255, 255, 255, 0.3)",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                  border: isDark 
+                    ? "1px solid rgba(255, 255, 255, 0.12)" 
+                    : "1px solid rgba(255, 255, 255, 0.4)",
+                  boxShadow: isDark
+                    ? "0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)"
+                    : "0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+                  cursor: "none",
+                }}
+              />
+              {navItems.map((item, index) => (
                 <a
                   key={item.href}
+                  ref={(el) => { navLinksRef.current[index] = el; }}
                   href={item.href}
-                  className="text-sm font-medium transition-colors duration-200"
-                  style={{ cursor: "none", color: colors.navMuted }}
+                  className="relative z-10 text-sm font-semibold uppercase tracking-[0.08em] transition-all duration-300 whitespace-nowrap"
+                  style={{ 
+                    cursor: "none", 
+                    color: activeSection === item.id ? navHoverColor : colors.navMuted 
+                  }}
                   onMouseEnter={handleNavEnter}
                   onMouseLeave={handleNavLeave}
                 >
-                  <span className="transition-opacity duration-200" key={`${item.key}-${lang}`}>
+                  <span className="inline-block transition-all duration-300" key={`${item.key}-${lang}`}>
                     {t(item.key)}
                   </span>
                 </a>
@@ -109,7 +224,7 @@ export default function PersistentHeader({ enterLink, leaveLink }: PersistentHea
             onMouseLeave={leaveLink}
           >
             {isDark ? (
-              <Sun className="h-5 w-5 text-slate-400" />
+              <Sun className="h-5 w-5 text-slate-300" />
             ) : (
               <Moon className="h-5 w-5 text-slate-600 fill-slate-600" />
             )}

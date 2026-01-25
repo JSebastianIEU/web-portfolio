@@ -13,7 +13,7 @@ export default function AboutSection() {
   const cardStyle: CSSProperties = {
     border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.08)",
     background: isDark ? "rgba(14, 18, 33, 0.72)" : "rgba(255, 255, 255, 0.72)",
-    boxShadow: isDark ? "0 30px 90px rgba(0,0,0,0.55)" : "0 30px 90px rgba(15,23,42,0.18)",
+    boxShadow: isDark ? "0 12px 36px rgba(0,0,0,0.24)" : "0 12px 36px rgba(15,23,42,0.1)",
     backdropFilter: "blur(18px) saturate(140%)",
     WebkitBackdropFilter: "blur(18px) saturate(140%)",
   };
@@ -29,7 +29,7 @@ export default function AboutSection() {
   return (
     <section
       id="about"
-      className="relative min-h-[68vh] flex items-center justify-center px-4 md:px-5 py-9 md:py-12 overflow-hidden"
+      className="relative min-h-[82vh] flex items-center justify-center px-4 md:px-5 py-9 md:py-12 overflow-hidden"
       style={{ cursor: "none" }}
     >
       {/* Subtle grid overlay inside the section to keep identity consistent */}
@@ -47,10 +47,15 @@ export default function AboutSection() {
       />
 
       <div className="relative w-full max-w-5xl mx-auto">
-        <div
-          className="relative overflow-hidden rounded-[20px] shadow-xl"
-          style={cardStyle}
-        >
+        <div className="relative overflow-hidden rounded-[20px]" style={cardStyle}>
+          <div
+            className="pointer-events-none absolute inset-x-0 -bottom-8 h-12"
+            style={{
+              background: isDark
+                ? "linear-gradient(to bottom, rgba(14,18,33,0) 0%, rgba(14,18,33,0.35) 100%)"
+                : "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.48) 100%)",
+            }}
+          />
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -176,7 +181,7 @@ export default function AboutSection() {
                 }}
               >
                 <Image
-                  src="/images/me.jpeg"
+                  src="/images/me.jpg"
                   alt="Portrait of Sebastián Peña"
                   fill
                   sizes="(max-width: 768px) 100vw, 360px"

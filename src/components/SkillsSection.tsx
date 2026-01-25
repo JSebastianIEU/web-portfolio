@@ -57,6 +57,19 @@ export default function SkillsSection() {
     }),
     [],
   );
+  const heroPalette = ["#a855f7", "#22c55e", "#38bdf8", "#fb923c", "#67e8f9", "#f472b6"];
+  const categoryColors = useMemo(() => {
+    const map: Record<string, { title: string }> = {};
+    const ids = ["software", "frontend", "data", "db", "cloud", "automation"];
+    ids.forEach((id, idx) => {
+      const base = heroPalette[idx % heroPalette.length];
+      map[id] = {
+        title: isDark ? "rgba(255,255,255,0.92)" : base,
+      };
+    });
+    return map;
+  }, [isDark]);
+  const neutralTitle = isDark ? "rgba(226,232,240,0.9)" : "rgba(15,23,42,0.88)";
   // Preload icons
   useEffect(() => {
     const cache: Record<string, HTMLImageElement> = {};
@@ -203,7 +216,7 @@ export default function SkillsSection() {
         if (!a || !b) continue;
         const intersects = paddedRects.some((r) => segmentIntersectsRect(a.x, a.y, b.x, b.y, r.x, r.y, r.width, r.height));
         if (intersects) continue;
-        ctx.strokeStyle = isDark ? "rgba(255,255,255,0.045)" : "rgba(15,23,42,0.06)";
+        ctx.strokeStyle = isDark ? "rgba(255,255,255,0.065)" : "rgba(15,23,42,0.08)";
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
@@ -249,6 +262,8 @@ export default function SkillsSection() {
         alphaBase *= isHovered ? 1.8 : deEmphasize ? 0.55 : 1;
         let alpha = alphaBase * tierFactor * (intersects ? 0.12 : 1);
         if (len > longThreshold) alpha *= 0.65;
+        const boost = isDark ? 1.35 : 1.1;
+        alpha = Math.min(0.38, alpha * boost);
         ctx.strokeStyle = isDark ? `rgba(255,255,255,${alpha})` : `rgba(15,23,42,${alpha + 0.03})`;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
@@ -272,6 +287,8 @@ export default function SkillsSection() {
         alphaBase *= isHovered ? 1.8 : deEmphasize ? 0.55 : 1;
         let alpha = Math.max(0, Math.min(0.12, alphaBase * tierFactor + breathe));
         if (len > longThreshold) alpha *= 0.65;
+        const boost = isDark ? 1.25 : 1.1;
+        alpha = Math.min(0.16, alpha * boost);
         ctx.strokeStyle = isDark ? `rgba(255,255,255,${alpha})` : `rgba(15,23,42,${alpha})`;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
@@ -325,6 +342,10 @@ export default function SkillsSection() {
 
     },
   });
+  const activeCategory = useMemo(() => {
+    const node = hoverId ? nodes.find((n) => n.id === hoverId) : null;
+    return node?.category ?? null;
+  }, [hoverId, nodes]);
 
   // Tooltip follow
   useEffect(() => {
@@ -403,18 +424,43 @@ export default function SkillsSection() {
           className="flex items-start justify-between mb-6 md:mb-8 px-1"
           style={{ color: isDark ? "#e5e7eb" : "#0f172a" }}
         >
-          <h2 className="text-lg md:text-xl font-semibold tracking-tight">{t("skills.label")}</h2>
+          <h2 className="text-lg md:text-xl font-semibold tracking-tight">
+            <span
+              className="inline-block"
+              style={
+                isDark
+                  ? {
+                      color: "rgba(255,255,255,0.96)",
+                      textShadow: "0 0 22px rgba(255,255,255,0.35)",
+                      backgroundImage: "none",
+                      WebkitTextFillColor: "initial",
+                      backgroundClip: "border-box",
+                    }
+                  : {
+                      backgroundImage: "linear-gradient(90deg, rgba(6,95,186,0.9), rgba(109,40,217,0.8))",
+                      backgroundRepeat: "no-repeat",
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      color: "transparent",
+                      textShadow: "0 2px 10px rgba(15,23,42,0.12)",
+                    }
+              }
+            >
+              {t("skills.label")}
+            </span>
+          </h2>
         </div>
 
         <div
           ref={containerRef}
-          className="relative overflow-hidden rounded-[18px] shadow-xl"
+          className="relative overflow-hidden rounded-[18px]"
           style={{
-            border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.08)",
-            background: isDark ? "rgba(14, 18, 33, 0.65)" : "rgba(255,255,255,0.65)",
-            boxShadow: isDark ? "0 24px 70px rgba(0,0,0,0.5)" : "0 24px 70px rgba(15,23,42,0.15)",
-            backdropFilter: "blur(16px) saturate(140%)",
-            WebkitBackdropFilter: "blur(16px) saturate(140%)",
+            border: "none",
+            background: "transparent",
+            boxShadow: "none",
+            backdropFilter: "none",
+            WebkitBackdropFilter: "none",
           }}
           onPointerMove={onPointerMove}
           onPointerLeave={onPointerLeave}
@@ -446,9 +492,18 @@ export default function SkillsSection() {
                         className="block text-[12px] md:text-[17px] font-semibold uppercase"
                         style={{
                           letterSpacing: "0.1em",
-                          color: isDark ? "rgba(226,232,240,0.9)" : "rgba(15,23,42,0.88)",
-                          textShadow: isDark ? "0 6px 20px rgba(0,0,0,0.25)" : "0 6px 18px rgba(0,0,0,0.08)",
+                          color:
+                            activeCategory === c.id
+                              ? categoryColors[c.id as keyof typeof categoryColors]?.title ?? neutralTitle
+                              : neutralTitle,
+                          textShadow:
+                            activeCategory === c.id && isDark
+                              ? "0 0 15px rgba(255,255,255,0.95), 0 0 30px rgba(255,255,255,0.75), 0 0 45px rgba(255,255,255,0.5), 0 0 60px rgba(255,255,255,0.3), 0 6px 20px rgba(0,0,0,0.25)"
+                              : isDark
+                              ? "0 6px 20px rgba(0,0,0,0.25)"
+                              : "0 6px 18px rgba(0,0,0,0.08)",
                           fontSize: "clamp(14px,2vw,22px)",
+                          transition: "all 0.3s ease",
                         }}
                       >
                         {line}

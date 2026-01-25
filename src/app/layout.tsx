@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Sora } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
+import SocialRail from "@/components/SocialRail";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -30,8 +31,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={`${display.variable} ${body.variable} antialiased`}>
-        <Providers>{children}</Providers>
+      <body
+        suppressHydrationWarning
+        className={`${display.variable} ${body.variable} antialiased`}
+      >
+        <Providers>
+          <SocialRail />
+          {children}
+        </Providers>
       </body>
     </html>
   );

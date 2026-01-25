@@ -8,6 +8,10 @@ import AboutSection from "@/components/AboutSection";
 import SkillsSection from "@/components/SkillsSection";
 import SpotlightOverlay from "@/components/SpotlightOverlay";
 import PersistentHeader from "@/components/PersistentHeader";
+import SocialRail from "@/components/SocialRail";
+import BetweenSectionsCta from "@/components/BetweenSectionsCta";
+import ProjectsSection from "@/components/ProjectsSection";
+import ContactSection from "@/components/ContactSection";
 
 type Point = { x: number; y: number };
 
@@ -88,6 +92,15 @@ export default function Home() {
   }, [lang]);
 
   useEffect(() => {
+    const originalRestoration = history.scrollRestoration;
+    history.scrollRestoration = "manual";
+    window.scrollTo({ top: 0, behavior: "auto" });
+    return () => {
+      history.scrollRestoration = originalRestoration;
+    };
+  }, []);
+
+  useEffect(() => {
     const handleMouseMove: (event: MouseEvent) => void = (event) => {
       mouseRef.current = { x: event.clientX, y: event.clientY };
     };
@@ -145,6 +158,7 @@ export default function Home() {
     <>
       <BackgroundGridSpotlight />
       <PersistentHeader enterLink={enterLink} leaveLink={leaveLink} />
+      <SocialRail onEnter={enterLink} onLeave={leaveLink} />
       <SpotlightOverlay cursorPosition={cursorPosition} showSpotlight={showSpotlight} />
 
       <main className="relative z-[10]" style={{ cursor: "none" }}>
@@ -185,7 +199,10 @@ export default function Home() {
         </section>
 
         <AboutSection />
+        <BetweenSectionsCta onEnterLink={enterLink} onLeaveLink={leaveLink} />
         <SkillsSection />
+        <ProjectsSection />
+        <ContactSection />
       </main>
 
       <div
