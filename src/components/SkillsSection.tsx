@@ -203,7 +203,7 @@ export default function SkillsSection() {
         if (!a || !b) continue;
         const intersects = paddedRects.some((r) => segmentIntersectsRect(a.x, a.y, b.x, b.y, r.x, r.y, r.width, r.height));
         if (intersects) continue;
-        ctx.strokeStyle = isDark ? "rgba(255,255,255,0.025)" : "rgba(15,23,42,0.03)";
+        ctx.strokeStyle = isDark ? "rgba(255,255,255,0.045)" : "rgba(15,23,42,0.06)";
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(b.x, b.y);
@@ -301,7 +301,7 @@ export default function SkillsSection() {
 
         // icon clipped
         const img = iconCache.current[n.node.id];
-        if (img && img.complete) {
+        if (img && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
           const target = r * 1.1;
           const iw = img.naturalWidth || target;
           const ih = img.naturalHeight || target;

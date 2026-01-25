@@ -35,6 +35,19 @@ const jitterDeg = 8;
 const otherAnchorRepelRadius = 220;
 const otherAnchorRepelStrength = 0.00022;
 const titleRepelStrength = 0.12;
+const maxSpeedDesktop = 0.9;
+const maxSpeedMobile = 0.75;
+const maxAccelDesktop = 0.06;
+const maxAccelMobile = 0.04;
+const dampingDesktop = 0.94;
+const dampingMobile = 0.96;
+const cursorRadiusDesktop = 120;
+const cursorRadiusMobile = 90;
+const cursorStrengthDesktop = 0.035;
+const cursorStrengthMobile = 0.025;
+const microMotionAmp = { desktop: 0.002, mobile: 0.0015 };
+const sleepThreshold = 0.002;
+const sleepFrames = 20;
 
 // deterministic hash for seed
 function hashString(str: string) {
@@ -72,6 +85,8 @@ export function useNetworkSimulation({
   const hoverIdRef = useRef<string | null>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const neighborsRef = useRef<Record<string, Set<string>>>({});
+  const cursorSmooth = useRef<{ x: number; y: number } | null>(null);
+  const sleepCounter = useRef<Record<string, number>>({});
 
   useEffect(() => {
     if (!width || !height) return;
@@ -182,9 +197,26 @@ export function useNetworkSimulation({
         grid[key].push(n);
       }
 
-      const time = performance.now() * 0.001;
+      const now = performance.now();
+      const dt = Math.min(Math.max((now - (step as any)._last || 0) / 1000, 0), 1 / 30);
+      (step as any)._last = now;
+      const fixedDt = 1 / 60;
+
+      const time = now * 0.001;
       const hoveredId = hoverIdRef.current;
       const neighborSet = hoveredId ? neighborsRef.current[hoveredId] : undefined;
+
+      // smooth cursor
+      const rawCursor = pointerRef.current;
+      if (rawCursor) {
+        const prev = cursorSmooth.current || rawCursor;
+        cursorSmooth.current = {
+          x: prev.x + (rawCursor.x - prev.x) * 0.12,
+          y: prev.y + (rawCursor.y - prev.y) * 0.12,
+        };
+      } else {
+        cursorSmooth.current = null;
+      }
 
       for (const n of arr) {
         const isHovered = hoveredId === n.node.id;
@@ -287,10 +319,10 @@ export function useNetworkSimulation({
               const dx = n.x - o.x;
               const dy = n.y - o.y;
               const dist2 = dx * dx + dy * dy;
-              const minDist = (n.r + o.r + 20) ** 2;
+              const minDist = (n.r + o.r + 26) ** 2;
               if (dist2 < minDist && dist2 > 0.01) {
                 const dist = Math.sqrt(dist2);
-                const push = (minDist - dist2) * 0.003;
+                const push = (minDist - dist2) * 0.0042;
                 ax += (dx / dist) * push;
                 ay += (dy / dist) * push;
               }
@@ -298,37 +330,74 @@ export function useNetworkSimulation({
           }
         }
 
-        // pointer repulsion
-        const pointer = pointerRef.current;
+        // pointer repulsion (smoothed)
+        const pointer = cursorSmooth.current;
         if (pointer && !isHovered) {
           const dx = n.x - pointer.x;
           const dy = n.y - pointer.y;
-          const dist2 = dx * dx + dy * dy;
-          if (dist2 < repulseRadius * repulseRadius) {
-            const dist = Math.sqrt(dist2) || 1;
-            const force = (repulseRadius - dist) * repulseForce;
+          const dist = Math.hypot(dx, dy) || 1;
+          const radius = isMobile ? cursorRadiusMobile : cursorRadiusDesktop;
+          if (dist < radius) {
+            const strength = isMobile ? cursorStrengthMobile : cursorStrengthDesktop;
+            const falloff = 1 - dist / radius;
+            const baseForce = strength * falloff * falloff;
+            // reduce influence if near band edges
+            const band = n.node.tier === "primary" ? primaryBand : secondaryBand;
+            const distAnchor = Math.hypot(n.x - anchor.x, n.y - anchor.y);
+            const atEdge = distAnchor < band.min + 8 || distAnchor > band.max - 8;
+            const scale = atEdge ? 0.35 : 1;
+            const force = baseForce * scale;
             ax += (dx / dist) * force;
             ay += (dy / dist) * force;
           }
         }
 
-        // micro motion (deterministic)
-        const micro = isMobile ? 0.003 : 0.0045;
+        // micro motion (very subtle)
+        const micro = isMobile ? microMotionAmp.mobile : microMotionAmp.desktop;
         if (!isHovered && !isNeighbor) {
-          ax += Math.sin(time * 0.6 + n.seed * 10) * micro;
-          ay += Math.cos(time * 0.5 + n.seed * 12) * micro;
+          const nearTitle =
+            rectMap[n.node.category] &&
+            titleCenters[n.node.category] &&
+            Math.abs(n.x - titleCenters[n.node.category].x) < (rectMap[n.node.category].w * 0.5 + padX + 10) &&
+            Math.abs(n.y - titleCenters[n.node.category].y) < (rectMap[n.node.category].h * 0.5 + padY + 10);
+          if (!nearTitle) {
+            ax += Math.sin(time * 0.4 + n.seed * 8) * micro;
+            ay += Math.cos(time * 0.3 + n.seed * 9) * micro;
+          }
         }
 
-        const damp = isNeighbor ? damping * 0.82 : damping;
+        // clamp accel
+        const maxAccel = isMobile ? maxAccelMobile : maxAccelDesktop;
+        const accelMag = Math.hypot(ax, ay);
+        if (accelMag > maxAccel) {
+          ax = (ax / accelMag) * maxAccel;
+          ay = (ay / accelMag) * maxAccel;
+        }
 
-        n.vx = isHovered ? 0 : (n.vx + ax / n.mass) * damp;
-        n.vy = isHovered ? 0 : (n.vy + ay / n.mass) * damp;
+        const baseDamp = isMobile ? dampingMobile : dampingDesktop;
+        const damp = Math.pow(baseDamp, dt * 60) * (isNeighbor ? 0.9 : 1);
+
+        n.vx = isHovered ? 0 : (n.vx + (ax / n.mass) * fixedDt) * damp;
+        n.vy = isHovered ? 0 : (n.vy + (ay / n.mass) * fixedDt) * damp;
 
         // clamp velocity
+        const maxVel = isMobile ? maxSpeedMobile : maxSpeedDesktop;
         const speed = Math.hypot(n.vx, n.vy);
         if (speed > maxVel) {
           n.vx = (n.vx / speed) * maxVel;
           n.vy = (n.vy / speed) * maxVel;
+        }
+
+        // sleep
+        const key = n.node.id;
+        if (speed < sleepThreshold) {
+          sleepCounter.current[key] = (sleepCounter.current[key] || 0) + 1;
+          if (sleepCounter.current[key] > sleepFrames) {
+            n.vx = 0;
+            n.vy = 0;
+          }
+        } else {
+          sleepCounter.current[key] = 0;
         }
 
         n.x += n.vx;
