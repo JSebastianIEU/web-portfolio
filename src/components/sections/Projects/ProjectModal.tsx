@@ -97,38 +97,51 @@ export default function ProjectModal({
     return () => clearTimeout(timer);
   }, []);
 
-  // Swipe down to close gesture (mobile only)
+  // Swipe down to close gesture (mobile/tablet only)
   useEffect(() => {
     if (!isCompact) return;
     const dialog = dialogRef.current;
     if (!dialog) return;
 
+    let initialScrollTop = 0;
+
     const handleTouchStart = (e: TouchEvent) => {
-      const scrollContainer = dialog.querySelector('[data-scroll-container]');
-      const scrollTop = scrollContainer ? (scrollContainer as HTMLElement).scrollTop : 0;
+      const scrollContainer = dialog.querySelector('[data-scroll-container]') as HTMLElement;
+      if (!scrollContainer) return;
       
-      // Only allow swipe when at the top OR when scrolling would go beyond top
-      if (scrollTop > 5) {
-        isDragging.current = false;
-        return;
-      }
-      
+      initialScrollTop = scrollContainer.scrollTop;
       touchStartY.current = e.touches[0].clientY;
-      isDragging.current = true;
+      isDragging.current = false; // Start as false, will enable if conditions are met
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!isDragging.current) return;
+      const scrollContainer = dialog.querySelector('[data-scroll-container]') as HTMLElement;
+      if (!scrollContainer) return;
       
       const currentY = e.touches[0].clientY;
       const deltaY = currentY - touchStartY.current;
+      const scrollTop = scrollContainer.scrollTop;
+      const scrollHeight = scrollContainer.scrollHeight;
+      const clientHeight = scrollContainer.clientHeight;
       
-      // Only allow downward drag
-      if (deltaY > 0) {
-        setDragY(deltaY);
-        // Prevent default scroll when dragging
-        if (deltaY > 10) {
-          e.preventDefault();
+      // Check if at top and swiping down
+      const isAtTop = scrollTop <= 5;
+      const isSwipingDown = deltaY > 0;
+      
+      // Check if at bottom and trying to scroll further down
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
+      const isTryingToScrollPastBottom = isAtBottom && scrollTop <= initialScrollTop && isSwipingDown;
+      
+      // Enable dragging if at top OR at bottom trying to scroll past
+      if ((isAtTop && isSwipingDown) || isTryingToScrollPastBottom) {
+        isDragging.current = true;
+        
+        if (deltaY > 0) {
+          setDragY(deltaY);
+          // Prevent default scroll when dragging
+          if (deltaY > 15) {
+            e.preventDefault();
+          }
         }
       }
     };
@@ -137,8 +150,8 @@ export default function ProjectModal({
       if (!isDragging.current) return;
       isDragging.current = false;
       
-      // Close if dragged more than 120px
-      if (dragY > 120) {
+      // Close if dragged more than 100px
+      if (dragY > 100) {
         handleClose();
       } else {
         setDragY(0);
