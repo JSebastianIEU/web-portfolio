@@ -13,6 +13,7 @@ import BetweenSectionsCta from "@/components/sections/Common/BetweenSectionsCta"
 import ProjectsSection from "@/components/sections/Projects/ProjectsSection";
 import ContactSection from "@/components/sections/Contact/ContactSection";
 import { useParallax } from "@/hooks/useParallax";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 type Point = { x: number; y: number };
 
@@ -45,7 +46,20 @@ export default function Home() {
   const [typingSpeed, setTypingSpeed] = useState(150);
   const [cursorPosition, setCursorPosition] = useState<Point>({ x: 0, y: 0 });
   const [cursorVariant, setCursorVariant] = useState<"default" | "link" | "text">("default");
-  const showSpotlight = true;
+  
+  // Detect if device has fine pointer (mouse) - desktop only
+  const [hasFineMouse, setHasFineMouse] = useState(false);
+  
+  useEffect(() => {
+    const checkMouse = () => {
+      setHasFineMouse(window.matchMedia("(hover: hover) and (pointer: fine)").matches);
+    };
+    checkMouse();
+    window.addEventListener("resize", checkMouse);
+    return () => window.removeEventListener("resize", checkMouse);
+  }, []);
+  
+  const showSpotlight = hasFineMouse;
 
   const mouseRef = useRef<Point>({ x: 0, y: 0 });
   const frameRef = useRef<number | null>(null);
@@ -54,6 +68,10 @@ export default function Home() {
   const currentPhrase = useMemo(() => phrases[loopNum % phrases.length], [phrases, loopNum]);
   const currentIndex = useMemo(() => loopNum % phrases.length, [phrases, loopNum]);
   const currentFullText = useMemo(() => getFullText(currentPhrase), [currentPhrase]);
+
+  const interactiveSelector =
+    "a, button, [role='button'], input, textarea, select, summary, [data-cursor='pointer']";
+  const textSelector = "input[type='text'], input[type='email'], input[type='search'], input[type='tel'], input[type='url'], input[type='password'], textarea, [contenteditable='true']";
 
   useEffect(() => {
     const fullText = getFullText(currentPhrase);
@@ -102,6 +120,8 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    if (!hasFineMouse) return; // Only set up cursor tracking for desktop
+    
     const detectInteractive = (target: EventTarget | null) => {
       if (!(target instanceof Element)) return false;
       return Boolean(target.closest(interactiveSelector));
@@ -146,9 +166,11 @@ export default function Home() {
       window.removeEventListener("pointerup", handlePointerUp);
       window.removeEventListener("pointercancel", handlePointerCancel);
     };
-  }, []);
+  }, [hasFineMouse]);
 
   useEffect(() => {
+    if (!hasFineMouse) return; // Only animate cursor for desktop
+    
     const tick = () => {
       setCursorPosition((prev) => ({
         x: prev.x + (mouseRef.current.x - prev.x) * 0.4,
@@ -161,13 +183,15 @@ export default function Home() {
         return () => {
           if (frameRef.current) cancelAnimationFrame(frameRef.current);
         };
-      }, []);
+      }, [hasFineMouse]);
 
   useEffect(() => {
+    if (!hasFineMouse) return; // Only set CSS variables for desktop
+    
     const root = document.documentElement.style;
     root.setProperty("--mx", `${cursorPosition.x}px`);
     root.setProperty("--my", `${cursorPosition.y}px`);
-  }, [cursorPosition]);
+  }, [cursorPosition, hasFineMouse]);
 
   const prefixLength = currentPhrase.prefix.length;
   const highlightLength = currentPhrase.highlight.length;
@@ -192,10 +216,6 @@ export default function Home() {
 
   const enterLink = useCallback(() => setCursorVariant("link"), []);
   const leaveLink = useCallback(() => setCursorVariant("default"), []);
-
-  const interactiveSelector =
-    "a, button, [role='button'], input, textarea, select, summary, [data-cursor='pointer']";
-  const textSelector = "input[type='text'], input[type='email'], input[type='search'], input[type='tel'], input[type='url'], input[type='password'], textarea, [contenteditable='true']";
 
   useParallax(16);
 
