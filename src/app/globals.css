@@ -6,9 +6,6 @@ body {
   scroll-behavior: smooth;
   overflow-x: hidden;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: auto;
-  touch-action: auto;
 }
 
 /* Only apply cursor:none on desktop */
