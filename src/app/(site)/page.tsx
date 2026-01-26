@@ -1,16 +1,25 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import SiteChrome from "@/components/layout/SiteChrome";
 import BetweenSectionsCta from "@/components/sections/Common/BetweenSectionsCta";
 import { AboutSection } from "@/components/sections/About";
 import { ContactSection } from "@/components/sections/Contact";
-import { ProjectsSection } from "@/components/sections/Projects";
-import { SkillsSection } from "@/components/sections/Skills";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useParallax } from "@/hooks/useParallax";
+
+const SkillsSection = dynamic(() => import("@/components/sections/Skills").then((mod) => mod.SkillsSection), {
+  ssr: true,
+  loading: () => null,
+});
+
+const ProjectsSection = dynamic(() => import("@/components/sections/Projects").then((mod) => mod.ProjectsSection), {
+  ssr: true,
+  loading: () => null,
+});
 
 type Point = { x: number; y: number };
 
@@ -193,6 +202,19 @@ export default function Home() {
 
   const enterLink = useCallback(() => setCursorVariant("link"), []);
   const leaveLink = useCallback(() => setCursorVariant("default"), []);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtml = html.style.overflowY;
+    const prevBody = body.style.overflowY;
+    html.style.overflowY = "auto";
+    body.style.overflowY = "auto";
+    return () => {
+      html.style.overflowY = prevHtml;
+      body.style.overflowY = prevBody;
+    };
+  }, []);
 
   useParallax(16);
 

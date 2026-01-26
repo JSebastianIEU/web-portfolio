@@ -7,6 +7,8 @@ export function useParallax(maxOffset: number = 16) {
     if (typeof window === "undefined") return;
 
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    if (coarsePointer) return;
     let rafId: number | null = null;
 
     const apply = () => {
