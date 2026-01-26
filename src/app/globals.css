@@ -6,30 +6,29 @@ body {
   scroll-behavior: smooth;
   overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: auto;
+  touch-action: pan-y;
 }
 
-/* Only apply cursor:none on desktop */
-@media (hover: hover) and (pointer: fine) {
-  html,
-  body {
-    cursor: none !important;
-  }
+/* Hide scrollbar for main document (all devices) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
-/* Hide scrollbar for main document on desktop only */
-@media (hover: hover) and (pointer: fine) {
-  html,
-  body {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  html::-webkit-scrollbar,
-  body::-webkit-scrollbar {
-    display: none !important;
-    width: 0 !important;
-    height: 0 !important;
-  }
+/* Hide scrollbars for all elements (desktop included) */
+*::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+* {
+  scrollbar-width: none !important;
 }
 
 .custom-cursor-disabled,

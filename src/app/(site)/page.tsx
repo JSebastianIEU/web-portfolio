@@ -203,19 +203,6 @@ export default function Home() {
   const enterLink = useCallback(() => setCursorVariant("link"), []);
   const leaveLink = useCallback(() => setCursorVariant("default"), []);
 
-  useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    const prevHtml = html.style.overflowY;
-    const prevBody = body.style.overflowY;
-    html.style.overflowY = "auto";
-    body.style.overflowY = "auto";
-    return () => {
-      html.style.overflowY = prevHtml;
-      body.style.overflowY = prevBody;
-    };
-  }, []);
-
   useParallax(16);
 
   return (
