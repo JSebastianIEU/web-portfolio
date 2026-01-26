@@ -3,15 +3,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useI18n } from "@/components/providers/language-provider";
-import BackgroundGridSpotlight from "@/components/BackgroundGridSpotlight";
-import AboutSection from "@/components/AboutSection";
+import BackgroundGridSpotlight from "@/components/layout/BackgroundGridSpotlight";
+import AboutSection from "@/components/sections/About/AboutSection";
 import SkillsSection from "@/components/SkillsSection";
-import SpotlightOverlay from "@/components/SpotlightOverlay";
-import PersistentHeader from "@/components/PersistentHeader";
-import SocialRail from "@/components/SocialRail";
-import BetweenSectionsCta from "@/components/BetweenSectionsCta";
-import ProjectsSection from "@/components/ProjectsSection";
-import ContactSection from "@/components/ContactSection";
+import SpotlightOverlay from "@/components/layout/SpotlightOverlay";
+import PersistentHeader from "@/components/layout/Header";
+import SocialRail from "@/components/layout/SocialRail";
+import BetweenSectionsCta from "@/components/sections/Common/BetweenSectionsCta";
+import ProjectsSection from "@/components/sections/Projects/ProjectsSection";
+import ContactSection from "@/components/sections/Contact/ContactSection";
 import { useParallax } from "@/hooks/useParallax";
 
 type Point = { x: number; y: number };
