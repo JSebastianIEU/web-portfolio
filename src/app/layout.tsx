@@ -77,11 +77,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning style={{ cursor: "none" }}>
+    <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
         className={`${display.variable} ${body.variable} antialiased`}
-        style={{ cursor: "none" }}
       >
         <Providers>{children}</Providers>
       </body>

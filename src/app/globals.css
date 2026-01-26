@@ -4,10 +4,18 @@
 html,
 body {
   scroll-behavior: smooth;
-  cursor: none !important;
   scrollbar-width: none;
   -ms-overflow-style: none;
   overflow-y: scroll;
+  touch-action: pan-y pan-x;
+}
+
+/* Only apply cursor:none on desktop */
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body {
+    cursor: none !important;
+  }
 }
 
 /* Force hide scrollbar across all browsers */
@@ -59,7 +67,13 @@ html {
 
 * {
   box-sizing: border-box;
-  cursor: none !important;
+}
+
+/* Only apply cursor:none on desktop */
+@media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
 }
 
 /* Ensure no scrollbar appears on any element */
@@ -81,7 +95,6 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: scroll;
-  cursor: none !important;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }

@@ -73,7 +73,8 @@ export default function ProjectModal({
     // Lock body scroll without altering scroll position (prevents jump in mobile/tablet)
     const originalBodyOverflow = document.body.style.overflow;
     const originalHtmlOverflow = document.documentElement.style.overflow;
-    const originalHtmlOverscroll = document.documentElement.style.overscrollBehaviorY;
+    const originalHtmlOverscrollY = document.documentElement.style.overscrollBehaviorY;
+    const originalHtmlOverscrollX = document.documentElement.style.overscrollBehaviorX;
 
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
@@ -83,9 +84,10 @@ export default function ProjectModal({
     window.addEventListener("keydown", handleKey);
     return () => {
       // Restore body/html scroll settings
-      document.body.style.overflow = originalBodyOverflow;
-      document.documentElement.style.overflow = originalHtmlOverflow;
-      document.documentElement.style.overscrollBehaviorY = originalHtmlOverscroll;
+      document.body.style.overflow = originalBodyOverflow || "";
+      document.documentElement.style.overflow = originalHtmlOverflow || "";
+      document.documentElement.style.overscrollBehaviorY = originalHtmlOverscrollY || "";
+      document.documentElement.style.overscrollBehaviorX = originalHtmlOverscrollX || "";
       window.removeEventListener("keydown", handleKey);
     };
   }, []);
@@ -104,6 +106,7 @@ export default function ProjectModal({
     if (!dialog) return;
 
     let initialScrollTop = 0;
+    let canPreventDefault = false;
 
     const handleTouchStart = (e: TouchEvent) => {
       const scrollContainer = dialog.querySelector('[data-scroll-container]') as HTMLElement;
@@ -111,7 +114,8 @@ export default function ProjectModal({
       
       initialScrollTop = scrollContainer.scrollTop;
       touchStartY.current = e.touches[0].clientY;
-      isDragging.current = false; // Start as false, will enable if conditions are met
+      isDragging.current = false;
+      canPreventDefault = false;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -134,14 +138,9 @@ export default function ProjectModal({
       
       // Enable dragging if at top OR at bottom trying to scroll past
       if ((isAtTop && isSwipingDown) || isTryingToScrollPastBottom) {
-        isDragging.current = true;
-        
         if (deltaY > 0) {
+          isDragging.current = true;
           setDragY(deltaY);
-          // Prevent default scroll when dragging
-          if (deltaY > 15) {
-            e.preventDefault();
-          }
         }
       }
     };
@@ -159,7 +158,7 @@ export default function ProjectModal({
     };
 
     dialog.addEventListener('touchstart', handleTouchStart, { passive: true });
-    dialog.addEventListener('touchmove', handleTouchMove, { passive: false });
+    dialog.addEventListener('touchmove', handleTouchMove, { passive: true });
     dialog.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
