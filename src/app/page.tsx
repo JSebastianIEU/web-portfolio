@@ -273,52 +273,54 @@ export default function Home() {
         <ContactSection />
       </main>
 
-      <div
-        className="fixed pointer-events-none z-[25000]"
-        style={{
-          left: `${cursorPosition.x}px`,
-          top: `${cursorPosition.y}px`,
-          transform: "translate(-4px, -4px)",
-        }}
-      >
-        {cursorVariant === "default" ? (
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ filter: "drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8))" }}
-          >
-            <path
-              d="M3 2 L3 17 L7.5 12.5 L10 18 L12 17 L9.5 11.5 L16 11.5 L3 2Z"
-              fill={isDark ? "#ffffff" : "#0f172a"}
-              stroke={isDark ? "#0b1224" : "#ffffff"}
-              strokeWidth="0.6"
-              strokeLinejoin="round"
+      {hasFineMouse && (
+        <div
+          className="fixed pointer-events-none z-[25000]"
+          style={{
+            left: `${cursorPosition.x}px`,
+            top: `${cursorPosition.y}px`,
+            transform: "translate(-4px, -4px)",
+          }}
+        >
+          {cursorVariant === "default" ? (
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ filter: "drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8))" }}
+            >
+              <path
+                d="M3 2 L3 17 L7.5 12.5 L10 18 L12 17 L9.5 11.5 L16 11.5 L3 2Z"
+                fill={isDark ? "#ffffff" : "#0f172a"}
+                stroke={isDark ? "#0b1224" : "#ffffff"}
+                strokeWidth="0.6"
+                strokeLinejoin="round"
+              />
+            </svg>
+          ) : cursorVariant === "link" ? (
+            <div
+              className="w-4 h-4 rounded-full border border-white/70 bg-white/10"
+              style={{
+                borderColor: isDark ? "rgba(255,255,255,0.7)" : "rgba(15,23,42,0.6)",
+                background: isDark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.7)",
+                boxShadow: isDark
+                  ? "0 0 12px rgba(255,255,255,0.35)"
+                  : "0 0 10px rgba(15,23,42,0.25)",
+              }}
             />
-          </svg>
-        ) : cursorVariant === "link" ? (
-          <div
-            className="w-4 h-4 rounded-full border border-white/70 bg-white/10"
-            style={{
-              borderColor: isDark ? "rgba(255,255,255,0.7)" : "rgba(15,23,42,0.6)",
-              background: isDark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.7)",
-              boxShadow: isDark
-                ? "0 0 12px rgba(255,255,255,0.35)"
-                : "0 0 10px rgba(15,23,42,0.25)",
-            }}
-          />
-        ) : (
-          <div
-            className="w-0.5 h-6 rounded-full"
-            style={{
-              background: isDark ? "rgba(255,255,255,0.85)" : "rgba(15,23,42,0.9)",
-              boxShadow: isDark ? "0 0 10px rgba(255,255,255,0.35)" : "0 0 8px rgba(15,23,42,0.22)",
-            }}
-          />
-        )}
-      </div>
+          ) : (
+            <div
+              className="w-0.5 h-6 rounded-full"
+              style={{
+                background: isDark ? "rgba(255,255,255,0.85)" : "rgba(15,23,42,0.9)",
+                boxShadow: isDark ? "0 0 10px rgba(255,255,255,0.35)" : "0 0 8px rgba(15,23,42,0.22)",
+              }}
+            />
+          )}
+        </div>
+      )}
     </>
   );
 }

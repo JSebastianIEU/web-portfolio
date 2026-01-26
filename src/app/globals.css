@@ -112,12 +112,15 @@ body::-webkit-scrollbar {
   height: 0 !important;
 }
 
-a,
-button,
-input,
-textarea,
-select {
-  cursor: none !important;
+/* Only apply cursor:none on interactive elements for desktop */
+@media (hover: hover) and (pointer: fine) {
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    cursor: none !important;
+  }
 }
 
 ::selection {
