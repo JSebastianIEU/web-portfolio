@@ -31,6 +31,9 @@ export default function ProjectModal({
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [dragY, setDragY] = useState(0);
+  const touchStartY = useRef(0);
+  const isDragging = useRef(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -94,6 +97,49 @@ export default function ProjectModal({
     return () => clearTimeout(timer);
   }, []);
 
+  // Swipe down to close gesture (mobile only)
+  useEffect(() => {
+    if (!isCompact) return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      const scrollContainer = dialog.querySelector('[data-scroll-container]');
+      if (scrollContainer && (scrollContainer as HTMLElement).scrollTop > 10) return;
+      touchStartY.current = e.touches[0].clientY;
+      isDragging.current = true;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging.current) return;
+      const currentY = e.touches[0].clientY;
+      const deltaY = currentY - touchStartY.current;
+      if (deltaY > 0) {
+        setDragY(deltaY);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (!isDragging.current) return;
+      isDragging.current = false;
+      if (dragY > 80) {
+        handleClose();
+      } else {
+        setDragY(0);
+      }
+    };
+
+    dialog.addEventListener('touchstart', handleTouchStart, { passive: true });
+    dialog.addEventListener('touchmove', handleTouchMove, { passive: true });
+    dialog.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      dialog.removeEventListener('touchstart', handleTouchStart);
+      dialog.removeEventListener('touchmove', handleTouchMove);
+      dialog.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isCompact, dragY]);
+
   const divider = (
     <div className="h-px w-full" style={{ background: isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)" }} />
   );
@@ -136,7 +182,7 @@ export default function ProjectModal({
       role="presentation"
       className={`fixed inset-0 z-[21000] flex ${isCompact ? "items-end" : "items-center"} justify-center transition-all duration-200`}
       style={{
-        background: isVisible ? "rgba(5,8,15,0.55)" : "rgba(5,8,15,0)",
+        background: isVisible ? `rgba(5,8,15,${Math.max(0.55 - dragY / 400, 0.1)})` : "rgba(5,8,15,0)",
         backdropFilter: isVisible ? "blur(8px)" : "blur(0px)",
         opacity: isVisible ? 1 : 0,
         padding: isCompact ? "0 0 0 0" : "2rem",
@@ -159,24 +205,31 @@ export default function ProjectModal({
             : "0 0 0 1px rgba(15,23,42,0.05), 0 32px 90px rgba(15,23,42,0.25), 0 12px 40px rgba(15,23,42,0.15)",
           cursor: "none",
           transform: isVisible
-            ? "scale(1) translateY(0)"
+            ? `scale(1) translateY(${dragY}px)`
             : isCompact
             ? "scale(0.95) translateY(20px)"
             : "scale(0.95) translateY(-20px)",
-          opacity: isVisible ? 1 : 0,
+          opacity: isVisible ? Math.max(1 - dragY / 300, 0.5) : 0,
           maxHeight: isCompact ? "85vh" : "90vh",
+          transition: dragY > 0 ? "none" : "all 0.2s ease-out",
         }}
         onClick={(event) => event.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
         ref={dialogRef}
       >
         <div 
+          data-scroll-container
           className="flex flex-col gap-4 p-4 sm:p-5 md:p-6 overflow-y-auto no-scrollbar" 
           style={{ flex: "1 1 auto", minHeight: 0, overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}
         >
           <div
-            className="flex items-start justify-between gap-3 sticky top-0 pb-2"
-            style={{ background: isDark ? "rgba(14,18,33,0.94)" : "rgba(255,255,255,0.96)" }}
+            className="flex items-start justify-between gap-3 sticky top-0 pb-3 -mt-4 pt-4 -mx-4 px-4 sm:-mx-5 sm:px-5 md:-mx-6 md:px-6 z-10"
+            style={{ 
+              background: isDark ? "rgba(14,18,33,0.98)" : "rgba(255,255,255,0.98)",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              boxShadow: "0 1px 0 " + (isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)"),
+            }}
           >
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2 flex-wrap">

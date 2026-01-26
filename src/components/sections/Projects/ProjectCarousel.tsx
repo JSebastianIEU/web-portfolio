@@ -16,6 +16,9 @@ type ProjectCarouselProps = {
   isTablet: boolean;
   repeatCount?: number;
   onOpen: (projectId: string) => void;
+  activeIndex?: number;
+  onActiveIndexChange?: (index: number) => void;
+  totalProjects?: number;
 };
 
 export default function ProjectCarousel({
@@ -29,6 +32,9 @@ export default function ProjectCarousel({
   isTablet,
   onOpen,
   repeatCount = 3,
+  activeIndex = 0,
+  onActiveIndexChange,
+  totalProjects,
 }: ProjectCarouselProps) {
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const baseWidthRef = useRef<number>(0);
@@ -60,7 +66,7 @@ export default function ProjectCarousel({
     let jumpTimeout: NodeJS.Timeout | null = null;
 
     const updateCardScales = (forceFreeze = false) => {
-      if (isJumping || forceFreeze) return;
+      if (isJumping || forceFreeze || isMobile) return;
 
       const cards = slider.querySelectorAll<HTMLElement>("[data-project-card]");
       if (!cards.length) return;
@@ -89,12 +95,14 @@ export default function ProjectCarousel({
     const performJump = (newPosition: number) => {
       isJumping = true;
       if (jumpTimeout) clearTimeout(jumpTimeout);
+      slider.style.scrollBehavior = "auto";
       slider.scrollLeft = newPosition;
+      slider.style.scrollBehavior = "";
       jumpTimeout = setTimeout(() => {
         isJumping = false;
         jumpTimeout = null;
         requestAnimationFrame(() => updateCardScales());
-      }, 150);
+      }, 100);
     };
 
     const handleScroll = () => {
@@ -106,6 +114,31 @@ export default function ProjectCarousel({
           return;
         }
         const left = slider.scrollLeft;
+        
+        // Calculate active index for mobile indicators
+        if (isMobile && onActiveIndexChange && totalProjects) {
+          const cards = slider.querySelectorAll<HTMLElement>("[data-project-card]");
+          if (cards.length > 0) {
+            const sliderRect = slider.getBoundingClientRect();
+            const centerX = sliderRect.left + sliderRect.width / 2;
+            let closestIndex = 0;
+            let minDistance = Infinity;
+            
+            cards.forEach((card, idx) => {
+              const cardRect = card.getBoundingClientRect();
+              const cardCenterX = cardRect.left + cardRect.width / 2;
+              const distance = Math.abs(cardCenterX - centerX);
+              if (distance < minDistance) {
+                minDistance = distance;
+                closestIndex = idx % totalProjects;
+              }
+            });
+            
+            onActiveIndexChange(closestIndex);
+          }
+        }
+        
+        // Infinite scroll logic
         const startBoundary = base * 0.15;
         const endBoundary = repeatCount > 1 ? base * (repeatCount - 1 - 0.15) : base;
 
@@ -137,7 +170,7 @@ export default function ProjectCarousel({
       if (rafId) cancelAnimationFrame(rafId);
       slider.removeEventListener("scroll", handleScroll);
     };
-  }, [repeatCount]);
+  }, [repeatCount, isMobile, onActiveIndexChange, totalProjects]);
 
   const widthStyles = useMemo(() => {
     return {
@@ -149,6 +182,7 @@ export default function ProjectCarousel({
   }, [isMobile, isTablet]);
 
   return (
+    <>
     <div
       ref={sliderRef}
       className={`flex ${isMobile ? "gap-4" : "gap-4 md:gap-5"} overflow-x-auto no-scrollbar ${isMobile ? "px-4" : "px-1"} py-1 cursor-default`}
@@ -160,7 +194,7 @@ export default function ProjectCarousel({
       }}
     >
       {projects.map((project, idx) => {
-        const scale = cardScales[idx] !== undefined ? cardScales[idx] : 0.9;
+        const scale = !isMobile && cardScales[idx] !== undefined ? cardScales[idx] : 1;
         return (
           <div
             key={`${project.id}-${idx}`}
@@ -168,9 +202,9 @@ export default function ProjectCarousel({
             data-project-card
             style={{
               ...widthStyles,
-              transform: `scale(${scale})`,
-              transition: "transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
-              willChange: "transform",
+              transform: isMobile ? "none" : `scale(${scale})`,
+              transition: isMobile ? "none" : "transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+              willChange: isMobile ? "auto" : "transform",
             }}
           >
             <ProjectCard
@@ -186,5 +220,28 @@ export default function ProjectCarousel({
         );
       })}
     </div>
+    {isMobile && totalProjects && totalProjects > 1 && (
+      <div className="flex items-center justify-center gap-2 mt-4 pb-1">
+        {Array.from({ length: totalProjects }).map((_, idx) => (
+          <div
+            key={idx}
+            className="transition-all duration-300 ease-out rounded-full"
+            style={{
+              width: activeIndex === idx ? "24px" : "6px",
+              height: "6px",
+              background: isDark
+                ? activeIndex === idx
+                  ? "rgba(255,255,255,0.85)"
+                  : "rgba(255,255,255,0.25)"
+                : activeIndex === idx
+                ? "rgba(15,23,42,0.75)"
+                : "rgba(15,23,42,0.2)",
+              cursor: "none",
+            }}
+          />
+        ))}
+      </div>
+    )}
+  </>
   );
 }

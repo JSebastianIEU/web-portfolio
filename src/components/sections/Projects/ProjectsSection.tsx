@@ -30,6 +30,7 @@ export default function ProjectsSection() {
   const statusMap = dictionary.statuses;
 
   const [openId, setOpenId] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const selected = useMemo(() => (openId ? findProjectById(openId) ?? null : null), [openId]);
 
   return (
@@ -65,6 +66,9 @@ export default function ProjectsSection() {
             isTablet={isTablet}
             repeatCount={repeatCount}
             onOpen={(id) => setOpenId(id)}
+            activeIndex={activeIndex}
+            onActiveIndexChange={setActiveIndex}
+            totalProjects={projects.length}
           />
         </div>
       </div>
