@@ -105,24 +105,40 @@ export default function ProjectModal({
 
     const handleTouchStart = (e: TouchEvent) => {
       const scrollContainer = dialog.querySelector('[data-scroll-container]');
-      if (scrollContainer && (scrollContainer as HTMLElement).scrollTop > 10) return;
+      const scrollTop = scrollContainer ? (scrollContainer as HTMLElement).scrollTop : 0;
+      
+      // Only allow swipe when at the top OR when scrolling would go beyond top
+      if (scrollTop > 5) {
+        isDragging.current = false;
+        return;
+      }
+      
       touchStartY.current = e.touches[0].clientY;
       isDragging.current = true;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
       if (!isDragging.current) return;
+      
       const currentY = e.touches[0].clientY;
       const deltaY = currentY - touchStartY.current;
+      
+      // Only allow downward drag
       if (deltaY > 0) {
         setDragY(deltaY);
+        // Prevent default scroll when dragging
+        if (deltaY > 10) {
+          e.preventDefault();
+        }
       }
     };
 
     const handleTouchEnd = () => {
       if (!isDragging.current) return;
       isDragging.current = false;
-      if (dragY > 80) {
+      
+      // Close if dragged more than 120px
+      if (dragY > 120) {
         handleClose();
       } else {
         setDragY(0);
@@ -130,7 +146,7 @@ export default function ProjectModal({
     };
 
     dialog.addEventListener('touchstart', handleTouchStart, { passive: true });
-    dialog.addEventListener('touchmove', handleTouchMove, { passive: true });
+    dialog.addEventListener('touchmove', handleTouchMove, { passive: false });
     dialog.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
@@ -219,16 +235,22 @@ export default function ProjectModal({
       >
         <div 
           data-scroll-container
-          className="flex flex-col gap-4 p-4 sm:p-5 md:p-6 overflow-y-auto no-scrollbar" 
+          className="flex flex-col gap-4 overflow-y-auto no-scrollbar" 
           style={{ flex: "1 1 auto", minHeight: 0, overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}
         >
           <div
-            className="flex items-start justify-between gap-3 sticky top-0 pb-3 -mt-4 pt-4 -mx-4 px-4 sm:-mx-5 sm:px-5 md:-mx-6 md:px-6 z-10"
+            className="flex items-start justify-between gap-3 sticky top-0 pb-3 pt-4 px-4 sm:px-5 md:px-6 z-10"
             style={{ 
-              background: isDark ? "rgba(14,18,33,0.98)" : "rgba(255,255,255,0.98)",
-              backdropFilter: "blur(16px)",
-              WebkitBackdropFilter: "blur(16px)",
-              boxShadow: "0 1px 0 " + (isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)"),
+              background: isDark ? "rgba(14,18,33,0.75)" : "rgba(255,255,255,0.75)",
+              backdropFilter: "blur(20px) saturate(180%)",
+              WebkitBackdropFilter: "blur(20px) saturate(180%)",
+              boxShadow: "0 1px 0 " + (isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)"),
+              marginLeft: "-1px",
+              marginRight: "-1px",
+              marginTop: isCompact ? "-1px" : "0",
+              paddingTop: isCompact ? "calc(1rem + env(safe-area-inset-top, 0px))" : "1rem",
+              borderTopLeftRadius: isCompact ? "1.5rem" : "0",
+              borderTopRightRadius: isCompact ? "1.5rem" : "0",
             }}
           >
             <div className="flex flex-col gap-2">
@@ -260,6 +282,7 @@ export default function ProjectModal({
             </button>
           </div>
 
+          <div className="px-4 sm:px-5 md:px-6 pb-4 sm:pb-5 md:pb-6 flex flex-col gap-4">
           {divider}
 
           <div className="grid md:grid-cols-2 gap-4 md:gap-6">
@@ -327,6 +350,7 @@ export default function ProjectModal({
             >
               <span>{copy.modal.openPage}</span>
             </Link>
+          </div>
           </div>
         </div>
       </div>

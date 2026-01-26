@@ -177,7 +177,7 @@ export default function ProjectCarousel({
       width: isMobile ? "calc(100vw - 2rem)" : isTablet ? "46vw" : "320px",
       maxWidth: isMobile ? "calc(100vw - 2rem)" : isTablet ? "360px" : "360px",
       scrollSnapAlign: isMobile ? "center" : "start",
-      scrollSnapStop: "always" as const,
+      scrollSnapStop: isMobile ? ("always" as const) : ("normal" as const),
     };
   }, [isMobile, isTablet]);
 
@@ -188,9 +188,8 @@ export default function ProjectCarousel({
       className={`flex ${isMobile ? "gap-4" : "gap-4 md:gap-5"} overflow-x-auto no-scrollbar ${isMobile ? "px-4" : "px-1"} py-1 cursor-default`}
       style={{
         scrollBehavior: "smooth",
-        scrollSnapType: isMobile || isTablet ? "x mandatory" : "x proximity",
-        scrollPaddingLeft: isMobile ? "50%" : "0px",
-        scrollPaddingRight: isMobile ? "50%" : "0px",
+        scrollSnapType: isMobile ? "x mandatory" : isTablet ? "x mandatory" : "x proximity",
+        WebkitOverflowScrolling: "touch",
       }}
     >
       {projects.map((project, idx) => {
