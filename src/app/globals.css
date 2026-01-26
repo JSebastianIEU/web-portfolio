@@ -12,6 +12,12 @@ body {
   cursor: auto !important;
 }
 
+.custom-cursor-disabled .grid-spotlight-layer {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  opacity: 0.55;
+}
+
 html {
   scroll-padding-top: 0;
 }
