@@ -10,7 +10,7 @@ body {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: auto;
-  touch-action: pan-y;
+  touch-action: auto;
 }
 
 /* Only apply cursor:none on desktop */
