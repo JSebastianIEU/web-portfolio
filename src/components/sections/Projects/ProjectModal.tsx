@@ -158,14 +158,14 @@ export default function ProjectModal({
       }
     };
 
-    dialog.addEventListener('touchstart', handleTouchStart, { passive: true });
-    dialog.addEventListener('touchmove', handleTouchMove, { passive: true });
-    dialog.addEventListener('touchend', handleTouchEnd, { passive: true });
+    dialog.addEventListener("touchstart", handleTouchStart, { passive: true });
+    dialog.addEventListener("touchmove", handleTouchMove, { passive: true });
+    dialog.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     return () => {
-      dialog.removeEventListener('touchstart', handleTouchStart);
-      dialog.removeEventListener('touchmove', handleTouchMove);
-      dialog.removeEventListener('touchend', handleTouchEnd);
+      dialog.removeEventListener("touchstart", handleTouchStart);
+      dialog.removeEventListener("touchmove", handleTouchMove);
+      dialog.removeEventListener("touchend", handleTouchEnd);
     };
   }, [isCompact, dragY]);
 

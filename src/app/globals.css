@@ -8,7 +8,8 @@ body {
   -ms-overflow-style: none;
   overflow-x: hidden;
   overflow-y: auto;
-  touch-action: pan-y pan-x;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: auto;
 }
 
 /* Only apply cursor:none on desktop */
