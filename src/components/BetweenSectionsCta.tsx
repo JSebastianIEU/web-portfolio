@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function BetweenSectionsCta({ onEnterLink, onLeaveLink }: Props) {
-  const { lang } = useI18n();
+  const { dictionary, lang } = useI18n();
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
@@ -73,7 +73,7 @@ export default function BetweenSectionsCta({ onEnterLink, onLeaveLink }: Props) 
               strokeLinejoin="round"
             />
           </svg>
-          <span>Download CV</span>
+          <span>{dictionary.cta.downloadCv}</span>
         </a>
 
         <a
@@ -89,7 +89,7 @@ export default function BetweenSectionsCta({ onEnterLink, onLeaveLink }: Props) 
             cursor: "none",
           }}
         >
-          <span>Contact me</span>
+          <span>{dictionary.cta.contactMe}</span>
         </a>
       </div>
     </section>

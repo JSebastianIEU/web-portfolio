@@ -1,4 +1,4 @@
-export type SkillCategoryId =
+﻿export type SkillCategoryId =
   | "software"
   | "frontend"
   | "data"

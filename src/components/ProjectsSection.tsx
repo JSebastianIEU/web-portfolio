@@ -1,10 +1,34 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useI18n } from "@/components/providers/language-provider";
 import { projectsData, type Project } from "@/data/projectsData";
+import { translations } from "@/i18n/translations";
+
+function Badge({ label, tone = "neutral", isDark }: { label: string; tone?: "neutral" | "accent" | "warning"; isDark: boolean }) {
+  const palette: Record<"neutral" | "accent" | "warning", { bg: string; color: string; border: string }> = isDark
+    ? {
+        neutral: { bg: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.9)", border: "rgba(255,255,255,0.14)" },
+        accent: { bg: "rgba(126,226,255,0.12)", color: "rgba(126,226,255,0.95)", border: "rgba(126,226,255,0.3)" },
+        warning: { bg: "rgba(255,199,122,0.16)", color: "rgba(255,199,122,0.95)", border: "rgba(255,199,122,0.32)" },
+      }
+    : {
+        neutral: { bg: "rgba(15,23,42,0.06)", color: "rgba(15,23,42,0.9)", border: "rgba(15,23,42,0.14)" },
+        accent: { bg: "rgba(6,95,186,0.08)", color: "rgba(6,95,186,0.9)", border: "rgba(6,95,186,0.2)" },
+        warning: { bg: "rgba(217,119,6,0.08)", color: "rgba(217,119,6,0.9)", border: "rgba(217,119,6,0.2)" },
+      };
+  const style = palette[tone];
+  return (
+    <span
+      className="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em]"
+      style={{ background: style.bg, color: style.color, border: `1px solid ${style.border}` }}
+    >
+      {label}
+    </span>
+  );
+}
 
 type ModalProps = {
   project: Project;
@@ -12,69 +36,11 @@ type ModalProps = {
   isDark: boolean;
   displayType: string;
   displayStatus: string;
+  copy: typeof translations["en"]["projects"];
+  lang: "en" | "es";
 };
 
-function Badge({
-  label,
-  tone = "neutral",
-  isDark,
-}: {
-  label: string;
-  tone?: "neutral" | "accent" | "warning";
-  isDark: boolean;
-}) {
-  const palette: Record<"neutral" | "accent" | "warning", { bg: string; color: string; border: string }> = isDark
-    ? {
-        neutral: {
-          bg: "rgba(255,255,255,0.06)",
-          color: "rgba(255,255,255,0.9)",
-          border: "rgba(255,255,255,0.14)",
-        },
-        accent: {
-          bg: "rgba(126, 226, 255, 0.12)",
-          color: "rgba(126, 226, 255, 0.95)",
-          border: "rgba(126, 226, 255, 0.3)",
-        },
-        warning: {
-          bg: "rgba(255, 199, 122, 0.16)",
-          color: "rgba(255, 199, 122, 0.95)",
-          border: "rgba(255, 199, 122, 0.32)",
-        },
-      }
-    : {
-        neutral: {
-          bg: "rgba(15,23,42,0.06)",
-          color: "rgba(15,23,42,0.75)",
-          border: "rgba(15,23,42,0.14)",
-        },
-        accent: {
-          bg: "rgba(6, 182, 212, 0.14)",
-          color: "rgba(6, 182, 212, 0.9)",
-          border: "rgba(6, 182, 212, 0.32)",
-        },
-        warning: {
-          bg: "rgba(245, 158, 11, 0.16)",
-          color: "rgba(245, 158, 11, 0.95)",
-          border: "rgba(245, 158, 11, 0.32)",
-        },
-      };
-
-  const style = palette[tone];
-  return (
-    <span
-      className="inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em]"
-      style={{
-        background: style.bg,
-        color: style.color,
-        border: `1px solid ${style.border}`,
-      }}
-    >
-      {label}
-    </span>
-  );
-}
-
-function ProjectModal({ project, onClose, isDark, displayType, displayStatus }: ModalProps) {
+function ProjectModal({ project, onClose, isDark, displayType, displayStatus, copy, lang }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -112,10 +78,7 @@ function ProjectModal({ project, onClose, isDark, displayType, displayStatus }: 
   }, []);
 
   const divider = (
-    <div
-      className="h-px w-full"
-      style={{ background: isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)" }}
-    />
+    <div className="h-px w-full" style={{ background: isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)" }} />
   );
 
   const chipStyle = {
@@ -136,10 +99,12 @@ function ProjectModal({ project, onClose, isDark, displayType, displayStatus }: 
       href={href || "#"}
       target={href ? "_blank" : undefined}
       rel={href ? "noreferrer" : undefined}
+      data-cursor={href ? "pointer" : undefined}
       className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition-colors"
       style={href ? chipStyle : disabledStyle}
       aria-disabled={!href}
       tabIndex={href ? 0 : -1}
+      onClick={href ? undefined : (e) => e.preventDefault()}
     >
       <span>{href ? label : disabledText || label}</span>
     </a>
@@ -175,22 +140,22 @@ function ProjectModal({ project, onClose, isDark, displayType, displayStatus }: 
                 {project.role && <Badge label={project.role} tone="neutral" isDark={isDark} />}
               </div>
               <div className="text-2xl md:text-3xl font-semibold leading-tight" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
-                {project.title}
+                {lang === "es" ? (project.titleES || project.title) : project.title}
               </div>
               <p className="text-sm md:text-base" style={{ color: isDark ? "rgba(226,232,240,0.82)" : "rgba(15,23,42,0.75)" }}>
-                {project.description}
+                {lang === "es" ? (project.descriptionES || project.description) : project.description}
               </p>
             </div>
             <button
               type="button"
               aria-label="Close"
               onClick={onClose}
-              className="h-10 w-10 aspect-square p-0 leading-none rounded-full flex items-center justify-center shrink-0 transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
+              data-cursor="pointer"
+              className="h-10 w-10 aspect-square p-0 leading-none rounded-full flex items-center justify-center shrink-0 transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 cursor-pointer"
               style={{
                 border: isDark ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(15,23,42,0.15)",
                 background: isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)",
                 color: isDark ? "rgba(248,250,252,0.92)" : "rgba(15,23,42,0.82)",
-                cursor: "none",
               }}
             >
               ✕
@@ -202,10 +167,10 @@ function ProjectModal({ project, onClose, isDark, displayType, displayStatus }: 
           <div className="grid md:grid-cols-2 gap-4 md:gap-6">
             <div className="flex flex-col gap-3">
               <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
-                What I built
+                {copy.modal.whatBuilt}
               </h4>
               <ul className="space-y-2 text-sm" style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.8)" }}>
-                {project.highlights.map((item) => (
+                {(lang === "es" ? (project.highlightsES || project.highlights) : project.highlights).map((item) => (
                   <li key={item} className="leading-relaxed">
                     • {item}
                   </li>
@@ -215,10 +180,10 @@ function ProjectModal({ project, onClose, isDark, displayType, displayStatus }: 
 
             <div className="flex flex-col gap-3">
               <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
-                Architecture
+                {copy.modal.architecture}
               </h4>
               <ul className="space-y-2 text-sm" style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.8)" }}>
-                {project.architecture.map((item) => (
+                {(lang === "es" ? (project.architectureES || project.architecture) : project.architecture).map((item) => (
                   <li key={item} className="leading-relaxed">
                     • {item}
                   </li>
@@ -248,10 +213,22 @@ function ProjectModal({ project, onClose, isDark, displayType, displayStatus }: 
           {divider}
 
           <div className="flex flex-wrap gap-3">
-            {linkRow("GitHub", project.links.github, "GitHub (soon)")}
-            {linkRow("Case Study", project.links.caseStudy, "Case Study (soon)")}
-            {linkRow("Demo Video", project.links.video, "Demo Video (soon)")}
-            {linkRow("Live Demo", project.links.live, "Offline (infra paused)")}
+            {linkRow(copy.cards.github, project.links.github, copy.modal.githubSoon)}
+            {linkRow(copy.cards.caseStudy, project.links.caseStudy, copy.modal.caseSoon)}
+            {linkRow(copy.cards.demoVideo, project.links.video, copy.modal.videoSoon)}
+            {linkRow(copy.cards.liveDemo, project.links.live, copy.modal.liveOffline)}
+            <Link
+              href={`/projects/${project.slug}`}
+              data-cursor="pointer"
+              className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition-colors cursor-pointer"
+              style={{
+                border: isDark ? "1px solid rgba(255,255,255,0.22)" : "1px solid rgba(15,23,42,0.2)",
+                color: isDark ? "rgba(248,250,252,0.92)" : "rgba(15,23,42,0.9)",
+                background: isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.06)",
+              }}
+            >
+              <span>{copy.modal.openPage}</span>
+            </Link>
           </div>
         </div>
       </div>
@@ -259,37 +236,25 @@ function ProjectModal({ project, onClose, isDark, displayType, displayStatus }: 
   );
 }
 
-function ProjectCard({
-  project,
-  onOpen,
-  isDark,
-  displayType,
-  displayStatus,
-}: {
-  project: Project;
-  onOpen: () => void;
-  isDark: boolean;
-  displayType: string;
-  displayStatus: string;
-}) {
+function ProjectCard({ project, onOpen, isDark, displayType, displayStatus, copy, lang }: { project: Project; onOpen: () => void; isDark: boolean; displayType: string; displayStatus: string; copy: typeof translations["en"]["projects"]; lang: "en" | "es" }) {
   const badgeTone = project.status === "live" ? "accent" : project.status === "paused" ? "warning" : "neutral";
   return (
-    <button
-      type="button"
-      onClick={onOpen}
-      className="group relative flex flex-col gap-3 rounded-2xl overflow-hidden transition-all duration-200 text-left h-[360px] md:h-[380px] lg:h-[400px]"
+    <div
+      className="group relative flex flex-col gap-3 rounded-2xl overflow-hidden transition-all duration-200 h-full cursor-default"
       style={{
         border: isDark ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(15,23,42,0.12)",
         background: isDark ? "rgba(14,18,33,0.72)" : "rgba(255,255,255,0.78)",
-        boxShadow: isDark ? "0 12px 32px rgba(0,0,0,0.26)" : "0 12px 32px rgba(15,23,42,0.12)",
         backdropFilter: "blur(12px)",
         WebkitBackdropFilter: "blur(12px)",
-        cursor: "none",
       }}
     >
-      <div
-        className="w-full h-[180px] md:h-[200px] lg:h-[220px] overflow-hidden relative"
+      <button
+        type="button"
+        onClick={onOpen}
+        data-cursor="pointer"
+        className="aspect-[16/9] w-full overflow-hidden relative cursor-pointer"
         style={{ background: isDark ? "rgba(255,255,255,0.03)" : "rgba(15,23,42,0.04)" }}
+        aria-label={`View details for ${project.titleES || project.title}`}
       >
         <div
           className="absolute inset-0"
@@ -311,20 +276,20 @@ function ProjectCard({
               : "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.45) 100%)",
           }}
         />
-      </div>
+      </button>
 
-      <div className="px-4 pb-4 flex flex-col gap-3">
+      <div className="px-3 pb-3 flex flex-col gap-2.5">
         <div className="flex items-center gap-2 flex-wrap">
           <Badge label={displayType} tone="neutral" isDark={isDark} />
           <Badge label={displayStatus} tone={badgeTone as "accent" | "neutral" | "warning"} isDark={isDark} />
         </div>
 
         <div className="flex flex-col gap-1">
-          <div className="text-lg font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
-            {project.title}
+          <div className="text-base md:text-lg font-semibold leading-snug" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+            {lang === "es" ? (project.titleES || project.title) : project.title}
           </div>
-          <p className="text-sm leading-relaxed" style={{ color: isDark ? "rgba(226,232,240,0.78)" : "rgba(15,23,42,0.72)" }}>
-            {project.subtitle}
+          <p className="text-xs md:text-sm leading-relaxed" style={{ color: isDark ? "rgba(226,232,240,0.78)" : "rgba(15,23,42,0.72)" }}>
+            {lang === "es" ? (project.subtitleES || project.subtitle) : project.subtitle}
           </p>
         </div>
 
@@ -345,189 +310,268 @@ function ProjectCard({
         </div>
 
         <div className="flex flex-wrap gap-2 text-xs font-semibold">
-          {["Case Study", "Demo Video", "GitHub"].map((cta) => {
-            const href =
-              cta === "Case Study"
-                ? project.links.caseStudy
-                : cta === "Demo Video"
-                ? project.links.video
-                : project.links.github;
-            const enabled = Boolean(href);
-            return (
-              <span
-                key={cta}
-                className="rounded-full px-3 py-2 transition-colors"
-                style={{
-                  border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.12)",
-                  color: enabled
-                    ? isDark
-                      ? "rgba(248,250,252,0.95)"
-                      : "rgba(15,23,42,0.9)"
-                    : isDark
-                    ? "rgba(226,232,240,0.55)"
-                    : "rgba(15,23,42,0.55)",
-                  background: enabled ? (isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)") : "transparent",
-                }}
-              >
-                {enabled ? cta : `${cta} - soon`}
-              </span>
-            );
-          })}
+          <div className="flex items-center gap-2">
+            <a
+              href={project.links.github || "#"}
+              target={project.links.github ? "_blank" : undefined}
+              rel={project.links.github ? "noreferrer" : undefined}
+              data-cursor={project.links.github ? "pointer" : undefined}
+              className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200"
+              style={{
+                border: isDark ? "1px solid rgba(255,255,255,0.3)" : "1px solid rgba(120,120,120,0.4)",
+                background: isDark ? "rgba(100,100,100,0.3)" : "rgba(140,140,140,0.5)",
+                opacity: project.links.github ? 1 : 0.4,
+                cursor: project.links.github ? "pointer" : "default",
+              }}
+              onMouseEnter={(e) => {
+                if (project.links.github) {
+                  e.currentTarget.style.background = isDark ? "rgba(100,100,100,0.5)" : "rgba(140,140,140,0.7)";
+                  e.currentTarget.style.transform = "scale(1.15)";
+                  e.currentTarget.style.boxShadow = isDark ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.15)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (project.links.github) {
+                  e.currentTarget.style.background = isDark ? "rgba(100,100,100,0.3)" : "rgba(140,140,140,0.5)";
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = "none";
+                }
+              }}
+              aria-label={project.links.github ? "View on GitHub" : "GitHub link not available"}
+              onClick={project.links.github ? undefined : (e) => e.preventDefault()}
+            >
+              <img src="/logos/github.svg" alt="GitHub" className="w-5 h-5" style={{ filter: "grayscale(100%) brightness(0.2) invert(1)" }} />
+            </a>
+            <a
+              href={project.links.caseStudy || "#"}
+              target={project.links.caseStudy ? "_blank" : undefined}
+              rel={project.links.caseStudy ? "noreferrer" : undefined}
+              data-cursor={project.links.caseStudy ? "pointer" : undefined}
+              className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200"
+              style={{
+                border: isDark ? "1px solid rgba(255,255,255,0.3)" : "1px solid rgba(120,120,120,0.4)",
+                background: isDark ? "rgba(100,100,100,0.3)" : "rgba(140,140,140,0.5)",
+                opacity: project.links.caseStudy ? 1 : 0.4,
+                cursor: project.links.caseStudy ? "pointer" : "default",
+              }}
+              onMouseEnter={(e) => {
+                if (project.links.caseStudy) {
+                  e.currentTarget.style.background = isDark ? "rgba(100,100,100,0.5)" : "rgba(140,140,140,0.7)";
+                  e.currentTarget.style.transform = "scale(1.15)";
+                  e.currentTarget.style.boxShadow = isDark ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.15)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (project.links.caseStudy) {
+                  e.currentTarget.style.background = isDark ? "rgba(100,100,100,0.3)" : "rgba(140,140,140,0.5)";
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = "none";
+                }
+              }}
+              aria-label={project.links.caseStudy ? "Read case study" : "Case study coming soon"}
+              onClick={project.links.caseStudy ? undefined : (e) => e.preventDefault()}
+            >
+              <img src="/logos/medium.svg" alt="Case Study" className="w-5 h-5" style={{ filter: "grayscale(100%) brightness(0.2) invert(1)" }} />
+            </a>
+          </div>
         </div>
       </div>
-
-      <div
-        className="absolute inset-0 rounded-2xl transition-opacity duration-200 pointer-events-none"
-        style={{ boxShadow: "0 18px 40px rgba(0,0,0,0.22)", opacity: 0, background: "rgba(255,255,255,0.02)" }}
-      />
-    </button>
+    </div>
   );
 }
 
 export default function ProjectsSection() {
   const { theme } = useTheme();
   const { lang } = useI18n();
+  const dict = translations[lang];
+  const copy = dict.projects;
+  const typeMap = dict.types;
+  const statusMap = dict.statuses;
   const isDark = theme === "dark";
   const [openId, setOpenId] = useState<string | null>(null);
   const selected = useMemo(() => projectsData.find((p) => p.id === openId) || null, [openId]);
-  const typeLabel: Record<string, string> = {
-    personal: "Personal",
-    enterprise: "Enterprise",
-    hackathon: "Hackathon",
-    startup: "Startup",
-  };
-  const statusLabel: Record<string, string> = {
-    "in-progress": "In progress",
-    prototype: "Prototype",
-    paused: "Paused",
-    live: "Live",
-  };
+  const sliderRef = useRef<HTMLDivElement | null>(null);
+  const baseWidthRef = useRef<number>(0);
+  const cardWidthRef = useRef<number>(0);
+  const loopProjects = useMemo(() => [...projectsData, ...projectsData, ...projectsData], []);
+  const [cardScales, setCardScales] = useState<number[]>([]);
 
-  // Carousel helpers: infinite loop + edge scaling
-  const loops = 3; // render 3 copies to enable seamless looping
-  const displayedIndices = useMemo(
-    () => Array.from({ length: loops * projectsData.length }, (_, i) => i % projectsData.length),
-    [],
-  );
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const groupWidthRef = useRef(0);
-  const tickingRef = useRef(false);
-  const scalesRef = useRef<number[]>([]);
-  const wrapCooldownRef = useRef(0);
-
-  // Measure group width and initialize scroll position at middle copy
+  // measure and center to middle segment
   useEffect(() => {
+    const slider = sliderRef.current;
+    if (!slider) return;
     const measure = () => {
-      if (!scrollRef.current) return;
-      const total = scrollRef.current.scrollWidth;
-      groupWidthRef.current = total / loops;
-      // Start at middle group for bidirectional infinite scroll
-      scrollRef.current.scrollLeft = groupWidthRef.current;
+      const firstCard = slider.querySelector<HTMLElement>("[data-project-card]");
+      const cardWidth = firstCard ? firstCard.getBoundingClientRect().width : 0;
+      cardWidthRef.current = cardWidth || cardWidthRef.current || 0;
+      baseWidthRef.current = slider.scrollWidth / 3;
+      // Set initial position to middle segment without smooth scroll
+      slider.style.scrollBehavior = 'auto';
+      slider.scrollLeft = baseWidthRef.current;
+      slider.style.scrollBehavior = '';
     };
     measure();
-    const ro = new ResizeObserver(measure);
-    if (scrollRef.current) ro.observe(scrollRef.current);
-    return () => ro.disconnect();
-  }, [lang]);
+    const observer = new ResizeObserver(measure);
+    observer.observe(slider);
+    return () => observer.disconnect();
+  }, []);
 
-  // Update active scaling and handle infinite wrap on scroll
+  // loop correction and scale update
   useEffect(() => {
-    const update = () => {
-      const scroller = scrollRef.current;
-      if (!scroller) {
-        tickingRef.current = false;
-        return;
-      }
-      const left = scroller.scrollLeft;
-      const gw = groupWidthRef.current || 1;
+    const slider = sliderRef.current;
+    if (!slider) return;
+    
+    let rafId: number | null = null;
+    let isJumping = false;
+    let jumpTimeout: NodeJS.Timeout | null = null;
+    let lastKnownScales: number[] = [];
+    
+    const updateCardScales = (forceFreeze = false) => {
+      // Don't update scales if we're jumping or forced freeze
+      if (isJumping || forceFreeze) return;
       
-      // Wrap seamlessly with cooldown to prevent multiple wraps per scroll
-      const now = performance.now();
-      if (wrapCooldownRef.current < now) {
-        if (left < gw * 0.25) {
-          // Hit left boundary: wrap to right copy
-          scroller.scrollLeft = left + gw;
-          wrapCooldownRef.current = now + 50; // 50ms cooldown
-        } else if (left > gw * 2.75) {
-          // Hit right boundary: wrap to left copy
-          scroller.scrollLeft = left - gw;
-          wrapCooldownRef.current = now + 50; // 50ms cooldown
-        }
-      }
-
-      // Edge scaling using offset math + lerp for smoother animation
-      const containerCenter = scroller.scrollLeft + scroller.clientWidth / 2;
-      const halfWidth = scroller.clientWidth / 2;
-      itemsRef.current.forEach((el, i) => {
-        if (!el) return;
-        const itemCenter = el.offsetLeft + el.offsetWidth / 2;
-        const dist = Math.abs(itemCenter - containerCenter) / halfWidth; // 0 center, ~1 edge
-        const t = Math.max(0, 1 - dist);
-        const targetScale = 0.8 + 0.2 * t; // 0.8 at edges -> 1.0 at center
-        const prev = scalesRef.current[i] ?? targetScale;
-        const next = prev + (targetScale - prev) * 0.25; // lerp factor
-        el.style.transform = `scale(${next})`;
-        scalesRef.current[i] = next;
+      const cards = slider.querySelectorAll<HTMLElement>("[data-project-card]");
+      if (!cards.length) return;
+      
+      const sliderRect = slider.getBoundingClientRect();
+      const centerX = sliderRect.left + sliderRect.width / 2;
+      
+      const newScales: number[] = [];
+      
+      cards.forEach((card) => {
+        const cardRect = card.getBoundingClientRect();
+        const cardCenterX = cardRect.left + cardRect.width / 2;
+        const distanceFromCenter = Math.abs(cardCenterX - centerX);
+        
+        // Smooth progressive scaling
+        const maxDistance = sliderRect.width * 0.85;
+        const ratio = Math.min(distanceFromCenter / maxDistance, 1);
+        
+        // Ease-out quadratic
+        const eased = 1 - (ratio * ratio);
+        const scale = 0.65 + (eased * 0.35);
+        
+        newScales.push(Math.max(Math.min(scale, 1), 0.65));
       });
-      tickingRef.current = false;
+      
+      // Store the scales before updating
+      lastKnownScales = [...newScales];
+      setCardScales(newScales);
     };
-
-    const onScroll = () => {
-      if (!tickingRef.current) {
-        tickingRef.current = true;
-        requestAnimationFrame(update);
-      }
+    
+    const performJump = (newPosition: number) => {
+      isJumping = true;
+      
+      // Clear any pending jump timeout
+      if (jumpTimeout) clearTimeout(jumpTimeout);
+      
+      // Perform the jump instantly
+      slider.scrollLeft = newPosition;
+      
+      // Keep scales frozen for longer to ensure smooth transition
+      jumpTimeout = setTimeout(() => {
+        isJumping = false;
+        jumpTimeout = null;
+        // Force an update after unfreezing
+        requestAnimationFrame(() => {
+          updateCardScales();
+        });
+      }, 150);
     };
-
-    const scroller = scrollRef.current;
-    if (!scroller) return;
-    scroller.addEventListener("scroll", onScroll, { passive: true });
-    // Initial apply
-    scalesRef.current = [];
-    wrapCooldownRef.current = 0;
-    update();
-    return () => scroller.removeEventListener("scroll", onScroll);
-  }, [lang]);
+    
+    const handleScroll = () => {
+      // Prevent overlapping RAF calls
+      if (rafId) return;
+      
+      rafId = requestAnimationFrame(() => {
+        const base = baseWidthRef.current;
+        if (!base) {
+          rafId = null;
+          return;
+        }
+        
+        const left = slider.scrollLeft;
+        
+        // Define safe zones - we only jump when crossing these boundaries
+        const startBoundary = base * 0.15; // 15% into first section
+        const endBoundary = base * 1.85;   // 85% into third section
+        
+        if (!isJumping) {
+          if (left < startBoundary) {
+            // Jumped too far left - reposition to middle section
+            const offset = left % base;
+            performJump(base + offset);
+          } else if (left > endBoundary) {
+            // Jumped too far right - reposition to middle section
+            const offset = (left - base * 2) % base;
+            performJump(base + offset);
+          } else {
+            // Normal scroll - safe to update scales
+            updateCardScales();
+          }
+        }
+        
+        rafId = null;
+      });
+    };
+    
+    // Initial setup with proper delay
+    const initTimer = setTimeout(() => {
+      updateCardScales();
+    }, 300);
+    
+    // Listen to scroll events
+    slider.addEventListener("scroll", handleScroll, { passive: true });
+    
+    return () => {
+      clearTimeout(initTimer);
+      if (jumpTimeout) clearTimeout(jumpTimeout);
+      if (rafId) cancelAnimationFrame(rafId);
+      slider.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
-    <section
-      id="projects"
-      className="relative w-full px-4 md:px-6 lg:px-8 py-12 md:py-16"
-      style={{ cursor: "none" }}
-    >
+    <section id="projects" className="relative w-full px-4 md:px-6 lg:px-8 py-12 md:py-16" style={{ cursor: "none" }}>
+      <div className="absolute inset-0 pointer-events-none" />
       <div className="max-w-5xl mx-auto flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h2 className="text-2xl md:text-3xl font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
-            Projects
+            {copy.title}
           </h2>
           <p className="text-sm md:text-base" style={{ color: isDark ? "rgba(226,232,240,0.75)" : "rgba(15,23,42,0.7)" }}>
-            Selected work across personal builds, startups, and enterprise problems.
+            {copy.subcopy}
           </p>
         </div>
 
-        {/* Horizontal carousel with snap and infinite loop (no fade masks) */}
-        <div className="relative">
-          <div ref={scrollRef} className="overflow-x-auto -mx-1 px-1 hide-scrollbar">
-            <div className="flex flex-row flex-nowrap gap-5 md:gap-6 snap-x snap-mandatory">
-              {displayedIndices.map((idx, i) => {
-                const project = projectsData[idx];
-                const displayType = typeLabel[project.type] || project.type;
-                const displayStatus = statusLabel[project.status] || project.status;
-                const cloneIndex = Math.floor(i / projectsData.length);
+        <div className="relative flex-1 overflow-hidden">
+          <div
+            ref={sliderRef}
+            className="flex gap-4 md:gap-5 overflow-x-auto no-scrollbar px-1 py-1 cursor-default"
+            style={{ scrollBehavior: "auto" }}
+          >
+              {loopProjects.map((project, idx) => {
+                const scale = cardScales[idx] !== undefined ? cardScales[idx] : 0.9;
+                
                 return (
                   <div
-                    key={`${project.id}-${cloneIndex}-${i}`}
-                    ref={(el) => (itemsRef.current[i] = el)}
-                    className="snap-start shrink-0 basis-[88%] sm:basis-[75%] md:basis-[50%] lg:basis-1/3"
-                    style={{ willChange: "transform" }}
+                    key={`${project.id}-${idx}`}
+                    className="flex-shrink-0 w-[240px] md:w-[280px]"
+                    data-project-card
+                    style={{
+                      transform: `scale(${scale})`,
+                      transition: "transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+                      willChange: "transform",
+                    }}
                   >
                     <ProjectCard
                       project={project}
-                      displayType={displayType}
-                      displayStatus={displayStatus}
+                      displayType={typeMap[project.type]}
+                      displayStatus={statusMap[project.status]}
+                      copy={copy}
                       onOpen={() => setOpenId(project.id)}
                       isDark={isDark}
+                      lang={lang}
                     />
                   </div>
                 );
@@ -535,15 +579,16 @@ export default function ProjectsSection() {
             </div>
           </div>
         </div>
-      </div>
 
       {selected && (
         <ProjectModal
           project={selected}
-          displayType={typeLabel[selected.type] || selected.type}
-          displayStatus={statusLabel[selected.status] || selected.status}
+          displayType={typeMap[selected.type]}
+          displayStatus={statusMap[selected.status]}
+          copy={copy}
           onClose={() => setOpenId(null)}
           isDark={isDark}
+          lang={lang}
         />
       )}
     </section>

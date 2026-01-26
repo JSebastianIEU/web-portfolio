@@ -101,22 +101,6 @@ export default function AboutSection() {
                 </span>
               </p>
 
-              <ul className="space-y-1.5 text-sm md:text-[14px] leading-snug max-w-prose">
-                {dictionary.about.bullets.map((item) => (
-                  <li
-                    key={`${item}-${lang}`}
-                    className="flex items-start gap-2"
-                    style={{ color: isDark ? "rgba(229,231,235,0.9)" : "rgba(15,23,42,0.85)" }}
-                  >
-                    <span
-                      className="mt-[6px] h-1.5 w-1.5 rounded-full"
-                      style={{ background: isDark ? "rgba(255,255,255,0.7)" : "rgba(15,23,42,0.7)" }}
-                    />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-
               <p
                 className="text-xs md:text-[12.5px] leading-[1.6] max-w-prose"
                 style={{ color: isDark ? "rgba(203,213,225,0.9)" : "rgba(71,85,105,0.95)" }}
@@ -140,7 +124,7 @@ export default function AboutSection() {
                         key={`${label}-${lang}`}
                         className={`w-full inline-flex flex-col justify-between h-full sm:w-auto sm:flex-none ${
                           idx === 2
-                            ? "sm:min-w-[190px] sm:max-w-[240px]"
+                            ? "sm:min-w-[190px] sm:max-w-[300px]"
                             : "sm:min-w-[150px] sm:max-w-[200px]"
                         }`}
                         style={badgeStyle()}

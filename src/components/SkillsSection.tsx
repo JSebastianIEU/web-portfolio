@@ -47,17 +47,26 @@ export default function SkillsSection() {
     }
     return edges;
   }, []);
-  const titleLines = useMemo(
-    () => ({
+  const titleLines = useMemo(() => {
+    if (lang === "es") {
+      return {
+        software: ["INGENIERÍA", "DE SOFTWARE"],
+        frontend: ["FRONTEND", "Y PRODUCTO", "UI"],
+        data: ["DATOS", "E IA"],
+        db: ["BASES", "DE DATOS"],
+        cloud: ["CLOUD Y", "DEVOPS"],
+        automation: ["AUTOMATIZACIÓN", "Y SCRIPTING"],
+      };
+    }
+    return {
       software: ["SOFTWARE", "ENGINEERING"],
       frontend: ["FRONTEND", "& PRODUCT", "UI"],
       data: ["DATA", "& ML"],
       db: ["DATABASES"],
       cloud: ["CLOUD &", "DEVOPS"],
       automation: ["AUTOMATION", "& SCRIPTING"],
-    }),
-    [],
-  );
+    };
+  }, [lang]);
   const heroPalette = ["#a855f7", "#22c55e", "#38bdf8", "#fb923c", "#67e8f9", "#f472b6"];
   const categoryColors = useMemo(() => {
     const map: Record<string, { title: string }> = {};

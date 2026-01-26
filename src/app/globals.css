@@ -19,6 +19,14 @@ html {
   display: none; /* Chrome, Safari */
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
 :root {
   color-scheme: light;
   --bg: #f5f7fb;

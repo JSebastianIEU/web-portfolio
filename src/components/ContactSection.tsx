@@ -1,9 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { siteConfig } from "@/config/siteConfig";
+import { translations } from "@/i18n/translations";
 
 type Variant = "section" | "page";
 
@@ -18,60 +19,7 @@ type FormState = {
 
 type FieldErrors = Partial<Record<keyof FormState, string>>;
 
-const contactCopy = {
-  en: {
-    title: "Contact",
-    tagline: "Let's talk.",
-    subcopy: "Reach out for collaborations, product conversations, or quick questions.",
-    actions: {
-      email: "Email me",
-      linkedin: "LinkedIn",
-      calendly: "Book a call",
-    },
-    form: {
-      name: "Name",
-      email: "Email",
-      company: "Company (optional)",
-      subject: "Subject",
-      message: "Message",
-      submit: "Send message",
-      sent: "Message sent. I'll get back to you soon.",
-      error: "Something went wrong. Please try again.",
-    },
-    validation: {
-      required: "This field is required",
-      email: "Enter a valid email",
-      messageLength: "Message should be at least 20 characters",
-    },
-  },
-  es: {
-    title: "Contacto",
-    tagline: "Hablemos.",
-    subcopy: "Escríbeme para colaborar, hablar de producto o resolver dudas rápidas.",
-    actions: {
-      email: "Envíame un correo",
-      linkedin: "LinkedIn",
-      calendly: "Agenda una llamada",
-    },
-    form: {
-      name: "Nombre",
-      email: "Correo",
-      company: "Empresa (opcional)",
-      subject: "Asunto",
-      message: "Mensaje",
-      submit: "Enviar mensaje",
-      sent: "Mensaje enviado. Te responderé pronto.",
-      error: "Algo salió mal. Intenta de nuevo.",
-    },
-    validation: {
-      required: "Este campo es obligatorio",
-      email: "Ingresa un correo válido",
-      messageLength: "El mensaje debe tener al menos 20 caracteres",
-    },
-  },
-};
-
-function validate(form: FormState, copy: (typeof contactCopy)["en"]): FieldErrors {
+function validate(form: FormState, copy: (typeof translations)["en"]["contact"]): FieldErrors {
   const errors: FieldErrors = {};
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const trimmed: FormState = {
@@ -84,10 +32,10 @@ function validate(form: FormState, copy: (typeof contactCopy)["en"]): FieldError
     honeypot: form.honeypot.trim(),
   };
 
-  if (!trimmed.name) errors.name = copy.validation.required;
-  if (!trimmed.email || !emailRegex.test(trimmed.email)) errors.email = copy.validation.email;
-  if (!trimmed.subject) errors.subject = copy.validation.required;
-  if (!trimmed.message || trimmed.message.length < 20) errors.message = copy.validation.messageLength;
+  if (!trimmed.name) errors.name = copy.form.required;
+  if (!trimmed.email || !emailRegex.test(trimmed.email)) errors.email = copy.form.emailInvalid;
+  if (!trimmed.subject) errors.subject = copy.form.required;
+  if (!trimmed.message || trimmed.message.length < 20) errors.message = copy.form.messageLength;
   return errors;
 }
 
@@ -95,7 +43,7 @@ export default function ContactSection({ variant = "section", enterLink, leaveLi
   const { lang } = useI18n();
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const copy = lang === "es" ? contactCopy.es : contactCopy.en;
+  const copy = translations[lang].contact;
 
   const [form, setForm] = useState<FormState>({
     name: "",
@@ -197,7 +145,7 @@ export default function ContactSection({ variant = "section", enterLink, leaveLi
   return (
     <section
       id={variant === "section" ? "contact" : undefined}
-      className="relative w-full px-4 md:px-6 py-12 md:py-16"
+      className="relative w-full px-4 md:px-6 lg:px-8 py-12 md:py-16"
       style={{ cursor: "none" }}
     >
       <div className="max-w-5xl mx-auto space-y-6">
@@ -261,8 +209,6 @@ export default function ContactSection({ variant = "section", enterLink, leaveLi
                   className="w-full rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300/60"
                   style={inputStyle}
                   maxLength={120}
-                  onMouseEnter={() => enterLink?.()}
-                  onMouseLeave={() => leaveLink?.()}
                 />
                 {errors.name && <p className="text-xs text-rose-400">{errors.name}</p>}
               </div>
@@ -279,8 +225,6 @@ export default function ContactSection({ variant = "section", enterLink, leaveLi
                   style={inputStyle}
                   maxLength={160}
                   inputMode="email"
-                  onMouseEnter={() => enterLink?.()}
-                  onMouseLeave={() => leaveLink?.()}
                 />
                 {errors.email && <p className="text-xs text-rose-400">{errors.email}</p>}
               </div>
@@ -299,8 +243,6 @@ export default function ContactSection({ variant = "section", enterLink, leaveLi
                   className="w-full rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300/60"
                   style={inputStyle}
                   maxLength={160}
-                  onMouseEnter={() => enterLink?.()}
-                  onMouseLeave={() => leaveLink?.()}
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -315,8 +257,6 @@ export default function ContactSection({ variant = "section", enterLink, leaveLi
                   className="w-full rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300/60"
                   style={inputStyle}
                   maxLength={160}
-                  onMouseEnter={() => enterLink?.()}
-                  onMouseLeave={() => leaveLink?.()}
                 />
                 {errors.subject && <p className="text-xs text-rose-400">{errors.subject}</p>}
               </div>
@@ -333,13 +273,10 @@ export default function ContactSection({ variant = "section", enterLink, leaveLi
                 className="w-full rounded-xl px-3 py-2 text-sm min-h-[140px] focus:outline-none focus:ring-2 focus:ring-slate-300/60"
                 style={inputStyle}
                 maxLength={2000}
-                onMouseEnter={() => enterLink?.()}
-                onMouseLeave={() => leaveLink?.()}
               />
               {errors.message && <p className="text-xs text-rose-400">{errors.message}</p>}
             </div>
 
-            {/* Honeypot */}
             <div style={{ position: "absolute", left: "-9999px", opacity: 0 }}>
               <label>
                 Do not fill

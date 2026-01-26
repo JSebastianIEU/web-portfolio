@@ -12,6 +12,73 @@ type Translations = {
     projects: string;
     contact: string;
   };
+  statuses: {
+    live: string;
+    paused: string;
+    prototype: string;
+    "in-progress": string;
+  };
+  types: {
+    personal: string;
+    enterprise: string;
+    hackathon: string;
+    startup: string;
+  };
+  projects: {
+    title: string;
+    subcopy: string;
+    cards: {
+      caseStudy: string;
+      demoVideo: string;
+      github: string;
+      liveDemo: string;
+      soon: string;
+      offline: string;
+    };
+    modal: {
+      whatBuilt: string;
+      architecture: string;
+      stack: string;
+      openPage: string;
+      githubSoon: string;
+      caseSoon: string;
+      videoSoon: string;
+      liveOffline: string;
+    };
+    detail: {
+      overview: string;
+      highlights: string;
+      architecture: string;
+      stack: string;
+      media: string;
+      videoPlaceholder: string;
+      imagePlaceholder: string;
+      nextProject: string;
+    };
+  };
+  contact: {
+    title: string;
+    tagline: string;
+    subcopy: string;
+    actions: {
+      email: string;
+      linkedin: string;
+      calendly: string;
+    };
+    form: {
+      name: string;
+      email: string;
+      company: string;
+      subject: string;
+      message: string;
+      submit: string;
+      sent: string;
+      error: string;
+      required: string;
+      emailInvalid: string;
+      messageLength: string;
+    };
+  };
   hero: {
     phrases: Phrase[];
   };
@@ -37,6 +104,10 @@ type Translations = {
     tagline: string;
     copyright: string;
   };
+  cta: {
+    downloadCv: string;
+    contactMe: string;
+  };
 };
 
 export const translations: Record<Locale, Translations> = {
@@ -46,7 +117,74 @@ export const translations: Record<Locale, Translations> = {
       about: "about",
       skills: "skills",
       projects: "projects",
-      contact: "contact",
+    contact: "contact",
+  },
+    statuses: {
+      live: "Live",
+      paused: "Paused",
+      prototype: "Prototype",
+      "in-progress": "In progress",
+    },
+    types: {
+      personal: "Personal",
+      enterprise: "Enterprise",
+      hackathon: "Hackathon",
+      startup: "Startup",
+    },
+    projects: {
+      title: "Projects",
+      subcopy: "Selected work across personal builds, startups, and enterprise problems.",
+      cards: {
+        caseStudy: "Case Study",
+        demoVideo: "Demo Video",
+        github: "GitHub",
+        liveDemo: "Live Demo",
+        soon: "— soon",
+        offline: "Offline (infra paused)",
+      },
+      modal: {
+        whatBuilt: "What I built",
+        architecture: "Architecture",
+        stack: "Tech stack",
+        openPage: "Open full page",
+        githubSoon: "GitHub (soon)",
+        caseSoon: "Case Study (soon)",
+        videoSoon: "Demo Video (soon)",
+        liveOffline: "Offline (infra paused)",
+      },
+      detail: {
+        overview: "Overview",
+        highlights: "Highlights",
+        architecture: "Architecture",
+        stack: "Tech stack",
+        media: "Media",
+        videoPlaceholder: "Video placeholder",
+        imagePlaceholder: "Image placeholder",
+        nextProject: "Next project →",
+      },
+    },
+    contact: {
+      title: "Contact",
+      tagline: "Let's talk.",
+      subcopy: "Reach out for collaborations, product conversations, or quick questions.",
+      actions: {
+        email: "Email me",
+        linkedin: "LinkedIn",
+        calendly: "Book a call",
+      },
+      form: {
+        name: "Name",
+        email: "Email",
+        company: "Company (optional)",
+        subject: "Subject",
+        message: "Message",
+        submit: "Send message",
+        sent: "Message sent. I'll get back to you soon.",
+        error: "Something went wrong. Please try again.",
+        required: "This field is required",
+        emailInvalid: "Enter a valid email",
+        messageLength: "Message should be at least 20 characters",
+      },
     },
     hero: {
       phrases: [
@@ -59,14 +197,10 @@ export const translations: Record<Locale, Translations> = {
     },
     about: {
       label: "About",
-      headline: "Building clear systems where software, design, and data meet.",
+      headline: "Building clear AI and data-driven systems with strong product judgment.",
       body:
-        "I’m Sebastian Peña, a Colombian builder based in Madrid, pursuing a degree in Computer Science and Artificial Intelligence. I design and build clear, useful systems with a bias for clarity—because technical excellence matters most when it improves outcomes for real people and real contexts. Outside of work, salsa and bachata shape how I think about adaptability, collaboration, and connection.",
-      bullets: [
-        "Software engineering with product judgment",
-        "Data-aware systems and practical AI",
-        "Human-centered thinking in complex environments",
-      ],
+        "I'm Juan Sebastian Peña, a Colombian builder based in Madrid, pursuing a degree in Computer Science and Artificial Intelligence. I design and build AI- and data-driven systems with a strong focus on clarity, explainability, and product intent—because technical excellence only matters when people can understand, trust, and act on it in real contexts.",
+      bullets: [],
       humanLine:
         "Outside of work, salsa and bachata shape how I think about adaptability, collaboration, and connection.",
       cards: {
@@ -85,6 +219,10 @@ export const translations: Record<Locale, Translations> = {
       tagline: "AI, Data & Intelligent Systems",
       copyright: "© {year} Juan Sebastian Peña",
     },
+    cta: {
+      downloadCv: "Download CV",
+      contactMe: "Contact me",
+    },
   },
   es: {
     nav: {
@@ -93,6 +231,73 @@ export const translations: Record<Locale, Translations> = {
       skills: "habilidades",
       projects: "proyectos",
       contact: "contacto",
+    },
+    statuses: {
+      live: "Activo",
+      paused: "Pausado",
+      prototype: "Prototipo",
+      "in-progress": "En progreso",
+    },
+    types: {
+      personal: "Personal",
+      enterprise: "Enterprise",
+      hackathon: "Hackathon",
+      startup: "Startup",
+    },
+    projects: {
+      title: "Proyectos",
+      subcopy: "Trabajo seleccionado en builds personales, startups y entornos enterprise.",
+      cards: {
+        caseStudy: "Case Study",
+        demoVideo: "Video demo",
+        github: "GitHub",
+        liveDemo: "Demo en vivo",
+        soon: "— próximamente",
+        offline: "Offline (infra pausada)",
+      },
+      modal: {
+        whatBuilt: "Lo que construí",
+        architecture: "Arquitectura",
+        stack: "Stack técnico",
+        openPage: "Abrir página completa",
+        githubSoon: "GitHub (pronto)",
+        caseSoon: "Case Study (pronto)",
+        videoSoon: "Video demo (pronto)",
+        liveOffline: "Offline (infra pausada)",
+      },
+      detail: {
+        overview: "Resumen",
+        highlights: "Highlights",
+        architecture: "Arquitectura",
+        stack: "Stack técnico",
+        media: "Media",
+        videoPlaceholder: "Placeholder de video",
+        imagePlaceholder: "Placeholder de imagen",
+        nextProject: "Próximo proyecto →",
+      },
+    },
+    contact: {
+      title: "Contacto",
+      tagline: "Hablemos.",
+      subcopy: "Escríbeme para colaborar, hablar de producto o resolver dudas rápidas.",
+      actions: {
+        email: "Envíame un correo",
+        linkedin: "LinkedIn",
+        calendly: "Agenda una llamada",
+      },
+      form: {
+        name: "Nombre",
+        email: "Correo",
+        company: "Empresa (opcional)",
+        subject: "Asunto",
+        message: "Mensaje",
+        submit: "Enviar mensaje",
+        sent: "Mensaje enviado. Te responderé pronto.",
+        error: "Algo salió mal. Intenta de nuevo.",
+        required: "Este campo es obligatorio",
+        emailInvalid: "Ingresa un correo válido",
+        messageLength: "El mensaje debe tener al menos 20 caracteres",
+      },
     },
     hero: {
       phrases: [
@@ -105,14 +310,10 @@ export const translations: Record<Locale, Translations> = {
     },
     about: {
       label: "Sobre mí",
-      headline: "Construyo sistemas claros donde el software, el diseño y los datos se encuentran.",
+      headline: "Construyo sistemas de IA y datos claros con sólido criterio de producto.",
       body:
-        "Soy Sebastian Peña, un creador colombiano basado en Madrid, y estoy cursando un grado en Ciencias de la Computación e Inteligencia Artificial. Diseño y construyo sistemas claros y útiles, con una obsesión sana por la claridad—porque la excelencia técnica solo importa cuando mejora resultados para personas reales y contextos reales. Fuera del trabajo, la salsa y la bachata moldean cómo pienso sobre adaptabilidad, colaboración y conexión.",
-      bullets: [
-        "Ingeniería de software con criterio de producto",
-        "Sistemas orientados a datos e IA práctica",
-        "Pensamiento centrado en las personas en entornos complejos",
-      ],
+        "Soy Juan Sebastian Peña, un creador colombiano basado en Madrid, y estoy cursando un grado en Ciencias de la Computación e Inteligencia Artificial. Diseño y construyo sistemas impulsados por IA y datos con un fuerte enfoque en claridad, explicabilidad e intención de producto—porque la excelencia técnica solo importa cuando las personas pueden comprenderla, confiar en ella y actuar sobre ella en contextos reales.",
+      bullets: [],
       humanLine:
         "Fuera del trabajo, la salsa y la bachata moldean cómo pienso sobre adaptabilidad, colaboración y conexión.",
       cards: {
@@ -130,6 +331,10 @@ export const translations: Record<Locale, Translations> = {
     footer: {
       tagline: "IA, Datos y Sistemas Inteligentes",
       copyright: "© {year} Juan Sebastian Peña",
+    },
+    cta: {
+      downloadCv: "Descargar CV",
+      contactMe: "Contáctame",
     },
   },
 };
