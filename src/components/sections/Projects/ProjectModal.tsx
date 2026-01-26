@@ -67,21 +67,21 @@ export default function ProjectModal({
       }
     };
 
-    // Lock body scroll completely
-    const scrollY = window.scrollY;
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = "100%";
+    // Lock body scroll without altering scroll position (prevents jump in mobile/tablet)
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    const originalHtmlOverscroll = document.documentElement.style.overscrollBehaviorY;
+
     document.body.style.overflow = "hidden";
-    
+    document.documentElement.style.overflow = "hidden";
+    document.documentElement.style.overscrollBehaviorY = "contain";
+
     window.addEventListener("keydown", handleKey);
     return () => {
-      // Restore body scroll
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      document.body.style.overflow = "";
-      window.scrollTo(0, scrollY);
+      // Restore body/html scroll settings
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+      document.documentElement.style.overscrollBehaviorY = originalHtmlOverscroll;
       window.removeEventListener("keydown", handleKey);
     };
   }, []);
@@ -142,7 +142,11 @@ export default function ProjectModal({
         overflow: "hidden",
       }}
       onClick={handleClose}
-      onTouchMove={(e) => e.preventDefault()}
+      onTouchMove={(e) => {
+        // Allow scroll only inside the dialog
+        if (dialogRef.current && dialogRef.current.contains(e.target as Node)) return;
+        e.preventDefault();
+      }}
     >
       <div
         role="dialog"
