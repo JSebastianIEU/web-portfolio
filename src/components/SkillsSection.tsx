@@ -1,13 +1,16 @@
 "use client";
 
+import NextImage from "next/image";
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useI18n } from "@/components/providers/language-provider";
 import { skillCategories, skillCrossLinks, skillNodes, type SkillLink } from "@/data/skillsData";
+import type { Locale } from "@/i18n/translations";
 import { useNetworkSimulation } from "@/hooks/useNetworkSimulation";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { buildCategoryBackbone, buildSkillEdges } from "@/utils/skillsGraph";
 
 type TooltipState = {
@@ -17,16 +20,175 @@ type TooltipState = {
   y: number;
 };
 
+type DesktopSkillsExperienceProps = {
+  theme: string;
+  lang: Locale;
+  t: (key: string) => string;
+  revealRef: React.RefObject<HTMLElement>;
+  srList: React.ReactNode;
+};
+
+type MobileSkillsLayoutProps = {
+  theme: string;
+  lang: Locale;
+  t: (key: string) => string;
+  revealRef: React.RefObject<HTMLElement>;
+  srList: React.ReactNode;
+};
+
+const HERO_PALETTE = ["#a855f7", "#22c55e", "#38bdf8", "#fb923c", "#67e8f9", "#f472b6"];
+
 export default function SkillsSection() {
   const { theme } = useTheme();
   const { lang, t } = useI18n();
-  const isDark = theme === "dark";
   const revealRef = useScrollReveal<HTMLElement>();
+  const isMobile = useMediaQuery("(max-width: 640px)");
+
+  const srList = useMemo(
+    () => (
+      <div className="sr-only" aria-hidden="false">
+        <p>{t("skills.label")}</p>
+        <ul>
+          {skillNodes.map((n) => (
+            <li key={n.id}>{lang === "es" ? n.nameES : n.nameEN}</li>
+          ))}
+        </ul>
+      </div>
+    ),
+    [lang, t],
+  );
+
+  if (isMobile) {
+    return <MobileSkillsLayout lang={lang} t={t} theme={theme} revealRef={revealRef} srList={srList} />;
+  }
+
+  return <DesktopSkillsExperience theme={theme} lang={lang} t={t} revealRef={revealRef} srList={srList} />;
+}
+
+function MobileSkillsLayout({ lang, t, theme, revealRef, srList }: MobileSkillsLayoutProps) {
+  const isDark = theme === "dark";
+  const groupedSkills = useMemo(() => {
+    const tierOrder: Record<"primary" | "secondary", number> = { primary: 0, secondary: 1 };
+    return skillCategories.map((category, idx) => {
+      const skills = skillNodes
+        .filter((skill) => skill.category === category.id)
+        .sort((a, b) => {
+          const tierDiff = tierOrder[a.tier] - tierOrder[b.tier];
+          if (tierDiff !== 0) return tierDiff;
+          const nameA = lang === "es" ? a.nameES : a.nameEN;
+          const nameB = lang === "es" ? b.nameES : b.nameEN;
+          return nameA.localeCompare(nameB, lang === "es" ? "es" : "en", { sensitivity: "base" });
+        });
+      return { category, skills, accent: HERO_PALETTE[idx % HERO_PALETTE.length] };
+    });
+  }, [lang]);
+
+  return (
+    <section
+      id="skills"
+      ref={revealRef}
+      className="reveal relative px-4 py-12 overflow-hidden"
+      style={{ cursor: "none" }}
+    >
+      <div className="relative w-full max-w-5xl mx-auto">
+        <div className="flex items-start justify-between mb-6 px-1">
+          <h2 className="text-2xl font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+            {t("skills.label")}
+          </h2>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {groupedSkills.map((group) => (
+            <div
+              key={group.category.id}
+              className="rounded-2xl p-4 shadow-sm"
+              style={{
+                background: isDark
+                  ? "linear-gradient(145deg, rgba(12,16,32,0.92), rgba(9,12,24,0.86))"
+                  : "linear-gradient(145deg, rgba(255,255,255,0.96), rgba(248,249,253,0.92))",
+                border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)"}`,
+                boxShadow: isDark ? "0 14px 38px rgba(0,0,0,0.35)" : "0 16px 34px rgba(15,23,42,0.08)",
+              }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <span
+                  aria-hidden
+                  className="inline-block h-2 w-2 rounded-full"
+                  style={{ background: group.accent, boxShadow: `0 0 0 6px ${group.accent}1f` }}
+                />
+                <p
+                  className="text-sm font-semibold uppercase tracking-[0.08em]"
+                  style={{ color: isDark ? "#e2e8f0" : "#0f172a" }}
+                >
+                  {lang === "es" ? group.category.labelES : group.category.labelEN}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {group.skills.map((skill) => {
+                  const label = lang === "es" ? skill.nameES : skill.nameEN;
+                  const isPrimary = skill.tier === "primary";
+                  return (
+                    <div key={skill.id} className="flex flex-col items-center gap-2 text-center">
+                      <div
+                        className="flex h-14 w-14 items-center justify-center rounded-xl border"
+                        style={{
+                          borderColor: isPrimary
+                            ? group.accent
+                            : isDark
+                            ? "rgba(255,255,255,0.08)"
+                            : "rgba(15,23,42,0.08)",
+                          background: isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,42,0.02)",
+                          boxShadow: isPrimary
+                            ? `0 10px 20px -10px ${group.accent}80`
+                            : isDark
+                            ? "0 6px 16px rgba(0,0,0,0.35)"
+                            : "0 8px 14px rgba(15,23,42,0.06)",
+                        }}
+                      >
+                        <NextImage
+                          src={skill.iconSrc}
+                          alt={label}
+                          width={32}
+                          height={32}
+                          className="h-8 w-8 object-contain"
+                        />
+                      </div>
+                      <span
+                        className="text-[11px] font-medium leading-tight"
+                        style={{
+                          color: isDark ? "rgba(226,232,240,0.92)" : "rgba(15,23,42,0.85)",
+                          opacity: isPrimary ? 1 : 0.82,
+                          letterSpacing: "0.02em",
+                        }}
+                      >
+                        {label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {srList}
+    </section>
+  );
+}
+
+function DesktopSkillsExperience({ theme, lang, t, revealRef, srList }: DesktopSkillsExperienceProps) {
+  const isDark = theme === "dark";
+  const isMobile = useMediaQuery("(max-width: 640px)");
+  const isTablet = useMediaQuery("(max-width: 1024px)") && !isMobile;
+  const viewportMode = isMobile ? "mobile" : isTablet ? "tablet" : "desktop";
+  const allowPointer = viewportMode === "desktop";
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
-  const [isMobile, setIsMobile] = useState(false);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const [tooltipCoords, setTooltipCoords] = useState<{ x: number; y: number } | null>(null);
   const [categoryRects, setCategoryRects] = useState<Array<{ id: string; width: number; height: number }>>(
     skillCategories.map((c) => ({ id: c.id, width: 220, height: 60 })),
   );
@@ -69,12 +231,11 @@ export default function SkillsSection() {
       automation: ["AUTOMATION", "& SCRIPTING"],
     };
   }, [lang]);
-  const heroPalette = ["#a855f7", "#22c55e", "#38bdf8", "#fb923c", "#67e8f9", "#f472b6"];
   const categoryColors = useMemo(() => {
     const map: Record<string, { title: string }> = {};
     const ids = ["software", "frontend", "data", "db", "cloud", "automation"];
     ids.forEach((id, idx) => {
-      const base = heroPalette[idx % heroPalette.length];
+      const base = HERO_PALETTE[idx % HERO_PALETTE.length];
       map[id] = {
         title: isDark ? "rgba(255,255,255,0.92)" : base,
       };
@@ -84,9 +245,11 @@ export default function SkillsSection() {
   const neutralTitle = isDark ? "rgba(226,232,240,0.9)" : "rgba(15,23,42,0.88)";
   // Preload icons
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const Img = window.Image;
     const cache: Record<string, HTMLImageElement> = {};
     skillNodes.forEach((n) => {
-      const img = new Image();
+      const img = new Img();
       img.src = n.iconSrc;
       cache[n.id] = img;
     });
@@ -98,9 +261,8 @@ export default function SkillsSection() {
     const el = containerRef.current;
     if (!el) return;
     const resize = () => {
-        const rect = el.getBoundingClientRect();
-        setSize({ w: rect.width, h: Math.max(320, rect.width * 0.6) });
-        setIsMobile(window.innerWidth < 768);
+      const rect = el.getBoundingClientRect();
+      setSize({ w: rect.width, h: Math.max(300, rect.width * 0.6) });
     };
     resize();
     window.addEventListener("resize", resize);
@@ -109,7 +271,7 @@ export default function SkillsSection() {
 
   useEffect(() => {
     lastEdgeBuild.current = 0;
-  }, [size.w, size.h, isMobile]);
+  }, [size.w, size.h, viewportMode]);
 
   // measure category label sizes for no-go rectangles using real DOM sizes
   useEffect(() => {
@@ -153,7 +315,7 @@ export default function SkillsSection() {
     width: size.w,
     height: size.h,
     pointerRef,
-    isMobile,
+    viewport: viewportMode,
     titleAnchors: titleAnchorMap,
     onFrame: ({ nodes: state, hoverId: frameHover, time }) => {
       const canvas = canvasRef.current;
@@ -187,10 +349,16 @@ export default function SkillsSection() {
 
       // rebuild edges occasionally (not every frame) to reduce churn
       if (!lastEdgeBuild.current || time - lastEdgeBuild.current > 1200) {
+        const edgeSettings =
+          viewportMode === "mobile"
+            ? { maxCross: 50, kPrimary: 1, kSecondary: 1 }
+            : viewportMode === "tablet"
+            ? { maxCross: 110, kPrimary: 2, kSecondary: 2 }
+            : { maxCross: 160, kPrimary: 4, kSecondary: 3 };
         edgesRef.current = buildSkillEdges(positions, links, {
-          maxCross: isMobile ? 80 : 160,
-          kPrimary: isMobile ? 2 : 4,
-          kSecondary: isMobile ? 1 : 3,
+          maxCross: edgeSettings.maxCross,
+          kPrimary: edgeSettings.kPrimary,
+          kSecondary: edgeSettings.kSecondary,
           paddedRects,
           categories,
         });
@@ -219,6 +387,7 @@ export default function SkillsSection() {
           : null;
 
       const longThreshold = size.w * 0.45;
+      const visibilityScale = viewportMode === "mobile" ? 0.55 : viewportMode === "tablet" ? 0.8 : 1;
 
       // Global mesh (very faint, behind everything, deterministic)
       ctx.lineWidth = 0.6;
@@ -249,6 +418,7 @@ export default function SkillsSection() {
         const alphaBase = 0.16 + (edge.norm ?? 0.5) * 0.1;
         let alpha = alphaBase * (intersects ? 0.12 : 1);
         if (len > longThreshold) alpha *= 0.65;
+        alpha *= visibilityScale;
         const widthL = 0.9 + (edge.norm ?? 0.5) * 0.8;
         ctx.strokeStyle = isDark ? `rgba(255,255,255,${alpha})` : `rgba(15,23,42,${alpha + 0.05})`;
         ctx.lineWidth = widthL;
@@ -275,7 +445,7 @@ export default function SkillsSection() {
         let alpha = alphaBase * tierFactor * (intersects ? 0.12 : 1);
         if (len > longThreshold) alpha *= 0.65;
         const boost = isDark ? 1.35 : 1.1;
-        alpha = Math.min(0.38, alpha * boost);
+        alpha = Math.min(0.38, alpha * boost * visibilityScale);
         ctx.strokeStyle = isDark ? `rgba(255,255,255,${alpha})` : `rgba(15,23,42,${alpha + 0.03})`;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
@@ -284,7 +454,9 @@ export default function SkillsSection() {
       }
 
       // Intra edges (weak mesh)
-      const breathe = 0.04 * Math.sin(time * 0.0015);
+      const breathe =
+        (viewportMode === "mobile" ? 0.02 : viewportMode === "tablet" ? 0.03 : 0.04) *
+        Math.sin(time * 0.0015);
       ctx.lineWidth = 0.65;
       for (const link of intraEdges) {
         const a = posMap.get(link.sourceId);
@@ -300,7 +472,7 @@ export default function SkillsSection() {
         let alpha = Math.max(0, Math.min(0.12, alphaBase * tierFactor + breathe));
         if (len > longThreshold) alpha *= 0.65;
         const boost = isDark ? 1.25 : 1.1;
-        alpha = Math.min(0.16, alpha * boost);
+        alpha = Math.min(0.16, alpha * boost * visibilityScale);
         ctx.strokeStyle = isDark ? `rgba(255,255,255,${alpha})` : `rgba(15,23,42,${alpha})`;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
@@ -314,17 +486,29 @@ export default function SkillsSection() {
         const rBase = n.r * (n.node.tier === "primary" ? 1.05 : 0.95);
         const r = isHover ? rBase * 1.18 : rBase;
         const dim = connectedSet && !connectedSet.has(n.node.id) ? 0.45 : 1;
+        const tone = dim * visibilityScale;
         ctx.save();
         ctx.translate(n.x, n.y);
-        const shadowBlur = n.node.tier === "primary" ? (isMobile ? 12 : 18) : isMobile ? 8 : 12;
-        ctx.shadowColor = isDark ? `rgba(255,255,255,${0.14 * dim})` : `rgba(15,23,42,${0.16 * dim})`;
+        const shadowBlur =
+          n.node.tier === "primary"
+            ? viewportMode === "mobile"
+              ? 10
+              : viewportMode === "tablet"
+              ? 14
+              : 18
+            : viewportMode === "mobile"
+            ? 6
+            : viewportMode === "tablet"
+            ? 9
+            : 12;
+        ctx.shadowColor = isDark ? `rgba(255,255,255,${0.14 * tone})` : `rgba(15,23,42,${0.16 * tone})`;
         ctx.shadowBlur = shadowBlur;
-        ctx.fillStyle = isDark ? `rgba(255,255,255,${0.07 * dim})` : `rgba(15,23,42,${0.07 * dim})`;
+        ctx.fillStyle = isDark ? `rgba(255,255,255,${0.07 * tone})` : `rgba(15,23,42,${0.07 * tone})`;
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
-        ctx.strokeStyle = isDark ? `rgba(255,255,255,${0.22 * dim})` : `rgba(15,23,42,${0.2 * dim})`;
+        ctx.strokeStyle = isDark ? `rgba(255,255,255,${0.22 * tone})` : `rgba(15,23,42,${0.2 * tone})`;
         ctx.lineWidth = 1;
         ctx.stroke();
 
@@ -354,14 +538,12 @@ export default function SkillsSection() {
 
     },
   });
-  const activeCategory = useMemo(() => {
-    const node = hoverId ? nodes.find((n) => n.id === hoverId) : null;
-    return node?.category ?? null;
-  }, [hoverId, nodes]);
+  const activeCategory = hoverId ? (nodes.find((n) => n.id === hoverId)?.category ?? null) : null;
 
   // Tooltip follow
   useEffect(() => {
     if (!hoverId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTooltip(null);
       return;
     }
@@ -379,8 +561,35 @@ export default function SkillsSection() {
     });
   }, [hoverId, lang, nodes, nodesRef]);
 
+  useEffect(() => {
+    if (!tooltip || typeof window === "undefined") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTooltipCoords(null);
+      return;
+    }
+    const padding = 12;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let x = tooltip.x;
+    let y = tooltip.y - 18;
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (rect) {
+      x = rect.left + tooltip.x;
+      y = rect.top + tooltip.y - 18;
+      if (y < padding) {
+        y = rect.top + tooltip.y + 18;
+      }
+    } else if (y < padding) {
+      y = tooltip.y + 18;
+    }
+    x = Math.min(vw - padding, Math.max(padding, x));
+    y = Math.min(vh - padding, Math.max(padding, y));
+    setTooltipCoords({ x, y });
+  }, [tooltip, size.h, size.w]);
+
   // Pointer handlers
   const onPointerMove = (e: React.PointerEvent) => {
+    if (!allowPointer) return;
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
     pointerRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
@@ -389,58 +598,33 @@ export default function SkillsSection() {
     pointerRef.current = null;
   };
 
-  const tooltipNode =
-    tooltip && typeof window !== "undefined"
-      ? createPortal(
-          (() => {
-            const padding = 12;
-            const vw = window.innerWidth;
-            const vh = window.innerHeight;
-            let x = tooltip.x;
-            let y = tooltip.y - 18;
-            const rect = canvasRef.current?.getBoundingClientRect();
-            if (rect) {
-              x = rect.left + tooltip.x;
-              y = rect.top + tooltip.y - 18;
-            }
-            if (y < padding) {
-              y = (rect ? rect.top + tooltip.y : tooltip.y) + 18;
-            }
-            x = Math.min(vw - padding, Math.max(padding, x));
-            y = Math.min(vh - padding, Math.max(padding, y));
+  useEffect(() => {
+    if (!allowPointer) {
+      pointerRef.current = null;
+    }
+  }, [allowPointer]);
 
-            return (
-              <div
-                className="pointer-events-none fixed px-2.5 py-1.5 rounded-full text-xs font-medium"
-                style={{
-                  left: x,
-                  top: y,
-                  transform: "translate(-50%, -100%)",
-                  background: isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.08)",
-                  border: isDark ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(15,23,42,0.12)",
-                  boxShadow: "0 10px 24px rgba(0,0,0,0.15)",
-                  color: isDark ? "#e5e7eb" : "#0f172a",
-                  zIndex: 30000,
-                }}
-              >
-                {tooltip.name}
-              </div>
-            );
-          })(),
+  const tooltipNode =
+    tooltip && tooltipCoords && typeof window !== "undefined"
+      ? createPortal(
+          <div
+            className="pointer-events-none fixed px-2.5 py-1.5 rounded-full text-xs font-medium"
+            style={{
+              left: tooltipCoords.x,
+              top: tooltipCoords.y,
+              transform: "translate(-50%, -100%)",
+              background: isDark ? "rgba(255,255,255,0.1)" : "rgba(15,23,42,0.08)",
+              border: isDark ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(15,23,42,0.12)",
+              boxShadow: "0 10px 24px rgba(0,0,0,0.15)",
+              color: isDark ? "#e5e7eb" : "#0f172a",
+              zIndex: 30000,
+            }}
+          >
+            {tooltip.name}
+          </div>,
           document.body,
         )
       : null;
-
-  const srList = (
-    <div className="sr-only" aria-hidden="false">
-      <p>{t("skills.label")}</p>
-      <ul>
-        {nodes.map((n) => (
-          <li key={n.id}>{lang === "es" ? n.nameES : n.nameEN}</li>
-        ))}
-      </ul>
-    </div>
-  );
 
   // helper: segment-rect intersection
   function segmentIntersectsRect(x1: number, y1: number, x2: number, y2: number, rx: number, ry: number, rw: number, rh: number) {
@@ -500,7 +684,11 @@ export default function SkillsSection() {
           onPointerMove={onPointerMove}
           onPointerLeave={onPointerLeave}
         >
-          <canvas ref={canvasRef} className="block w-full h-full" style={{ minHeight: "360px" }} />
+          <canvas
+            ref={canvasRef}
+            className="block w-full h-full"
+            style={{ minHeight: isMobile ? "280px" : "360px" }}
+          />
 
           {/* Category titles overlay */}
           <div className="pointer-events-none absolute inset-0">

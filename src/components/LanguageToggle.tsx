@@ -64,7 +64,7 @@ export default function LanguageToggle({ onEnter, onLeave }: LanguageToggleProps
           aria-pressed={isActive(code)}
           aria-label={`Change language to ${code.toUpperCase()}`}
           onClick={() => setLang(lang === "en" ? "es" : "en")}
-          className="relative z-10 w-12 h-8 flex items-center justify-center text-xs font-semibold uppercase tracking-wide transition-colors duration-200 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
+          className="relative z-10 w-10 h-8 sm:w-12 flex items-center justify-center text-[11px] sm:text-xs font-semibold uppercase tracking-wide transition-colors duration-200 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
           style={{
             color: isActive(code)
               ? isDark

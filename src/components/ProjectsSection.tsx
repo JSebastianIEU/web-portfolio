@@ -7,6 +7,7 @@ import { useI18n } from "@/components/providers/language-provider";
 import { projectsData, type Project } from "@/data/projectsData";
 import { translations } from "@/i18n/translations";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 function Badge({ label, tone = "neutral", isDark }: { label: string; tone?: "neutral" | "accent" | "warning"; isDark: boolean }) {
   const palette: Record<"neutral" | "accent" | "warning", { bg: string; color: string; border: string }> = isDark
@@ -35,13 +36,14 @@ type ModalProps = {
   project: Project;
   onClose: () => void;
   isDark: boolean;
+  isCompact: boolean;
   displayType: string;
   displayStatus: string;
   copy: typeof translations["en"]["projects"];
   lang: "en" | "es";
 };
 
-function ProjectModal({ project, onClose, isDark, displayType, displayStatus, copy, lang }: ModalProps) {
+function ProjectModal({ project, onClose, isDark, isCompact, displayType, displayStatus, copy, lang }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -115,16 +117,16 @@ function ProjectModal({ project, onClose, isDark, displayType, displayStatus, co
 
   return (
     <div
-      className="fixed inset-0 z-[21000] flex items-center justify-center px-4 md:px-6"
+      className={`fixed inset-0 z-[21000] flex ${isCompact ? "items-end" : "items-center"} justify-center px-3 sm:px-4 md:px-6`}
       style={{ background: "rgba(5,8,15,0.55)", backdropFilter: "blur(8px)" }}
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
-        className="relative w-full max-w-4xl rounded-2xl overflow-hidden"
+        className={`relative w-full ${isCompact ? "max-w-xl max-h-[88vh] rounded-t-3xl" : "max-w-4xl rounded-2xl"} overflow-hidden`}
         style={{
-          background: isDark ? "rgba(14,18,33,0.82)" : "rgba(255,255,255,0.9)",
+          background: isDark ? "rgba(14,18,33,0.9)" : "rgba(255,255,255,0.94)",
           border: isDark ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(15,23,42,0.12)",
           boxShadow: isDark ? "0 24px 70px rgba(0,0,0,0.45)" : "0 24px 70px rgba(15,23,42,0.18)",
           cursor: "none",
@@ -132,15 +134,18 @@ function ProjectModal({ project, onClose, isDark, displayType, displayStatus, co
         onClick={(e) => e.stopPropagation()}
         ref={dialogRef}
       >
-        <div className="flex flex-col gap-4 p-5 md:p-6">
-          <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col gap-4 p-4 sm:p-5 md:p-6 h-full overflow-y-auto">
+          <div
+            className="flex items-start justify-between gap-3 sticky top-0 pb-2"
+            style={{ background: isDark ? "rgba(14,18,33,0.94)" : "rgba(255,255,255,0.96)" }}
+          >
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge label={displayType} tone="neutral" isDark={isDark} />
                 <Badge label={displayStatus} tone={badgeTone as "accent" | "neutral" | "warning"} isDark={isDark} />
                 {project.role && <Badge label={project.role} tone="neutral" isDark={isDark} />}
               </div>
-              <div className="text-2xl md:text-3xl font-semibold leading-tight" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+              <div className="text-xl sm:text-2xl md:text-3xl font-semibold leading-tight" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
                 {lang === "es" ? (project.titleES || project.title) : project.title}
               </div>
               <p className="text-sm md:text-base" style={{ color: isDark ? "rgba(226,232,240,0.82)" : "rgba(15,23,42,0.75)" }}>
@@ -161,7 +166,7 @@ function ProjectModal({ project, onClose, isDark, displayType, displayStatus, co
             >
               ✕
             </button>
-          </div>
+            </div>
 
           {divider}
 
@@ -390,6 +395,10 @@ export default function ProjectsSection() {
   const typeMap = dict.types;
   const statusMap = dict.statuses;
   const isDark = theme === "dark";
+  const isMobile = useMediaQuery("(max-width: 640px)");
+  // Call hooks unconditionally; derive boolean from results to keep hook order stable.
+  const isTabletRaw = useMediaQuery("(max-width: 1024px)");
+  const isTablet = !isMobile && isTabletRaw;
   const [openId, setOpenId] = useState<string | null>(null);
   const selected = useMemo(() => projectsData.find((p) => p.id === openId) || null, [openId]);
   const sliderRef = useRef<HTMLDivElement | null>(null);
@@ -559,8 +568,13 @@ export default function ProjectsSection() {
         <div className="relative flex-1 overflow-hidden">
           <div
             ref={sliderRef}
-            className="flex gap-4 md:gap-5 overflow-x-auto no-scrollbar px-1 py-1 cursor-default"
-            style={{ scrollBehavior: "auto" }}
+            className={`flex ${isMobile ? "gap-3" : "gap-4 md:gap-5"} overflow-x-auto no-scrollbar px-1 py-1 cursor-default`}
+            style={{
+              scrollBehavior: "auto",
+              scrollSnapType: isMobile || isTablet ? "x mandatory" : "x proximity",
+              scrollPaddingLeft: isMobile ? "1rem" : "0px",
+              scrollPaddingRight: isMobile ? "1rem" : "0px",
+            }}
           >
               {loopProjects.map((project, idx) => {
                 const scale = cardScales[idx] !== undefined ? cardScales[idx] : 0.9;
@@ -568,9 +582,13 @@ export default function ProjectsSection() {
                 return (
                   <div
                     key={`${project.id}-${idx}`}
-                    className="flex-shrink-0 w-[240px] md:w-[280px]"
+                    className="flex-shrink-0"
                     data-project-card
                     style={{
+                      width: isMobile ? "78vw" : isTablet ? "46vw" : "320px",
+                      maxWidth: isMobile ? "320px" : isTablet ? "360px" : "360px",
+                      scrollSnapAlign: "start",
+                      scrollSnapStop: "always",
                       transform: `scale(${scale})`,
                       transition: "transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
                       willChange: "transform",
@@ -600,6 +618,7 @@ export default function ProjectsSection() {
           copy={copy}
           onClose={() => setOpenId(null)}
           isDark={isDark}
+          isCompact={isMobile || isTablet}
           lang={lang}
         />
       )}

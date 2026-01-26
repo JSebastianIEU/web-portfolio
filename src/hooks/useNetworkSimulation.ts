@@ -1,7 +1,7 @@
 "use client";
 
-import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
 import type { SkillCategory, SkillLink, SkillNode } from "@/data/skillsData";
 
 type Vec = { x: number; y: number; vx: number; vy: number; node: SkillNode; r: number; mass: number; seed: number };
@@ -19,8 +19,8 @@ type SimulationParams = {
   links: SkillLink[];
   width: number;
   height: number;
-  pointerRef: React.MutableRefObject<{ x: number; y: number } | null>;
-  isMobile: boolean;
+  pointerRef: MutableRefObject<{ x: number; y: number } | null>;
+  viewport: "mobile" | "tablet" | "desktop";
   titleAnchors?: Record<string, { x: number; y: number }>;
   onFrame?: (state: { nodes: Vec[]; hoverId: string | null; time: number }) => void;
 };
@@ -35,19 +35,15 @@ const jitterDeg = 8;
 const otherAnchorRepelRadius = 220;
 const otherAnchorRepelStrength = 0.00022;
 const titleRepelStrength = 0.12;
-const maxSpeedDesktop = 2.4;
-const maxSpeedMobile = 1.8;
 const maxAccelDesktop = 0.15;
 const maxAccelMobile = 0.12;
-const dampingDesktop = 0.93;
-const dampingMobile = 0.94;
 const cursorRadiusDesktop = 200;
+const cursorRadiusTablet = 170;
 const cursorRadiusMobile = 150;
 const cursorStrengthDesktop = 0.12;
+const cursorStrengthTablet = 0.1;
 const cursorStrengthMobile = 0.08;
-const microMotionAmp = { desktop: 0.012, mobile: 0.008 };
-const sleepThreshold = 0;
-const sleepFrames = 9999;
+const microMotionAmp = { desktop: 0.012, tablet: 0.01, mobile: 0.006 };
 
 // deterministic hash for seed
 function hashString(str: string) {
@@ -77,10 +73,13 @@ export function useNetworkSimulation({
   width,
   height,
   pointerRef,
-  isMobile,
+  viewport,
   titleAnchors,
   onFrame,
 }: SimulationParams) {
+  const isMobile = viewport === "mobile";
+  const isTablet = viewport === "tablet";
+  const isCompact = viewport !== "desktop";
   const nodesRef = useRef<Vec[]>([]);
   const hoverIdRef = useRef<string | null>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
@@ -134,19 +133,20 @@ export function useNetworkSimulation({
       const radiusJitter = n.tier === "primary" ? 20 : 40;
       const r0 = radiusBase + (rand() - 0.5) * radiusJitter;
       const baseR = n.tier === "primary" ? 20 : 14;
+      const radiusScale = isMobile ? 0.85 : isTablet ? 0.92 : 1;
       return {
-        x: cat.anchor.x * width + Math.cos(angle) * r0,
-        y: cat.anchor.y * height + Math.sin(angle) * r0,
+        x: cat.anchor.x * width + Math.cos(angle) * r0 * radiusScale,
+        y: cat.anchor.y * height + Math.sin(angle) * r0 * radiusScale,
         vx: 0,
         vy: 0,
         node: n,
-        r: isMobile ? baseR * 0.9 : baseR,
+        r: baseR * radiusScale,
         mass: n.tier === "primary" ? 1.6 : 1,
         seed,
       };
     });
     nodesRef.current = nextNodes;
-  }, [categories, height, isMobile, links, nodes, width]);
+  }, [categories, height, isMobile, isTablet, links, nodes, width]);
 
   useEffect(() => {
     if (!width || !height) return;
@@ -173,18 +173,17 @@ export function useNetworkSimulation({
     }
 
     const boundsPad = 24;
-    const stiffness = isMobile ? 0.04 : 0.046;
-    const linkK = 0; // edges are visual-only
-    const damping = isMobile ? 0.975 : 0.97;
-    const repulseRadius = isMobile ? 60 : 80;
-    const repulseForce = 0.0002; // cursor influence minimal
+    const stiffness = isMobile ? 0.038 : isTablet ? 0.044 : 0.046;
+    const damping = isMobile ? 0.982 : isTablet ? 0.976 : 0.97;
+    const repulseRadius = isMobile ? 40 : isTablet ? 60 : 80;
+    const repulseForce = isMobile ? 0.00012 : isTablet ? 0.00018 : 0.0002; // cursor influence minimal
     const ringPrimary = 115;
     const ringSecondary = 200;
-    const maxVel = isMobile ? 0.3 : 0.4;
+    const maxVelCap = isMobile ? 0.28 : isTablet ? 0.34 : 0.4;
     const angleForce = angleForceStrength;
     const jitterRad = (jitterDeg * Math.PI) / 180;
 
-    const gridSize = 80;
+    const gridSize = isMobile ? 120 : isTablet ? 100 : 80;
     const freezeMotion = false;
 
     const step = () => {
@@ -336,9 +335,9 @@ export function useNetworkSimulation({
           const dx = n.x - pointer.x;
           const dy = n.y - pointer.y;
           const dist = Math.hypot(dx, dy) || 1;
-          const radius = isMobile ? cursorRadiusMobile : cursorRadiusDesktop;
+          const radius = isMobile ? cursorRadiusMobile * 0.6 : isTablet ? cursorRadiusTablet : cursorRadiusDesktop;
           if (dist < radius) {
-            const strength = isMobile ? cursorStrengthMobile : cursorStrengthDesktop;
+            const strength = isMobile ? cursorStrengthMobile * 0.4 : isTablet ? cursorStrengthTablet : cursorStrengthDesktop;
             const falloff = 1 - dist / radius;
             const baseForce = strength * falloff * falloff;
             // reduce influence if near band edges
@@ -353,7 +352,7 @@ export function useNetworkSimulation({
         }
 
         // micro motion (very subtle)
-        const micro = isMobile ? microMotionAmp.mobile : microMotionAmp.desktop;
+        const micro = isMobile ? microMotionAmp.mobile : isTablet ? microMotionAmp.tablet : microMotionAmp.desktop;
         if (!isHovered && !isNeighbor) {
           const nearTitle =
             rectMap[n.node.category] &&
@@ -367,25 +366,24 @@ export function useNetworkSimulation({
         }
 
         // clamp accel
-        const maxAccel = isMobile ? maxAccelMobile : maxAccelDesktop;
+        const maxAccel = isMobile ? maxAccelMobile : isTablet ? (maxAccelDesktop * 0.85) : maxAccelDesktop;
         const accelMag = Math.hypot(ax, ay);
         if (accelMag > maxAccel) {
           ax = (ax / accelMag) * maxAccel;
           ay = (ay / accelMag) * maxAccel;
         }
 
-        const baseDamp = isMobile ? dampingMobile : dampingDesktop;
+        const baseDamp = damping;
         const damp = Math.pow(baseDamp, dt * 60) * (isNeighbor ? 0.9 : 1);
 
         n.vx = isHovered ? 0 : (n.vx + (ax / n.mass) * fixedDt) * damp;
         n.vy = isHovered ? 0 : (n.vy + (ay / n.mass) * fixedDt) * damp;
 
         // clamp velocity
-        const maxVel = isMobile ? 1.8 : 2.4;
         const speed = Math.hypot(n.vx, n.vy);
-        if (speed > maxVel) {
-          n.vx = (n.vx / speed) * maxVel;
-          n.vy = (n.vy / speed) * maxVel;
+        if (speed > maxVelCap) {
+          n.vx = (n.vx / speed) * maxVelCap;
+          n.vy = (n.vy / speed) * maxVelCap;
         }
 
         // keep gentle motion; disable sleep zeroing to avoid stuck nodes
@@ -425,7 +423,7 @@ export function useNetworkSimulation({
 
     frame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frame);
-  }, [categories, categoryRects, height, isMobile, links, onFrame, pointerRef, titleAnchors, width]);
+  }, [categories, categoryRects, height, isMobile, isTablet, links, onFrame, pointerRef, titleAnchors, width]);
 
   return { nodesRef, hoverId };
 }

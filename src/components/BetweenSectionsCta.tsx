@@ -36,7 +36,7 @@ export default function BetweenSectionsCta({ onEnterLink, onLeaveLink }: Props) 
       className="relative w-full py-5 md:py-6 flex justify-center"
       style={{ cursor: "none" }}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4 flex-col sm:flex-row text-center sm:text-left">
         <a
           href={cvHref}
           onMouseEnter={onEnterLink}
@@ -44,7 +44,7 @@ export default function BetweenSectionsCta({ onEnterLink, onLeaveLink }: Props) 
           onMouseLeave={onLeaveLink}
           onBlur={onLeaveLink}
           download
-          className="group inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors"
+          className="group inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors w-full sm:w-auto justify-center"
           style={{
             color: styles.primaryText,
             border: `1px solid ${styles.primaryBorder}`,
@@ -82,7 +82,7 @@ export default function BetweenSectionsCta({ onEnterLink, onLeaveLink }: Props) 
           onFocus={onEnterLink}
           onMouseLeave={onLeaveLink}
           onBlur={onLeaveLink}
-          className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors"
+          className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors w-full sm:w-auto justify-center"
           style={{
             color: styles.secondaryText,
             border: `1px solid ${styles.secondaryBorder}`,

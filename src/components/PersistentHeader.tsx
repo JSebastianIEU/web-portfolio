@@ -6,6 +6,7 @@ import LanguageToggle from "@/components/LanguageToggle";
 import { Sun, Moon } from "lucide-react";
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import type React from "react";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface PersistentHeaderProps {
   enterLink: () => void;
@@ -19,8 +20,10 @@ export default function PersistentHeader({ enterLink, leaveLink }: PersistentHea
   const [activeSection, setActiveSection] = useState("hero");
   const [refsReady, setRefsReady] = useState(false);
   const [indicatorVisible, setIndicatorVisible] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navLinksRef = useRef<(HTMLAnchorElement | null)[]>([]);
   const tickingRef = useRef(false);
+  const isMobile = useMediaQuery("(max-width: 640px)");
 
   const navItems = [
     { key: "nav.home", href: "#hero", id: "hero" },
@@ -152,63 +155,92 @@ export default function PersistentHeader({ enterLink, leaveLink }: PersistentHea
     cursor: "none",
   };
 
+  useEffect(() => {
+    if (!isMobile) {
+      setMobileMenuOpen(false);
+    }
+  }, [isMobile]);
+
   return (
-    <div className="fixed top-6 inset-x-0 z-[20000] pointer-events-none px-4 md:px-6">
-      <div className="flex items-center justify-between gap-4">
+    <div className="fixed top-4 sm:top-6 inset-x-0 z-[20000] pointer-events-none px-3 sm:px-4 md:px-6">
+      <div className="flex items-center justify-between gap-2 sm:gap-4">
         <div className="pointer-events-auto">
           <LanguageToggle onEnter={enterLink} onLeave={leaveLink} />
         </div>
 
-        <div className="flex-1 flex justify-center pointer-events-auto">
-          <nav>
-            <div className="relative flex items-center gap-8 px-8 py-3 rounded-full transition-all duration-300" style={navCapsuleStyle}>
-              {/* Active section indicator */}
-              <div
-                className="absolute top-[6px] bottom-[6px] rounded-full transition-all duration-300 ease-out pointer-events-none"
-                style={{
-                  ...indicatorStyle,
-                  background: isDark 
-                    ? "rgba(255, 255, 255, 0.08)" 
-                    : "rgba(255, 255, 255, 0.3)",
-                  backdropFilter: "blur(8px)",
-                  WebkitBackdropFilter: "blur(8px)",
-                  border: isDark 
-                    ? "1px solid rgba(255, 255, 255, 0.12)" 
-                    : "1px solid rgba(255, 255, 255, 0.4)",
-                  boxShadow: isDark
-                    ? "0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)"
-                    : "0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
-                  cursor: "none",
-                }}
-              />
-              {navItems.map((item, index) => (
-                <a
-                  key={item.href}
-                  ref={(el) => { navLinksRef.current[index] = el; }}
-                  href={item.href}
-                  className="relative z-10 text-sm font-semibold uppercase tracking-[0.08em] transition-all duration-300 whitespace-nowrap"
-                  style={{ 
-                    cursor: "none", 
-                    color: activeSection === item.id ? navHoverColor : colors.navMuted 
+        {!isMobile && (
+          <div className="flex-1 flex justify-center pointer-events-auto">
+            <nav>
+              <div className="relative flex items-center gap-6 px-6 py-2.5 rounded-full transition-all duration-300 max-w-full overflow-x-auto no-scrollbar" style={navCapsuleStyle}>
+                {/* Active section indicator */}
+                <div
+                  className="absolute top-[6px] bottom-[6px] rounded-full transition-all duration-300 ease-out pointer-events-none"
+                  style={{
+                    ...indicatorStyle,
+                    background: isDark 
+                      ? "rgba(255, 255, 255, 0.08)" 
+                      : "rgba(255, 255, 255, 0.3)",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    border: isDark 
+                      ? "1px solid rgba(255, 255, 255, 0.12)" 
+                      : "1px solid rgba(255, 255, 255, 0.4)",
+                    boxShadow: isDark
+                      ? "0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)"
+                      : "0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+                    cursor: "none",
                   }}
-                  onMouseEnter={handleNavEnter}
-                  onMouseLeave={handleNavLeave}
-                >
-                  <span className="inline-block transition-all duration-300" key={`${item.key}-${lang}`}>
-                    {t(item.key)}
-                  </span>
-                </a>
-              ))}
-            </div>
-          </nav>
-        </div>
+                />
+                {navItems.map((item, index) => (
+                  <a
+                    key={item.href}
+                    ref={(el) => { navLinksRef.current[index] = el; }}
+                    href={item.href}
+                    className="relative z-10 text-[12px] md:text-sm font-semibold uppercase tracking-[0.08em] transition-all duration-300 whitespace-nowrap"
+                    style={{ 
+                      cursor: "none", 
+                      color: activeSection === item.id ? navHoverColor : colors.navMuted 
+                    }}
+                    onMouseEnter={handleNavEnter}
+                    onMouseLeave={handleNavLeave}
+                  >
+                    <span className="inline-block transition-all duration-300" key={`${item.key}-${lang}`}>
+                      {t(item.key)}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </nav>
+          </div>
+        )}
 
-        <div className="pointer-events-auto flex items-center justify-center">
+        <div className="pointer-events-auto flex items-center justify-center gap-2">
+          {isMobile && (
+            <button
+              type="button"
+              aria-label="Toggle menu"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="flex h-11 w-11 items-center justify-center rounded-full shadow-lg transition"
+              style={{
+                background: isDark ? "rgba(16, 20, 30, 0.08)" : "rgba(255, 255, 255, 0.08)",
+                border: isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(255, 255, 255, 0.16)",
+                backdropFilter: "blur(10px) saturate(145%) contrast(110%)",
+                WebkitBackdropFilter: "blur(10px) saturate(145%) contrast(110%)",
+                boxShadow: "0 10px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.22)",
+                color: isDark ? "rgba(255,255,255,0.9)" : "#0f172a",
+                cursor: "none",
+              }}
+              onMouseEnter={enterLink}
+              onMouseLeave={leaveLink}
+            >
+              <span className="text-lg leading-none">☰</span>
+            </button>
+          )}
           <button
             type="button"
             aria-label="Cambiar tema"
             onClick={toggleTheme}
-            className="flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition hover:-translate-y-0.5"
+            className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full shadow-lg transition hover:-translate-y-0.5"
             style={{
               background: isDark ? "rgba(16, 20, 30, 0.06)" : "rgba(255, 255, 255, 0.06)",
               border: isDark ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(255, 255, 255, 0.14)",
@@ -231,6 +263,39 @@ export default function PersistentHeader({ enterLink, leaveLink }: PersistentHea
           </button>
         </div>
       </div>
+
+      {isMobile && mobileMenuOpen && (
+        <div className="pointer-events-auto mt-3 px-1">
+          <div
+            className="rounded-2xl border backdrop-blur-xl shadow-2xl p-3 flex flex-wrap gap-2"
+            style={{
+              borderColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.12)",
+              background: isDark ? "rgba(12,16,26,0.65)" : "rgba(255,255,255,0.8)",
+            }}
+          >
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="flex-1 min-w-[120px] text-sm font-semibold uppercase tracking-[0.08em] px-3 py-2 rounded-xl text-center transition-colors"
+                style={{
+                  cursor: "none",
+                  color: activeSection === item.id ? navHoverColor : colors.navMuted,
+                  background: activeSection === item.id
+                    ? isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)"
+                    : "transparent",
+                  border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(15,23,42,0.08)",
+                }}
+                onMouseEnter={handleNavEnter}
+                onMouseLeave={handleNavLeave}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t(item.key)}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
