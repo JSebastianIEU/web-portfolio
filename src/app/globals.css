@@ -6,7 +6,8 @@ body {
   scroll-behavior: smooth;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  overflow-y: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
   touch-action: pan-y pan-x;
 }
 
@@ -18,18 +19,12 @@ body {
   }
 }
 
-/* Force hide scrollbar across all browsers */
+/* Hide scrollbar for main document */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-/* Additional scrollbar hiding for Firefox and IE/Edge */
-html {
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .custom-cursor-disabled,
@@ -64,28 +59,19 @@ html {
   display: none; /* Chrome, Safari */
 }
 
-
 * {
   box-sizing: border-box;
 }
 
-/* Only apply cursor:none on desktop */
+/* Only apply cursor:none on interactive elements for desktop */
 @media (hover: hover) and (pointer: fine) {
-  * {
+  a,
+  button,
+  input,
+  textarea,
+  select {
     cursor: none !important;
   }
-}
-
-/* Ensure no scrollbar appears on any element */
-*::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-* {
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
 }
 
 body {
@@ -93,23 +79,6 @@ body {
   color: var(--text);
   font-family: var(--font-body), system-ui, -apple-system, sans-serif;
   min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-}
-
-body::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-
-body::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
 }
 
 /* Only apply cursor:none on interactive elements for desktop */

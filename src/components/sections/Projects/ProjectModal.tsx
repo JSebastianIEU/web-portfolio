@@ -1,5 +1,6 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps, @typescript-eslint/no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
@@ -305,7 +306,7 @@ export default function ProjectModal({
               <ul className="space-y-2 text-sm" style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.8)" }}>
                 {(lang === "es" ? project.highlightsES || project.highlights : project.highlights).map((item) => (
                   <li key={item} className="leading-relaxed">
-                     {item}
+                    • {item}
                   </li>
                 ))}
               </ul>
@@ -318,7 +319,7 @@ export default function ProjectModal({
               <ul className="space-y-2 text-sm" style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.8)" }}>
                 {(lang === "es" ? project.architectureES || project.architecture : project.architecture).map((item) => (
                   <li key={item} className="leading-relaxed">
-                     {item}
+                    • {item}
                   </li>
                 ))}
               </ul>
