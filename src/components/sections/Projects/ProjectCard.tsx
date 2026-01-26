@@ -20,7 +20,7 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
 
   return (
     <div
-      className="group relative flex flex-col gap-3 rounded-2xl overflow-hidden transition-all duration-200 h-full"
+      className="group relative flex flex-col gap-3 rounded-2xl overflow-hidden transition-all duration-150 h-full"
       style={{
         border: isDark ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(15,23,42,0.12)",
         background: isDark ? "rgba(14,18,33,0.72)" : "rgba(255,255,255,0.78)",

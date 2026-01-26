@@ -209,7 +209,7 @@ export default function ProjectModal({
   return createPortal(
     <div
       role="presentation"
-      className={`fixed inset-0 z-[21000] flex ${isCompact ? "items-end" : "items-center"} justify-center transition-all duration-200`}
+      className={`fixed inset-0 z-[21000] flex ${isCompact ? "items-end" : "items-center"} justify-center transition-all duration-150`}
       style={{
         background: isVisible ? `rgba(5,8,15,${Math.max(0.55 - dragY / 400, 0.1)})` : "rgba(5,8,15,0)",
         backdropFilter: isVisible ? "blur(8px)" : "blur(0px)",
@@ -225,7 +225,7 @@ export default function ProjectModal({
         aria-modal="true"
         className={`relative w-full ${
           isCompact ? "max-w-xl rounded-t-3xl" : "max-w-4xl rounded-2xl"
-        } flex flex-col transition-all duration-200 ease-out no-scrollbar`}
+        } flex flex-col transition-all duration-150 ease-out no-scrollbar`}
         style={{
           background: isDark ? "rgba(14,18,33,0.9)" : "rgba(255,255,255,0.94)",
           border: isDark ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(15,23,42,0.12)",

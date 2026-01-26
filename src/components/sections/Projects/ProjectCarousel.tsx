@@ -224,7 +224,7 @@ export default function ProjectCarousel({
         {Array.from({ length: totalProjects }).map((_, idx) => (
           <div
             key={idx}
-            className="transition-all duration-300 ease-out rounded-full"
+            className="transition-all duration-150 ease-out rounded-full"
             style={{
               width: activeIndex === idx ? "24px" : "6px",
               height: "6px",

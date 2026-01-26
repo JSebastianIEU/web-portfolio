@@ -169,11 +169,11 @@ body {
 }
 
 .bubble-float {
-  animation: bubbleFloat 6.6s ease-in-out infinite;
+  animation: bubbleFloat 4.2s ease-in-out infinite;
 }
 
 .skill-bubble {
-  transition: transform 180ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  transition: transform 100ms ease, box-shadow 120ms ease, border-color 120ms ease;
 }
 
 .skill-bubble img {
@@ -193,7 +193,7 @@ body {
 
 .cursor-blink {
   display: inline-block;
-  animation: cursorBlink 1.1s ease-in-out infinite;
+  animation: cursorBlink 0.7s ease-in-out infinite;
   will-change: opacity;
 }
 
