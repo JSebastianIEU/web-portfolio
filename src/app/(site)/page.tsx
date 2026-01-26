@@ -83,15 +83,6 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [currentPhrase, isDeleting, loopNum, phrases, text, typingSpeed]);
 
-  useEffect(() => {
-    const originalRestoration = history.scrollRestoration;
-    history.scrollRestoration = "manual";
-    window.scrollTo({ top: 0, behavior: "auto" });
-    return () => {
-      history.scrollRestoration = originalRestoration;
-    };
-  }, []);
-
   const interactiveSelector =
     "a, button, [role='button'], input, textarea, select, summary, [data-cursor='pointer']";
   const textSelector =
