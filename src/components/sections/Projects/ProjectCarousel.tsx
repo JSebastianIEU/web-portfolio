@@ -141,9 +141,9 @@ export default function ProjectCarousel({
 
   const widthStyles = useMemo(() => {
     return {
-      width: isMobile ? "78vw" : isTablet ? "46vw" : "320px",
-      maxWidth: isMobile ? "320px" : isTablet ? "360px" : "360px",
-      scrollSnapAlign: "start",
+      width: isMobile ? "calc(100vw - 2rem)" : isTablet ? "46vw" : "320px",
+      maxWidth: isMobile ? "calc(100vw - 2rem)" : isTablet ? "360px" : "360px",
+      scrollSnapAlign: isMobile ? "center" : "start",
       scrollSnapStop: "always" as const,
     };
   }, [isMobile, isTablet]);
@@ -151,12 +151,12 @@ export default function ProjectCarousel({
   return (
     <div
       ref={sliderRef}
-      className={`flex ${isMobile ? "gap-3" : "gap-4 md:gap-5"} overflow-x-auto no-scrollbar px-1 py-1 cursor-default`}
+      className={`flex ${isMobile ? "gap-4" : "gap-4 md:gap-5"} overflow-x-auto no-scrollbar ${isMobile ? "px-4" : "px-1"} py-1 cursor-default`}
       style={{
-        scrollBehavior: "auto",
+        scrollBehavior: "smooth",
         scrollSnapType: isMobile || isTablet ? "x mandatory" : "x proximity",
-        scrollPaddingLeft: isMobile ? "1rem" : "0px",
-        scrollPaddingRight: isMobile ? "1rem" : "0px",
+        scrollPaddingLeft: isMobile ? "50%" : "0px",
+        scrollPaddingRight: isMobile ? "50%" : "0px",
       }}
     >
       {projects.map((project, idx) => {

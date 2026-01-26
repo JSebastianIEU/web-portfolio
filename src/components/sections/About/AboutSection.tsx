@@ -68,7 +68,7 @@ export default function AboutSection() {
           }}
         />
 
-        <div className="relative grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 p-5 md:p-7 items-start">
+        <div className="relative grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 p-5 md:p-7 items-center md:items-start">
           <div className="md:col-span-8 flex flex-col gap-3.5 md:gap-4 md:pr-4">
             <div className="flex items-center gap-3">
               <div
@@ -158,9 +158,9 @@ export default function AboutSection() {
             </div>
           </div>
 
-          <div className="md:col-span-4 flex items-start justify-end self-stretch h-full">
+          <div className="md:col-span-4 flex items-center justify-center md:justify-end h-full">
             <div
-              className="relative w-full max-w-xs md:max-w-sm h-full min-h-[320px] max-h-[520px] rounded-lg overflow-hidden"
+              className="relative w-full max-w-[280px] md:max-w-xs lg:max-w-sm h-full min-h-[320px] md:min-h-[380px] max-h-[480px] mx-auto md:mx-0 rounded-lg overflow-hidden"
               style={{
                 aspectRatio: "4 / 5",
                 border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.08)",
