@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import NextImage from "next/image";
@@ -13,18 +14,11 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { buildCategoryBackbone, buildSkillEdges } from "@/utils/skillsGraph";
 
-type TooltipState = {
-  id: string;
-  name: string;
-  x: number;
-  y: number;
-};
-
 type DesktopSkillsExperienceProps = {
   theme: string;
   lang: Locale;
   t: (key: string) => string;
-  revealRef: React.RefObject<HTMLElement>;
+  revealRef: React.RefObject<HTMLElement | null>;
   srList: React.ReactNode;
 };
 
@@ -32,7 +26,7 @@ type MobileSkillsLayoutProps = {
   theme: string;
   lang: Locale;
   t: (key: string) => string;
-  revealRef: React.RefObject<HTMLElement>;
+  revealRef: React.RefObject<HTMLElement | null>;
   srList: React.ReactNode;
 };
 
@@ -187,7 +181,7 @@ function DesktopSkillsExperience({ theme, lang, t, revealRef, srList }: DesktopS
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
-  const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const [tooltip, setTooltip] = useState<{ id: string; name: string; x: number; y: number } | null>(null);
   const [tooltipCoords, setTooltipCoords] = useState<{ x: number; y: number } | null>(null);
   const [categoryRects, setCategoryRects] = useState<Array<{ id: string; width: number; height: number }>>(
     skillCategories.map((c) => ({ id: c.id, width: 220, height: 60 })),
@@ -540,10 +534,26 @@ function DesktopSkillsExperience({ theme, lang, t, revealRef, srList }: DesktopS
   });
   const activeCategory = hoverId ? (nodes.find((n) => n.id === hoverId)?.category ?? null) : null;
 
+  // Pointer handlers
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!allowPointer) return;
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    pointerRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  };
+  const onPointerLeave = () => {
+    pointerRef.current = null;
+  };
+
+  useEffect(() => {
+    if (!allowPointer) {
+      pointerRef.current = null;
+    }
+  }, [allowPointer]);
+
   // Tooltip follow
   useEffect(() => {
     if (!hoverId) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTooltip(null);
       return;
     }
@@ -563,7 +573,6 @@ function DesktopSkillsExperience({ theme, lang, t, revealRef, srList }: DesktopS
 
   useEffect(() => {
     if (!tooltip || typeof window === "undefined") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTooltipCoords(null);
       return;
     }
@@ -586,23 +595,6 @@ function DesktopSkillsExperience({ theme, lang, t, revealRef, srList }: DesktopS
     y = Math.min(vh - padding, Math.max(padding, y));
     setTooltipCoords({ x, y });
   }, [tooltip, size.h, size.w]);
-
-  // Pointer handlers
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!allowPointer) return;
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    pointerRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-  };
-  const onPointerLeave = () => {
-    pointerRef.current = null;
-  };
-
-  useEffect(() => {
-    if (!allowPointer) {
-      pointerRef.current = null;
-    }
-  }, [allowPointer]);
 
   const tooltipNode =
     tooltip && tooltipCoords && typeof window !== "undefined"
