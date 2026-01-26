@@ -9,6 +9,7 @@ import { ProjectsSection } from "@/components/sections/Projects";
 import { SkillsSection } from "@/components/sections/Skills";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useParallax } from "@/hooks/useParallax";
 
 type Point = { x: number; y: number };
@@ -43,6 +44,7 @@ export default function Home() {
   const [cursorPosition, setCursorPosition] = useState<Point>({ x: 0, y: 0 });
   const [cursorVariant, setCursorVariant] = useState<"default" | "link" | "text">("default");
   const showSpotlight = true;
+  const enableCustomCursor = useMediaQuery("(min-width: 1024px) and (pointer: fine)");
 
   const mouseRef = useRef<Point>({ x: 0, y: 0 });
   const frameRef = useRef<number | null>(null);
@@ -96,6 +98,18 @@ export default function Home() {
     "input[type='text'], input[type='email'], input[type='search'], input[type='tel'], input[type='url'], input[type='password'], textarea, [contenteditable='true']";
 
   useEffect(() => {
+    const root = document.documentElement;
+    if (enableCustomCursor) {
+      root.classList.remove("custom-cursor-disabled");
+    } else {
+      root.classList.add("custom-cursor-disabled");
+    }
+    return () => root.classList.remove("custom-cursor-disabled");
+  }, [enableCustomCursor]);
+
+  useEffect(() => {
+    if (!enableCustomCursor) return;
+
     const detectInteractive = (target: EventTarget | null) => {
       if (!(target instanceof Element)) return false;
       return Boolean(target.closest(interactiveSelector));
@@ -140,9 +154,10 @@ export default function Home() {
       window.removeEventListener("pointerup", handlePointerUp);
       window.removeEventListener("pointercancel", handlePointerCancel);
     };
-  }, [interactiveSelector, textSelector]);
+  }, [enableCustomCursor, interactiveSelector, textSelector]);
 
   useEffect(() => {
+    if (!enableCustomCursor) return;
     const tick = () => {
       setCursorPosition((prev) => ({
         x: prev.x + (mouseRef.current.x - prev.x) * 0.4,
@@ -155,13 +170,14 @@ export default function Home() {
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
     };
-  }, []);
+  }, [enableCustomCursor]);
 
   useEffect(() => {
+    if (!enableCustomCursor) return;
     const root = document.documentElement.style;
     root.setProperty("--mx", `${cursorPosition.x}px`);
     root.setProperty("--my", `${cursorPosition.y}px`);
-  }, [cursorPosition]);
+  }, [cursorPosition, enableCustomCursor]);
 
   const prefixLength = currentPhrase.prefix.length;
   const highlightLength = currentPhrase.highlight.length;
@@ -192,8 +208,8 @@ export default function Home() {
   return (
     <>
       <SiteChrome
-        cursorPosition={cursorPosition}
-        showSpotlight={showSpotlight}
+        cursorPosition={enableCustomCursor ? cursorPosition : undefined}
+        showSpotlight={enableCustomCursor && showSpotlight}
         onEnterLink={enterLink}
         onLeaveLink={leaveLink}
         mainClassName="relative z-[10] overflow-x-hidden"
@@ -247,52 +263,56 @@ export default function Home() {
         <ContactSection />
       </SiteChrome>
 
-      <div
-        className="fixed pointer-events-none z-[25000]"
-        style={{
-          left: `${cursorPosition.x}px`,
-          top: `${cursorPosition.y}px`,
-          transform: "translate(-4px, -4px)",
-        }}
-      >
-        {cursorVariant === "default" ? (
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ filter: "drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8))" }}
-          >
-            <path
-              d="M3 2 L3 17 L7.5 12.5 L10 18 L12 17 L9.5 11.5 L16 11.5 L3 2Z"
-              fill={isDark ? "#ffffff" : "#0f172a"}
-              stroke={isDark ? "#0b1224" : "#ffffff"}
-              strokeWidth="0.6"
-              strokeLinejoin="round"
+      {enableCustomCursor && (
+        <div
+          className="fixed pointer-events-none z-[25000]"
+          style={{
+            left: `${cursorPosition.x}px`,
+            top: `${cursorPosition.y}px`,
+            transform: "translate(-4px, -4px)",
+          }}
+        >
+          {cursorVariant === "default" ? (
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 20 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ filter: "drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8))" }}
+            >
+              <path
+                d="M3 2 L3 17 L7.5 12.5 L10 18 L12 17 L9.5 11.5 L16 11.5 L3 2Z"
+                fill={isDark ? "#ffffff" : "#0f172a"}
+                stroke={isDark ? "#0b1224" : "#ffffff"}
+                strokeWidth="0.6"
+                strokeLinejoin="round"
+              />
+            </svg>
+          ) : cursorVariant === "link" ? (
+            <div
+              className="w-4 h-4 rounded-full border border-white/70 bg-white/10"
+              style={{
+                borderColor: isDark ? "rgba(255,255,255,0.7)" : "rgba(15,23,42,0.6)",
+                background: isDark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.7)",
+                boxShadow: isDark
+                  ? "0 0 12px rgba(255,255,255,0.35)"
+                  : "0 0 10px rgba(15,23,42,0.25)",
+              }}
             />
-          </svg>
-        ) : cursorVariant === "link" ? (
-          <div
-            className="w-4 h-4 rounded-full border border-white/70 bg-white/10"
-            style={{
-              borderColor: isDark ? "rgba(255,255,255,0.7)" : "rgba(15,23,42,0.6)",
-              background: isDark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.7)",
-              boxShadow: isDark
-                ? "0 0 12px rgba(255,255,255,0.35)"
-                : "0 0 10px rgba(15,23,42,0.25)",
-            }}
-          />
-        ) : (
-          <div
-            className="w-0.5 h-6 rounded-full"
-            style={{
-              background: isDark ? "rgba(255,255,255,0.85)" : "rgba(15,23,42,0.9)",
-              boxShadow: isDark ? "0 0 10px rgba(255,255,255,0.35)" : "0 0 8px rgba(15,23,42,0.22)",
-            }}
-          />
-        )}
-      </div>
+          ) : (
+            <div
+              className="w-0.5 h-6 rounded-full"
+              style={{
+                background: isDark ? "rgba(255,255,255,0.85)" : "rgba(15,23,42,0.9)",
+                boxShadow: isDark
+                  ? "0 0 10px rgba(255,255,255,0.35)"
+                  : "0 0 8px rgba(15,23,42,0.22)",
+              }}
+            />
+          )}
+        </div>
+      )}
     </>
   );
 }

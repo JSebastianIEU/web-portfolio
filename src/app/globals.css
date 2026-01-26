@@ -7,6 +7,11 @@ body {
   cursor: none !important;
 }
 
+.custom-cursor-disabled,
+.custom-cursor-disabled * {
+  cursor: auto !important;
+}
+
 html {
   scroll-padding-top: 0;
 }
