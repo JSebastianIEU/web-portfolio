@@ -6,6 +6,22 @@ body {
   scroll-behavior: smooth;
   cursor: none !important;
   scrollbar-width: none;
+  -ms-overflow-style: none;
+  overflow-y: scroll;
+}
+
+/* Force hide scrollbar across all browsers */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Additional scrollbar hiding for Firefox and IE/Edge */
+html {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 .custom-cursor-disabled,
@@ -46,18 +62,41 @@ html {
   cursor: none !important;
 }
 
+/* Ensure no scrollbar appears on any element */
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
 body {
   background: var(--grid-base);
   color: var(--text);
   font-family: var(--font-body), system-ui, -apple-system, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  overflow-y: scroll;
   cursor: none !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
-html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-  display: none;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+
+body::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 a,

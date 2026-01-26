@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import type { Locale, TranslationCopy } from "@/domain/i18n";
 import type { Project } from "@/domain/projects";
@@ -28,10 +29,27 @@ export default function ProjectModal({
   lang,
 }: ProjectModalProps) {
   const dialogRef = useRef<HTMLDivElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    // Trigger entry animation
+    const timer = setTimeout(() => setIsVisible(true), 10);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(() => onClose(), 200);
+  };
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") handleClose();
       if (event.key === "Tab" && dialogRef.current) {
         const focusables = dialogRef.current.querySelectorAll<HTMLElement>(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
@@ -49,13 +67,24 @@ export default function ProjectModal({
       }
     };
 
+    // Lock body scroll completely
+    const scrollY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
     document.body.style.overflow = "hidden";
+    
     window.addEventListener("keydown", handleKey);
     return () => {
+      // Restore body scroll
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
       document.body.style.overflow = "";
+      window.scrollTo(0, scrollY);
       window.removeEventListener("keydown", handleKey);
     };
-  }, [onClose]);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -99,26 +128,51 @@ export default function ProjectModal({
 
   const badgeTone = project.status === "live" ? "accent" : project.status === "paused" ? "warning" : "neutral";
 
-  return (
+  if (!isMounted) return null;
+
+  return createPortal(
     <div
-      className={`fixed inset-0 z-[21000] flex ${isCompact ? "items-end" : "items-center"} justify-center px-3 sm:px-4 md:px-6`}
-      style={{ background: "rgba(5,8,15,0.55)", backdropFilter: "blur(8px)" }}
-      onClick={onClose}
+      role="presentation"
+      className={`fixed inset-0 z-[21000] flex ${isCompact ? "items-end" : "items-center"} justify-center transition-all duration-200`}
+      style={{
+        background: isVisible ? "rgba(5,8,15,0.55)" : "rgba(5,8,15,0)",
+        backdropFilter: isVisible ? "blur(8px)" : "blur(0px)",
+        opacity: isVisible ? 1 : 0,
+        padding: isCompact ? "0 0 0 0" : "2rem",
+        overflow: "hidden",
+      }}
+      onClick={handleClose}
+      onTouchMove={(e) => e.preventDefault()}
     >
       <div
         role="dialog"
         aria-modal="true"
-        className={`relative w-full ${isCompact ? "max-w-xl max-h-[88vh] rounded-t-3xl" : "max-w-4xl rounded-2xl"} overflow-hidden`}
+        className={`relative w-full ${
+          isCompact ? "max-w-xl rounded-t-3xl" : "max-w-4xl rounded-2xl"
+        } flex flex-col transition-all duration-200 ease-out no-scrollbar`}
         style={{
           background: isDark ? "rgba(14,18,33,0.9)" : "rgba(255,255,255,0.94)",
           border: isDark ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(15,23,42,0.12)",
-          boxShadow: isDark ? "0 24px 70px rgba(0,0,0,0.45)" : "0 24px 70px rgba(15,23,42,0.18)",
+          boxShadow: isDark 
+            ? "0 0 0 1px rgba(255,255,255,0.05), 0 32px 90px rgba(0,0,0,0.65), 0 12px 40px rgba(0,0,0,0.5)" 
+            : "0 0 0 1px rgba(15,23,42,0.05), 0 32px 90px rgba(15,23,42,0.25), 0 12px 40px rgba(15,23,42,0.15)",
           cursor: "none",
+          transform: isVisible
+            ? "scale(1) translateY(0)"
+            : isCompact
+            ? "scale(0.95) translateY(20px)"
+            : "scale(0.95) translateY(-20px)",
+          opacity: isVisible ? 1 : 0,
+          maxHeight: isCompact ? "85vh" : "90vh",
         }}
         onClick={(event) => event.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
         ref={dialogRef}
       >
-        <div className="flex flex-col gap-4 p-4 sm:p-5 md:p-6 h-full overflow-y-auto">
+        <div 
+          className="flex flex-col gap-4 p-4 sm:p-5 md:p-6 overflow-y-auto no-scrollbar" 
+          style={{ flex: "1 1 auto", minHeight: 0, overscrollBehavior: "contain" }}
+        >
           <div
             className="flex items-start justify-between gap-3 sticky top-0 pb-2"
             style={{ background: isDark ? "rgba(14,18,33,0.94)" : "rgba(255,255,255,0.96)" }}
@@ -139,7 +193,7 @@ export default function ProjectModal({
             <button
               type="button"
               aria-label="Close"
-              onClick={onClose}
+              onClick={handleClose}
               data-cursor="pointer"
               className="h-10 w-10 aspect-square p-0 leading-none rounded-full flex items-center justify-center shrink-0 transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 cursor-pointer"
               style={{
@@ -148,7 +202,7 @@ export default function ProjectModal({
                 color: isDark ? "rgba(248,250,252,0.92)" : "rgba(15,23,42,0.82)",
               }}
             >
-              ✕
+              ×
             </button>
           </div>
 
@@ -162,7 +216,7 @@ export default function ProjectModal({
               <ul className="space-y-2 text-sm" style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.8)" }}>
                 {(lang === "es" ? project.highlightsES || project.highlights : project.highlights).map((item) => (
                   <li key={item} className="leading-relaxed">
-                    • {item}
+                     {item}
                   </li>
                 ))}
               </ul>
@@ -175,7 +229,7 @@ export default function ProjectModal({
               <ul className="space-y-2 text-sm" style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.8)" }}>
                 {(lang === "es" ? project.architectureES || project.architecture : project.architecture).map((item) => (
                   <li key={item} className="leading-relaxed">
-                    • {item}
+                     {item}
                   </li>
                 ))}
               </ul>
@@ -222,6 +276,7 @@ export default function ProjectModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
