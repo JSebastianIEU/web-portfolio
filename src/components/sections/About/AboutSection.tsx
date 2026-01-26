@@ -69,7 +69,7 @@ export default function AboutSection() {
         />
 
         <div className="relative grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 p-5 md:p-7 items-center md:items-start">
-          <div className="md:col-span-8 flex flex-col gap-3.5 md:gap-4 md:pr-4">
+          <div className="order-2 md:order-1 md:col-span-8 flex flex-col gap-3.5 md:gap-4 md:pr-4">
             <div className="flex items-center gap-3">
               <div
                 className="text-xs uppercase tracking-[0.32em]"
@@ -158,7 +158,7 @@ export default function AboutSection() {
             </div>
           </div>
 
-          <div className="md:col-span-4 flex items-center justify-center md:justify-end h-full">
+          <div className="order-1 md:order-2 md:col-span-4 flex items-center justify-center md:justify-end h-full">
             <div
               className="relative w-full max-w-[280px] md:max-w-xs lg:max-w-sm h-full min-h-[320px] md:min-h-[380px] max-h-[480px] mx-auto md:mx-0 rounded-lg overflow-hidden"
               style={{
