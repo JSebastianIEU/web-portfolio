@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { findProjectBySlug, getProjects } from "@/domain/projects";
-import ProjectDetailScreen from "./project-detail-screen";
+import ProjectDetailScreen from "@/components/sections/Projects/ProjectDetailScreen";
 
 type ProjectPageProps = {
   params: { slug: string };

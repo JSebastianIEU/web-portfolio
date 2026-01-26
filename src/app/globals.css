@@ -5,6 +5,7 @@ html,
 body {
   scroll-behavior: smooth;
   cursor: none !important;
+  scrollbar-width: none;
 }
 
 .custom-cursor-disabled,
@@ -52,6 +53,11 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   cursor: none !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }
 
 a,

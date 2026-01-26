@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import SiteChrome from "@/components/layout/SiteChrome";
-import BetweenSectionsCta from "@/components/layout/BetweenSectionsCta";
+import BetweenSectionsCta from "@/components/sections/Common/BetweenSectionsCta";
 import { AboutSection } from "@/components/sections/About";
 import { ContactSection } from "@/components/sections/Contact";
 import { ProjectsSection } from "@/components/sections/Projects";
