@@ -20,7 +20,7 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
 
   return (
     <div
-      className="group relative flex flex-col gap-3 rounded-2xl overflow-hidden transition-all duration-200 h-full cursor-default"
+      className="group relative flex flex-col gap-3 rounded-2xl overflow-hidden transition-all duration-200 h-full"
       style={{
         border: isDark ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(15,23,42,0.12)",
         background: isDark ? "rgba(14,18,33,0.72)" : "rgba(255,255,255,0.78)",
@@ -32,7 +32,7 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
         type="button"
         onClick={onOpen}
         data-cursor="pointer"
-        className="aspect-[16/9] w-full overflow-hidden relative cursor-pointer"
+        className="aspect-[16/9] w-full overflow-hidden relative"
         style={{ background: isDark ? "rgba(255,255,255,0.03)" : "rgba(15,23,42,0.04)" }}
         aria-label={`View details for ${project.titleES || project.title}`}
       >
@@ -108,7 +108,6 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
                     border: isDark ? "1px solid rgba(255,255,255,0.3)" : "1px solid rgba(120,120,120,0.4)",
                     background: isDark ? "rgba(100,100,100,0.3)" : "rgba(140,140,140,0.5)",
                     opacity: hasLink ? 1 : 0.4,
-                    cursor: hasLink ? "pointer" : "default",
                   }}
                   onMouseEnter={(e) => {
                     if (!hasLink) return;

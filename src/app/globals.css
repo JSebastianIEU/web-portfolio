@@ -65,8 +65,12 @@ html {
   box-sizing: border-box;
 }
 
-/* Only apply cursor:none on interactive elements for desktop */
+/* Only apply cursor:none on desktop - ALL elements */
 @media (hover: hover) and (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+  
   a,
   button,
   input,
@@ -81,17 +85,6 @@ body {
   color: var(--text);
   font-family: var(--font-body), system-ui, -apple-system, sans-serif;
   min-height: 100vh;
-}
-
-/* Only apply cursor:none on interactive elements for desktop */
-@media (hover: hover) and (pointer: fine) {
-  a,
-  button,
-  input,
-  textarea,
-  select {
-    cursor: none !important;
-  }
 }
 
 ::selection {
