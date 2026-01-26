@@ -12,6 +12,7 @@ import SocialRail from "@/components/SocialRail";
 import BetweenSectionsCta from "@/components/BetweenSectionsCta";
 import ProjectsSection from "@/components/ProjectsSection";
 import ContactSection from "@/components/ContactSection";
+import { useParallax } from "@/hooks/useParallax";
 
 type Point = { x: number; y: number };
 
@@ -195,6 +196,8 @@ export default function Home() {
   const interactiveSelector =
     "a, button, [role='button'], input, textarea, select, summary, [data-cursor='pointer']";
   const textSelector = "input[type='text'], input[type='email'], input[type='search'], input[type='tel'], input[type='url'], input[type='password'], textarea, [contenteditable='true']";
+
+  useParallax(16);
 
   return (
     <>

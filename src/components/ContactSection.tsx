@@ -5,6 +5,7 @@ import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { siteConfig } from "@/config/siteConfig";
 import { translations } from "@/i18n/translations";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 type Variant = "section" | "page";
 
@@ -43,6 +44,7 @@ export default function ContactSection({ variant = "section", enterLink, leaveLi
   const { lang } = useI18n();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const revealRef = useScrollReveal<HTMLElement>();
   const copy = translations[lang].contact;
 
   const [form, setForm] = useState<FormState>({
@@ -145,12 +147,18 @@ export default function ContactSection({ variant = "section", enterLink, leaveLi
   return (
     <section
       id={variant === "section" ? "contact" : undefined}
-      className="relative w-full px-4 md:px-6 lg:px-8 py-12 md:py-16"
+      ref={revealRef}
+      className="reveal relative w-full px-4 md:px-6 lg:px-8 py-12 md:py-16"
       style={{ cursor: "none" }}
     >
       <div className="max-w-5xl mx-auto space-y-6">
         <div className="flex flex-col gap-1">
-          <h2 className="text-2xl md:text-3xl font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+          <h2
+            className="text-2xl md:text-3xl font-semibold"
+            data-parallax="title"
+            data-speed="0.28"
+            style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
+          >
             {copy.title}
           </h2>
           <div className="text-lg font-semibold" style={{ color: isDark ? "#e2e8f0" : "#111827" }}>

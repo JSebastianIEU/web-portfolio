@@ -7,6 +7,7 @@ import { useTheme } from "@/components/providers/theme-provider";
 import { useI18n } from "@/components/providers/language-provider";
 import { skillCategories, skillCrossLinks, skillNodes, type SkillLink } from "@/data/skillsData";
 import { useNetworkSimulation } from "@/hooks/useNetworkSimulation";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { buildCategoryBackbone, buildSkillEdges } from "@/utils/skillsGraph";
 
 type TooltipState = {
@@ -20,6 +21,7 @@ export default function SkillsSection() {
   const { theme } = useTheme();
   const { lang, t } = useI18n();
   const isDark = theme === "dark";
+  const revealRef = useScrollReveal<HTMLElement>();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
@@ -466,14 +468,20 @@ export default function SkillsSection() {
   return (
     <section
       id="skills"
-      className="relative min-h-[60vh] flex items-center justify-center px-4 md:px-5 py-12 md:py-14 overflow-hidden"
+      ref={revealRef}
+      className="reveal relative min-h-[60vh] flex items-center justify-center px-4 md:px-5 py-12 md:py-14 overflow-hidden"
       style={{ cursor: "none" }}
     >
       <div className="absolute inset-0 pointer-events-none" />
 
       <div className="relative w-full max-w-5xl mx-auto">
         <div className="flex items-start justify-between mb-6 md:mb-8 px-1">
-          <h2 className="text-2xl md:text-3xl font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+          <h2
+            className="text-2xl md:text-3xl font-semibold"
+            data-parallax="title"
+            data-speed="0.26"
+            style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
+          >
             {t("skills.label")}
           </h2>
           <div aria-hidden className="hidden" />

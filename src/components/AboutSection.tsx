@@ -4,11 +4,13 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useI18n } from "@/components/providers/language-provider";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export default function AboutSection() {
   const { dictionary, lang } = useI18n();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const revealRef = useScrollReveal<HTMLElement>();
 
   const cardStyle: CSSProperties = {
     border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.08)",
@@ -29,7 +31,8 @@ export default function AboutSection() {
   return (
     <section
       id="about"
-      className="relative min-h-[82vh] flex items-center justify-center px-4 md:px-5 py-9 md:py-12 overflow-hidden"
+      ref={revealRef}
+      className="reveal relative min-h-[82vh] flex items-center justify-center px-4 md:px-5 py-9 md:py-12 overflow-hidden"
       style={{ cursor: "none" }}
     >
       {/* Subtle grid overlay inside the section to keep identity consistent */}
@@ -68,25 +71,31 @@ export default function AboutSection() {
 
           <div className="relative grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 p-5 md:p-7 items-start">
             <div className="md:col-span-8 flex flex-col gap-3.5 md:gap-4 md:pr-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className="text-xs uppercase tracking-[0.32em]"
-                  style={{ color: isDark ? "rgba(226,232,240,0.75)" : "rgba(15,23,42,0.6)" }}
-                >
-                  <span className="transition-opacity duration-200" key={`label-${lang}`}>
-                    {dictionary.about.label}
-                  </span>
-                </div>
-                <div
-                  className="h-px flex-1"
-                  style={{ background: isDark ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.08)" }}
-                />
-              </div>
-
-              <h2
-                className="text-xl md:text-2xl font-semibold leading-tight"
-                style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
+            <div className="flex items-center gap-3">
+              <div
+                className="text-xs uppercase tracking-[0.32em]"
+                data-parallax="title"
+                data-speed="0.16"
+                style={{ color: isDark ? "rgba(226,232,240,0.75)" : "rgba(15,23,42,0.6)" }}
               >
+                <span className="transition-opacity duration-200" key={`label-${lang}`}>
+                  {dictionary.about.label}
+                </span>
+              </div>
+              <div
+                className="h-px flex-1"
+                data-parallax="title"
+                data-speed="0.12"
+                style={{ background: isDark ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.08)" }}
+              />
+            </div>
+
+            <h2
+              className="text-xl md:text-2xl font-semibold leading-tight"
+              data-parallax="title"
+              data-speed="0.28"
+              style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
+            >
                 <span className="transition-opacity duration-200" key={`headline-${lang}`}>
                   {dictionary.about.headline}
                 </span>

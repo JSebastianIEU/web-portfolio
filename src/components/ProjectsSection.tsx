@@ -6,6 +6,7 @@ import { useTheme } from "@/components/providers/theme-provider";
 import { useI18n } from "@/components/providers/language-provider";
 import { projectsData, type Project } from "@/data/projectsData";
 import { translations } from "@/i18n/translations";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 function Badge({ label, tone = "neutral", isDark }: { label: string; tone?: "neutral" | "accent" | "warning"; isDark: boolean }) {
   const palette: Record<"neutral" | "accent" | "warning", { bg: string; color: string; border: string }> = isDark
@@ -383,6 +384,7 @@ function ProjectCard({ project, onOpen, isDark, displayType, displayStatus, copy
 export default function ProjectsSection() {
   const { theme } = useTheme();
   const { lang } = useI18n();
+  const revealRef = useScrollReveal<HTMLElement>();
   const dict = translations[lang];
   const copy = dict.projects;
   const typeMap = dict.types;
@@ -532,11 +534,21 @@ export default function ProjectsSection() {
   }, []);
 
   return (
-    <section id="projects" className="relative w-full px-4 md:px-6 lg:px-8 py-12 md:py-16" style={{ cursor: "none" }}>
+    <section
+      id="projects"
+      ref={revealRef}
+      className="reveal relative w-full px-4 md:px-6 lg:px-8 py-12 md:py-16"
+      style={{ cursor: "none" }}
+    >
       <div className="absolute inset-0 pointer-events-none" />
       <div className="max-w-5xl mx-auto flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <h2 className="text-2xl md:text-3xl font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+          <h2
+            className="text-2xl md:text-3xl font-semibold"
+            data-parallax="title"
+            data-speed="0.26"
+            style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
+          >
             {copy.title}
           </h2>
           <p className="text-sm md:text-base" style={{ color: isDark ? "rgba(226,232,240,0.75)" : "rgba(15,23,42,0.7)" }}>
