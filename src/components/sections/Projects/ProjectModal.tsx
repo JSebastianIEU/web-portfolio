@@ -75,6 +75,7 @@ export default function ProjectModal({
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
     document.documentElement.style.overscrollBehaviorY = "contain";
+    document.documentElement.style.overscrollBehaviorX = "contain";
 
     window.addEventListener("keydown", handleKey);
     return () => {
@@ -140,13 +141,9 @@ export default function ProjectModal({
         opacity: isVisible ? 1 : 0,
         padding: isCompact ? "0 0 0 0" : "2rem",
         overflow: "hidden",
+        overscrollBehavior: "none",
       }}
       onClick={handleClose}
-      onTouchMove={(e) => {
-        // Allow scroll only inside the dialog
-        if (dialogRef.current && dialogRef.current.contains(e.target as Node)) return;
-        e.preventDefault();
-      }}
     >
       <div
         role="dialog"
@@ -175,7 +172,7 @@ export default function ProjectModal({
       >
         <div 
           className="flex flex-col gap-4 p-4 sm:p-5 md:p-6 overflow-y-auto no-scrollbar" 
-          style={{ flex: "1 1 auto", minHeight: 0, overscrollBehavior: "contain" }}
+          style={{ flex: "1 1 auto", minHeight: 0, overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}
         >
           <div
             className="flex items-start justify-between gap-3 sticky top-0 pb-2"
