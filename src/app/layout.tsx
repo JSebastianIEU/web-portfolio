@@ -2,8 +2,6 @@
 import { Space_Grotesk, Sora } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
-import SocialRail from "@/components/SocialRail";
-import Footer from "@/components/Footer";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -37,11 +35,7 @@ export default function RootLayout({
         className={`${display.variable} ${body.variable} antialiased`}
         style={{ cursor: "none" }}
       >
-        <Providers>
-          <SocialRail />
-          {children}
-          <Footer />
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

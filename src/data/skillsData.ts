@@ -1,31 +1,4 @@
-﻿export type SkillCategoryId =
-  | "software"
-  | "frontend"
-  | "data"
-  | "db"
-  | "cloud"
-  | "automation";
-
-export type SkillTier = "primary" | "secondary";
-
-export type SkillNode = {
-  id: string;
-  nameEN: string;
-  nameES: string;
-  category: SkillCategoryId;
-  iconSrc: string;
-  tier: SkillTier;
-  nodeType?: "skill" | "category";
-};
-
-export type SkillCategory = {
-  id: SkillCategoryId;
-  labelEN: string;
-  labelES: string;
-  anchor: { x: number; y: number }; // normalized 0..1
-};
-
-export type SkillLink = { sourceId: string; targetId: string };
+import type { SkillCategory, SkillLink, SkillNode } from "@/domain/skills";
 
 export const skillCategories: SkillCategory[] = [
   { id: "software", labelEN: "Software Engineering", labelES: "Ingeniería de software", anchor: { x: 0.18, y: 0.35 } },

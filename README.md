@@ -1,42 +1,38 @@
-# Web Portfolio · Next.js + Spline + Motion
-Portafolio personal enfocado en experiencias inmersivas con Spline, animaciones 3D al hacer scroll, modo claro/oscuro y contenido bilingüe (ES/EN). Inspirado en el flujo narrativo de [Mitchell Sparrow](https://github.com/MitchellSparrow/portfolioWebsite) y [mitchellsparrow.com](https://www.mitchellsparrow.com/).
+# Personal Portfolio · Next.js App Router
+Portfolio for Juan Sebastian Peña with a custom cursor/spotlight, canvas-based skills network, bilingual copy (ES/EN), and sectionized layout for easy extensions.
 
-## Stack
-- Next.js 16 (App Router) + React 19 + TypeScript.
-- Tailwind CSS 4 (nuevo pipeline `@tailwindcss/postcss`), diseño con gradientes y glassmorphism.
-- Framer Motion para animaciones on-scroll y microinteracciones 3D.
-- Spline runtime (`@splinetool/react-spline`) para el hero tridimensional.
-- i18n ligero con toggle ES/EN y modo claro/oscuro persistente.
+## Tech stack
+- Next.js 16 (App Router) + React 19 + TypeScript
+- Tailwind CSS (v4 pipeline) + custom glass/grid styling
+- Canvas skills graph with a deterministic simulation
+- Resend email API for the contact form
+- Context providers for theme and language persistence
 
-## Cómo ejecutarlo
+## Run locally
 ```bash
 npm install
 npm run dev
-# npm run lint   # valida estilo/TS
-# npm run build  # build de producción
+# npm run lint
 ```
-Abre http://localhost:3000.
+Open http://localhost:3000.
 
-## Estructura clave
-- `src/app/page.tsx`: layout completo de la landing, secciones, data bilingüe y Spline.
-- `src/app/layout.tsx`: fuentes (Space Grotesk + Sora), providers de tema e idioma.
-- `src/app/globals.css`: tokens de color, fondos y clases utilitarias como `.glass` y `.text-muted`.
-- `src/components/providers/*`: contextos de tema e idioma (persisten en `localStorage`).
-- `src/components/ui/*`: toggles de tema e idioma.
+## Environment
+Create a `.env.local` with:
+```
+RESEND_API_KEY=...
+CONTACT_TO_EMAIL=...
+CONTACT_FROM_EMAIL=...
+```
+The contact API short-circuits if any of these are missing.
 
-## Personaliza rápido
-1) **Escena Spline:** cambia `splineSceneUrl` en `src/app/page.tsx` por la URL exportada desde Spline (`Export -> Code -> React/Next`).
-2) **Proyectos y texto:** edita los arrays `projects`, `services`, `milestones` y `processSteps` en `src/app/page.tsx` (cada string tiene versión ES/EN).
-3) **Contactos:** reemplaza `contactEmail`, el enlace de LinkedIn/GitHub y CTA en la sección `Contact`.
-4) **Colores/mood:** ajusta variables en `src/app/globals.css` (`--bg`, `--accent`, `--accent-2`, sombras, etc.).
-5) **SEO:** actualiza `metadata` en `src/app/layout.tsx` y añade `favicon/og` en `public/` si lo necesitas.
+## Architecture map
+- `app/(site)/`: pages (`page.tsx`, `projects/`, `contact/`, dynamic `[slug]`), `SiteChrome` handles header/footer/background.
+- `src/components/layout/`: header, footer, social rail, spotlight/grid layers, section shell.
+- `src/components/sections/`: About, Skills (desktop canvas + mobile grid), Projects (cards/carousel/modal/detail), Contact (form + actions).
+- `src/data/`: `projectsData.ts`, `skillsData.ts`, `navLinks.ts`, `siteConfig.ts`, `contactCopy.ts`.
+- `src/domain/`: types + logic (`projects`, `skills` graph helpers, `i18n` copy, `contact` validation).
+- `src/lib/`: small helpers (`env`, `cn`, `id`, `safe`).
+- `src/services/email/`: Resend client + contact email helper.
+- `src/styles/tokens.css`: design tokens and CSS variables.
 
-## Inspiración & diferenciadores
-- Hero con Spline + gradientes, tarjetas glass y grillas para dar profundidad.
-- Animaciones on-scroll con ligeras rotaciones 3D (`framer-motion`) y micro-hover.
-- Modo noche/día diseñado (no solo invertido) y copy bilingüe listo desde el inicio.
-
-## Próximos pasos sugeridos
-- Añadir tu PDF de CV y enlaces reales a estudios/casos (botones “View project/Ver proyecto”).
-- Integrar analytics (Vercel/GA/Logrocket) y métricas de scroll/engagement.
-- Conectar un formulario de contacto (Resend/Formspree) o una agenda (Cal/Calendly).
+Content lives in `src/data` and `src/domain/i18n`; UI components only consume that data so adding new projects/skills/copy stays data-driven.

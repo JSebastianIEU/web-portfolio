@@ -1,34 +1,4 @@
-export type ProjectStatus = "live" | "prototype" | "in-progress" | "paused";
-export type ProjectType = "personal" | "enterprise" | "hackathon" | "startup";
-
-export type ProjectLinkSet = {
-  github?: string;
-  caseStudy?: string;
-  video?: string;
-  live?: string;
-};
-
-export type Project = {
-  id: string;
-  slug: string;
-  title: string;
-  titleES?: string;
-  subtitle: string;
-  subtitleES?: string;
-  description: string;
-  descriptionES?: string;
-  type: ProjectType;
-  status: ProjectStatus;
-  role?: string;
-  timeframe?: string;
-  stack: string[];
-  highlights: string[];
-  highlightsES?: string[];
-  architecture: string[];
-  architectureES?: string[];
-  thumbnail?: string;
-  links: ProjectLinkSet;
-};
+import type { Project } from "@/domain/projects";
 
 export const projectsData: Project[] = [
   {
@@ -37,11 +7,11 @@ export const projectsData: Project[] = [
     title: "QR-Forge",
     titleES: "QR-Forge",
     subtitle: "Custom QR generator with SVG/PNG export and design controls.",
-    subtitleES: "Generador de códigos QR con exportación SVG/PNG y controles de diseño.",
+    subtitleES: "Generador de cÃ³digos QR con exportaciÃ³n SVG/PNG y controles de diseÃ±o.",
     description:
       "A design-forward QR builder that lets you control colors, backgrounds, error correction, and export formats without leaving the browser.",
     descriptionES:
-      "Un generador de QR orientado al diseño que permite controlar colores, fondos, corrección de errores y exportar en varios formatos sin salir del navegador.",
+      "Un generador de QR orientado al diseÃ±o que permite controlar colores, fondos, correcciÃ³n de errores y exportar en varios formatos sin salir del navegador.",
     type: "personal",
     status: "prototype",
     role: "Full-stack",
@@ -53,7 +23,7 @@ export const projectsData: Project[] = [
     ],
     highlightsES: [
       "Vista previa en vivo con control de colores de fondo y primer plano",
-      "Exportación a SVG/PNG con tamaños predefinidos",
+      "ExportaciÃ³n a SVG/PNG con tamaÃ±os predefinidos",
       "Presets compartibles para mantener consistencia de marca",
     ],
     architecture: [
@@ -62,9 +32,9 @@ export const projectsData: Project[] = [
       "Preset serialization for quick reuse",
     ],
     architectureES: [
-      "Aplicación Next.js con renderizado en cliente para vista instantánea",
-      "Generación de QR mediante una pipeline ligera de SVG/Canvas",
-      "Serialización de presets para reutilización rápida",
+      "AplicaciÃ³n Next.js con renderizado en cliente para vista instantÃ¡nea",
+      "GeneraciÃ³n de QR mediante una pipeline ligera de SVG/Canvas",
+      "SerializaciÃ³n de presets para reutilizaciÃ³n rÃ¡pida",
     ],
     thumbnail: "/images/placeholders/qr-forge.jpg",
     links: {
@@ -97,7 +67,7 @@ export const projectsData: Project[] = [
     highlightsES: [
       "Flujos basados en roles para administradores, moderadores y usuarios",
       "Chat en tiempo real y actualizaciones de estado en los tickets",
-      "Auto-asociación entre reportes y objetos encontrados",
+      "Auto-asociaciÃ³n entre reportes y objetos encontrados",
     ],
     architecture: [
       "Next.js front-end with server components for data fetching",
@@ -105,7 +75,7 @@ export const projectsData: Project[] = [
       "PostgreSQL for ticketing; Redis for pub/sub notifications",
     ],
     architectureES: [
-      "Frontend Next.js con server components para obtención de datos",
+      "Frontend Next.js con server components para obtenciÃ³n de datos",
       "API en Node.js con canal WebSocket para actualizaciones en vivo",
       "PostgreSQL para tickets; Redis para pub/sub de notificaciones",
     ],
@@ -127,7 +97,7 @@ export const projectsData: Project[] = [
     description:
       "Hackathon prototype for translating legal documents while preserving terminology, structure, and redaction requirements.",
     descriptionES:
-      "Prototipo de hackathon para traducir documentos legales preservando terminología, estructura y requisitos de redacción.",
+      "Prototipo de hackathon para traducir documentos legales preservando terminologÃ­a, estructura y requisitos de redacciÃ³n.",
     type: "hackathon",
     status: "prototype",
     role: "Full-stack / ML",
@@ -138,7 +108,7 @@ export const projectsData: Project[] = [
       "Privacy-first handling of documents",
     ],
     highlightsES: [
-      "Consistencia terminológica con glosarios",
+      "Consistencia terminolÃ³gica con glosarios",
       "Salidas estructuradas alineadas a las secciones originales",
       "Manejo de documentos con enfoque de privacidad",
     ],
@@ -148,9 +118,9 @@ export const projectsData: Project[] = [
       "Next.js front-end for uploads, review, and exports",
     ],
     architectureES: [
-      "Backend FastAPI orquestando pipelines de traducción",
+      "Backend FastAPI orquestando pipelines de traducciÃ³n",
       "Prompts conscientes de secciones para conservar la estructura",
-      "Frontend Next.js para cargas, revisión y exportaciones",
+      "Frontend Next.js para cargas, revisiÃ³n y exportaciones",
     ],
     thumbnail: "/images/placeholders/legal-translator.jpg",
     links: {
@@ -170,7 +140,7 @@ export const projectsData: Project[] = [
     description:
       "Startup initiative to forecast content performance, guide scheduling, and surface actionable insights across channels.",
     descriptionES:
-      "Iniciativa startup para predecir el rendimiento de contenido, guiar la programación y mostrar insights accionables en múltiples canales.",
+      "Iniciativa startup para predecir el rendimiento de contenido, guiar la programaciÃ³n y mostrar insights accionables en mÃºltiples canales.",
     type: "startup",
     status: "in-progress",
     role: "Product & Engineering",
@@ -181,9 +151,9 @@ export const projectsData: Project[] = [
       "Dashboards for scheduling and creative guidance",
     ],
     highlightsES: [
-      "Pipelines de ingesta para métricas multicanal",
-      "Modelos de scoring para predicción de rendimiento",
-      "Dashboards para calendarización y guía creativa",
+      "Pipelines de ingesta para mÃ©tricas multicanal",
+      "Modelos de scoring para predicciÃ³n de rendimiento",
+      "Dashboards para calendarizaciÃ³n y guÃ­a creativa",
     ],
     architecture: [
       "Next.js front-end with typed contracts",
@@ -192,7 +162,7 @@ export const projectsData: Project[] = [
     ],
     architectureES: [
       "Frontend Next.js con contratos tipados",
-      "Supabase para auth y storage; Postgres para analítica",
+      "Supabase para auth y storage; Postgres para analÃ­tica",
       "Pipelines Airflow/Python para features y scoring",
     ],
     thumbnail: "/images/placeholders/predictive-intel.jpg",

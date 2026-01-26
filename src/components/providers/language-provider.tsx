@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import type { Locale } from "@/i18n/translations";
-import { getTranslation } from "@/i18n/translations";
+import type { Locale } from "@/domain/i18n";
+import { getTranslation } from "@/domain/i18n";
 
 type LanguageContextValue = {
   lang: Locale;
@@ -15,14 +15,12 @@ type LanguageContextValue = {
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Locale>("en");
-
-  useEffect(() => {
-    const stored = typeof window !== "undefined" ? window.localStorage.getItem("lang") : null;
-    const browser = typeof window !== "undefined" ? window.navigator.language?.toLowerCase() || "en" : "en";
-    const initial = stored === "es" || stored === "en" ? stored : browser.startsWith("es") ? "es" : "en";
-    setLang(initial as Locale);
-  }, []);
+  const [lang, setLang] = useState<Locale>(() => {
+    if (typeof window === "undefined") return "en";
+    const stored = window.localStorage.getItem("lang");
+    const browser = window.navigator.language?.toLowerCase() || "en";
+    return stored === "es" || stored === "en" ? stored : browser.startsWith("es") ? "es" : "en";
+  });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -37,7 +35,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       lang,
       setLang,
       dictionary,
-      t: (key: string) => key.split(".").reduce((acc: any, segment) => acc?.[segment], dictionary) ?? "",
+      t: (key: string) => {
+        const value = key
+          .split(".")
+          .reduce<unknown>((acc, segment) => {
+            if (acc && typeof acc === "object" && segment in acc) {
+              return (acc as Record<string, unknown>)[segment];
+            }
+            return undefined;
+          }, dictionary);
+        return typeof value === "string" ? value : "";
+      },
     }),
     [dictionary, lang],
   );
