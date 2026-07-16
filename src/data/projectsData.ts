@@ -16,6 +16,7 @@ export const projectsData: Project[] = [
     org: "Strategos AI",
     orgES: "Strategos AI",
     codePrivate: true,
+    preview: "/images/previews/craig.webp",
     type: "enterprise",
     status: "live",
     role: "Lead engineer — end to end",
@@ -55,9 +56,9 @@ export const projectsData: Project[] = [
     ],
     links: {
       github: "",
-      caseStudy: "https://craig-explainer-261w4un7h-jsebastianieus-projects.vercel.app",
+      caseStudy: "https://craig-explainer.vercel.app",
       video: "",
-      live: "",
+      live: "https://just-print.ie",
     },
   },
   {
@@ -66,6 +67,8 @@ export const projectsData: Project[] = [
     title: "Boletapp",
     titleES: "Boletapp",
     logo: "/logos/boletapp.svg",
+    logoDark: "/logos/boletapp-dark.svg",
+    preview: "/images/previews/boletapp.webp",
     subtitle: "Anti-fraud ticketing platform for nightclubs and concerts in Colombia.",
     subtitleES: "Plataforma de boletería antifraude para discotecas y conciertos en Colombia.",
     description:
