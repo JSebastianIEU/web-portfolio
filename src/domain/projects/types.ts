@@ -32,6 +32,10 @@ export type Project = {
   codePrivate?: boolean;
   /** Brand wordmark/logo (SVG path under /public) shown on featured cards. */
   logo?: string;
+  /** Light-on-dark variant of `logo`, used when the dark theme is active. */
+  logoDark?: string;
+  /** Screenshot of the page `links.live` points at, shown on featured cards. */
+  preview?: string;
   type: ProjectType;
   status: ProjectStatus;
   role?: string;
