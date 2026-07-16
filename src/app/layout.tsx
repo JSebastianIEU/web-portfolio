@@ -3,11 +3,8 @@ import { Space_Grotesk, Sora } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "REPLACE_WITH_PRODUCTION_URL"; // TODO: set to production URL
-const metadataBase =
-  SITE_URL.startsWith("http://") || SITE_URL.startsWith("https://")
-    ? new URL(SITE_URL)
-    : new URL("http://localhost:3000");
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const metadataBase = new URL(SITE_URL);
 const SOCIAL_IMAGE = "/images/me.png";
 const TITLE = "Juan Sebastian Peña | Software Engineering & AI";
 const DESCRIPTION =
