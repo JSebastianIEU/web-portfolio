@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import Link from "next/link";
+import { usePathname } from "next/navigation";
+import TransitionLink from "@/components/ui/TransitionLink";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { Sun, Moon } from "lucide-react";
 import LanguageToggle from "@/components/ui/LanguageToggle";
@@ -27,8 +28,19 @@ export default function Header({ enterLink, leaveLink }: HeaderProps) {
   const navLinksRef = useRef<(HTMLAnchorElement | null)[]>([]);
   const tickingRef = useRef(false);
   const isMobile = useMediaQuery("(max-width: 640px)");
+  const pathname = usePathname();
+  // Off-home routes own their nav state; the scroll spy only applies on "/".
+  const routeSection = pathname?.startsWith("/contact")
+    ? "contact"
+    : pathname?.startsWith("/projects")
+    ? "projects"
+    : null;
 
   useEffect(() => {
+    if (routeSection) {
+      setActiveSection(routeSection);
+      return;
+    }
     const updateActiveSection = () => {
       const sections = navLinks.map((item) => document.getElementById(item.id));
       const scrollPosition = window.scrollY + window.innerHeight / 3;
@@ -57,7 +69,7 @@ export default function Header({ enterLink, leaveLink }: HeaderProps) {
       window.removeEventListener("scroll", handleScroll);
       clearTimeout(timeout);
     };
-  }, []);
+  }, [routeSection]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -170,7 +182,7 @@ export default function Header({ enterLink, leaveLink }: HeaderProps) {
                   }}
                 />
                 {navLinks.map((item, index) => (
-                  <Link
+                  <TransitionLink
                     key={item.href}
                     ref={(el) => {
                       navLinksRef.current[index] = el;
@@ -187,7 +199,7 @@ export default function Header({ enterLink, leaveLink }: HeaderProps) {
                     <span className="inline-block transition-all duration-300" key={`${item.labelKey}-${lang}`}>
                       {t(item.labelKey)}
                     </span>
-                  </Link>
+                  </TransitionLink>
                 ))}
               </div>
             </nav>
@@ -254,7 +266,7 @@ export default function Header({ enterLink, leaveLink }: HeaderProps) {
             }}
           >
             {navLinks.map((item) => (
-              <Link
+              <TransitionLink
                 key={item.href}
                 href={item.href}
                 className="flex-1 min-w-[120px] text-sm font-semibold uppercase tracking-[0.08em] px-3 py-2 rounded-xl text-center transition-colors"
@@ -274,7 +286,7 @@ export default function Header({ enterLink, leaveLink }: HeaderProps) {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t(item.labelKey)}
-              </Link>
+              </TransitionLink>
             ))}
           </div>
         </div>

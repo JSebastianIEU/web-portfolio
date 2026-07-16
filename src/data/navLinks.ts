@@ -9,5 +9,7 @@ export const navLinks: NavLink[] = [
   { id: "about", href: "/#about", labelKey: "nav.about" },
   { id: "skills", href: "/#skills", labelKey: "nav.skills" },
   { id: "projects", href: "/#projects", labelKey: "nav.projects" },
-  { id: "contact", href: "/#contact", labelKey: "nav.contact" },
+  // Contact points at the wizard route, not the homepage section, so the
+  // active state must come from the pathname there (see Header).
+  { id: "contact", href: "/contact", labelKey: "nav.contact" },
 ];

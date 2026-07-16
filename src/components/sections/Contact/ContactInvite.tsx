@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import TransitionLink from "@/components/ui/TransitionLink";
 import SectionShell from "@/components/layout/SectionShell";
 import { contactActions } from "@/data/contactCopy";
 import { siteConfig } from "@/data/siteConfig";
@@ -48,7 +48,7 @@ export default function ContactInvite({ enterLink, leaveLink }: Props) {
           {copy.subcopy}
         </p>
 
-        <Link
+        <TransitionLink
           href="/contact"
           data-cursor="pointer"
           className="mt-2 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm md:text-base font-semibold transition-transform hover:scale-[1.04]"
@@ -61,7 +61,7 @@ export default function ContactInvite({ enterLink, leaveLink }: Props) {
         >
           {copy.wizard.cta}
           <ArrowRight size={16} aria-hidden />
-        </Link>
+        </TransitionLink>
 
         {actions.length > 0 && (
           <div className="flex flex-wrap justify-center gap-3 pt-2">

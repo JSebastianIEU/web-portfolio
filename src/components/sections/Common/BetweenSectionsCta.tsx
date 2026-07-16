@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import TransitionLink from "@/components/ui/TransitionLink";
 import { cvFiles } from "@/data/contactCopy";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
@@ -76,7 +77,7 @@ export default function BetweenSectionsCta({ onEnterLink, onLeaveLink }: Props) 
           <span>{dictionary.cta.downloadCv}</span>
         </a>
 
-        <a
+        <TransitionLink
           href="/contact"
           onMouseEnter={onEnterLink}
           onFocus={onEnterLink}
@@ -90,7 +91,7 @@ export default function BetweenSectionsCta({ onEnterLink, onLeaveLink }: Props) 
           }}
         >
           <span>{dictionary.cta.contactMe}</span>
-        </a>
+        </TransitionLink>
       </div>
     </section>
   );
