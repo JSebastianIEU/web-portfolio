@@ -168,49 +168,6 @@ export const projectsData: Project[] = [
     },
   },
   {
-    id: "legal-doc-translator",
-    slug: "legal-doc-translator",
-    title: "Legal Document Translator",
-    titleES: "Traductor de documentos legales",
-    subtitle: "Translator for legal documents with structured output.",
-    subtitleES: "Traductor de documentos legales con salida estructurada.",
-    description:
-      "Hackathon prototype for translating legal documents while preserving terminology, structure, and redaction requirements.",
-    descriptionES:
-      "Prototipo de hackathon para traducir documentos legales preservando terminología, estructura y requisitos de redacción.",
-    category: "open-source",
-    type: "hackathon",
-    status: "prototype",
-    role: "Full-stack / ML",
-    stack: ["Python", "FastAPI", "Next.js", "OpenAI API"],
-    highlights: [
-      "Terminology consistency with glossary anchoring",
-      "Structured outputs aligned to source sections",
-      "Privacy-first handling of documents",
-    ],
-    highlightsES: [
-      "Consistencia terminológica con glosarios",
-      "Salidas estructuradas alineadas a las secciones originales",
-      "Manejo de documentos con enfoque de privacidad",
-    ],
-    architecture: [
-      "FastAPI backend orchestrating translation pipelines",
-      "Section-aware prompts to keep structure intact",
-      "Next.js front-end for uploads, review, and exports",
-    ],
-    architectureES: [
-      "Backend FastAPI orquestando pipelines de traducción",
-      "Prompts conscientes de secciones para conservar la estructura",
-      "Frontend Next.js para cargas, revisión y exportaciones",
-    ],
-    links: {
-      github: "",
-      caseStudy: "",
-      video: "",
-      live: "",
-    },
-  },
-  {
     id: "tiktok-semantic-engagement",
     slug: "tiktok-semantic-engagement",
     title: "TikTok Semantic Engagement",

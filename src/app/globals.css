@@ -189,6 +189,101 @@ body {
   }
 }
 
+/* Sticker cluster (About). Each sticker is: wrapper (position + z + entrance
+   stagger) > TiltCard (existing tilt mechanism, per-sticker) > body (base
+   rotation + hover lift) > two stacked imgs (neon/paper) crossfaded by theme.
+   Rotation lives on the body and tilt on the tilt-card so the transforms
+   compose instead of fighting. Only the hovered sticker moves. */
+.sticker-wrap {
+  position: absolute;
+  /* Depth comes in as a var so :hover can outrank it (an inline z-index would
+     beat the hover rule and back stickers could never lift above the front). */
+  z-index: var(--z, 1);
+}
+
+.sticker-wrap:hover {
+  z-index: 60;
+}
+
+.sticker-body {
+  display: grid;
+  transform: rotate(var(--rot, 0deg));
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sticker-wrap:hover .sticker-body {
+  transform: rotate(0deg) scale(1.04);
+}
+
+.sticker-body > img {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: auto;
+  transition: opacity 200ms ease;
+}
+
+/* Neon cutouts are transparent PNGs: the shadow must follow the silhouette. */
+.sticker-neon {
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.4));
+}
+
+.sticker-wrap:hover .sticker-neon {
+  filter: drop-shadow(0 18px 34px rgba(0, 0, 0, 0.55));
+}
+
+/* Paper stickers have a black background baked in: round it and shadow it so
+   the rectangle reads as an intentional dark card, not a rendering box. */
+.sticker-paper {
+  border-radius: 12px;
+  box-shadow: 0 12px 26px -8px rgba(15, 23, 42, 0.35);
+}
+
+.sticker-wrap:hover .sticker-paper {
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.45);
+}
+
+/* Theme crossfade: both layers stay mounted, only opacity moves. */
+.sticker-cluster[data-skin="neon"] .sticker-paper,
+.sticker-cluster[data-skin="paper"] .sticker-neon {
+  opacity: 0;
+}
+
+/* Entrance stagger, keyed off the section's existing reveal state. */
+@keyframes stickerIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal[data-reveal-state="visible"] .sticker-wrap {
+  animation: stickerIn 440ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: var(--stagger, 0ms);
+}
+
+@media (max-width: 767px) {
+  /* Tighter quarters: calm the hand-placed look so faces keep breathing room. */
+  .sticker-body {
+    transform: rotate(calc(var(--rot, 0deg) * 0.5));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal[data-reveal-state="visible"] .sticker-wrap {
+    animation: none;
+  }
+  .sticker-body,
+  .sticker-wrap:hover .sticker-body {
+    transform: rotate(var(--rot, 0deg));
+    transition: none;
+  }
+  /* The theme crossfade on the imgs stays enabled on purpose. */
+}
+
 /* Contact wizard: each step slides in when it mounts (keyed by step index). */
 @keyframes wizardStepIn {
   from {

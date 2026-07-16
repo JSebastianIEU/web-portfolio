@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import SectionShell from "@/components/layout/SectionShell";
-import TiltCard from "@/components/ui/TiltCard";
+import StickerCluster from "@/components/sections/About/StickerCluster";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
@@ -141,25 +140,8 @@ export default function AboutSection() {
             </div>
           </div>
 
-          <div className="order-1 md:order-2 md:col-span-4 flex items-center justify-center md:justify-end h-full">
-            <TiltCard
-              max={7}
-              className="float-layer relative w-full max-w-[280px] md:max-w-xs lg:max-w-sm h-full min-h-[320px] md:min-h-[380px] max-h-[480px] mx-auto md:mx-0 rounded-lg overflow-hidden"
-              style={{
-                aspectRatio: "4 / 5",
-                border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.08)",
-                background: isDark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.9)",
-              }}
-            >
-              <Image
-                src="/images/me.jpg"
-                alt="Portrait of Sebastian Peña"
-                fill
-                sizes="(max-width: 768px) 100vw, 360px"
-                className="object-cover"
-                priority
-              />
-            </TiltCard>
+          <div className="order-1 md:order-2 md:col-span-4 flex items-center justify-center md:justify-end h-full py-2 md:py-0">
+            <StickerCluster />
           </div>
         </div>
       </div>
