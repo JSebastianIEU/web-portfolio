@@ -206,9 +206,12 @@ body {
 }
 
 .sticker-body {
+  position: relative;
   display: grid;
   transform: rotate(var(--rot, 0deg));
-  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 250ms ease;
 }
 
 .sticker-wrap:hover .sticker-body {
@@ -222,24 +225,65 @@ body {
   transition: opacity 200ms ease;
 }
 
-/* Neon cutouts are transparent PNGs: the shadow must follow the silhouette. */
+/* Both skins are transparent cutouts now (the paper PNGs had their outer
+   black flood-filled away), so both shadows follow the silhouette. */
 .sticker-neon {
   filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.4));
 }
 
-.sticker-wrap:hover .sticker-neon {
-  filter: drop-shadow(0 18px 34px rgba(0, 0, 0, 0.55));
-}
-
-/* Paper stickers have a black background baked in: round it and shadow it so
-   the rectangle reads as an intentional dark card, not a rendering box. */
 .sticker-paper {
-  border-radius: 12px;
-  box-shadow: 0 12px 26px -8px rgba(15, 23, 42, 0.35);
+  filter: drop-shadow(0 10px 20px rgba(15, 23, 42, 0.32));
 }
 
-.sticker-wrap:hover .sticker-paper {
-  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.45);
+/* Hover, dark skin: the cutout's rim lights up in its own neon color. */
+.sticker-cluster[data-skin="neon"] .sticker-wrap:hover .sticker-neon {
+  filter: brightness(1.06) drop-shadow(0 0 5px var(--neon, #67e8f9))
+    drop-shadow(0 0 16px color-mix(in srgb, var(--neon, #67e8f9) 55%, transparent))
+    drop-shadow(0 14px 28px rgba(0, 0, 0, 0.5));
+}
+
+/* Hover, light skin: just lift the shadow. */
+.sticker-cluster[data-skin="paper"] .sticker-wrap:hover .sticker-paper {
+  filter: drop-shadow(0 18px 32px rgba(15, 23, 42, 0.42));
+}
+
+/* While one sticker is hovered, its neighbors recede. */
+.sticker-cluster[data-skin="neon"]:has(.sticker-wrap:hover) .sticker-wrap:not(:hover) .sticker-body {
+  filter: brightness(0.45) saturate(0.75);
+}
+
+.sticker-cluster[data-skin="paper"]:has(.sticker-wrap:hover) .sticker-wrap:not(:hover) .sticker-body {
+  filter: brightness(0.8) saturate(0.85);
+}
+
+/* Sparks: a few tiny motes that twinkle along the lit rim (dark skin only). */
+.spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--neon, #67e8f9);
+  box-shadow: 0 0 6px 1px var(--neon, #67e8f9);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes sparkTwinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+}
+
+.sticker-cluster[data-skin="neon"] .sticker-wrap:hover .spark {
+  animation: sparkTwinkle 1.5s ease-in-out infinite;
+  animation-delay: var(--d, 0ms);
 }
 
 /* Theme crossfade: both layers stay mounted, only opacity moves. */
@@ -280,6 +324,9 @@ body {
   .sticker-wrap:hover .sticker-body {
     transform: rotate(var(--rot, 0deg));
     transition: none;
+  }
+  .sticker-cluster[data-skin="neon"] .sticker-wrap:hover .spark {
+    animation: none;
   }
   /* The theme crossfade on the imgs stays enabled on purpose. */
 }
