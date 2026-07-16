@@ -19,15 +19,7 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
   const badgeTone = project.status === "live" ? "accent" : project.status === "paused" ? "warning" : "neutral";
 
   return (
-    <div
-      className="group relative flex flex-col gap-3 rounded-2xl overflow-hidden transition-all duration-150 h-full"
-      style={{
-        border: isDark ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(15,23,42,0.12)",
-        background: isDark ? "rgba(14,18,33,0.72)" : "rgba(255,255,255,0.78)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-      }}
-    >
+    <div className="glass-card group relative flex flex-col gap-3 rounded-2xl overflow-hidden transition-all duration-150 h-full">
       <button
         type="button"
         onClick={onOpen}

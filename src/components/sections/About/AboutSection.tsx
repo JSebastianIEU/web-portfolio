@@ -1,8 +1,8 @@
 "use client";
 
-import type { CSSProperties } from "react";
 import Image from "next/image";
 import SectionShell from "@/components/layout/SectionShell";
+import TiltCard from "@/components/ui/TiltCard";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
@@ -12,22 +12,6 @@ export default function AboutSection() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const revealRef = useScrollReveal<HTMLElement>();
-
-  const cardStyle: CSSProperties = {
-    border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.08)",
-    background: isDark ? "rgba(14, 18, 33, 0.72)" : "rgba(255, 255, 255, 0.72)",
-    boxShadow: isDark ? "0 12px 36px rgba(0,0,0,0.24)" : "0 12px 36px rgba(15,23,42,0.1)",
-    backdropFilter: "blur(18px) saturate(140%)",
-    WebkitBackdropFilter: "blur(18px) saturate(140%)",
-  };
-
-  const badgeStyle = (): CSSProperties => ({
-    border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.08)",
-    background: isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,42,0.04)",
-    padding: "10px 11px",
-    borderRadius: 10,
-    lineHeight: 1.3,
-  });
 
   return (
     <SectionShell
@@ -49,7 +33,7 @@ export default function AboutSection() {
         }}
       />
 
-      <div className="relative overflow-hidden rounded-[20px]" style={cardStyle}>
+      <div className="glass-panel relative overflow-hidden rounded-[20px]">
         <div
           className="pointer-events-none absolute inset-x-0 -bottom-8 h-12"
           style={{
@@ -130,10 +114,9 @@ export default function AboutSection() {
                   return (
                     <div
                       key={`${label}-${lang}`}
-                      className={`w-full inline-flex flex-col justify-between h-full sm:w-auto sm:flex-none ${
+                      className={`glass-tile w-full inline-flex flex-col justify-between h-full sm:w-auto sm:flex-none px-[11px] py-2.5 rounded-[10px] leading-[1.3] ${
                         idx === 2 ? "sm:min-w-[190px] sm:max-w-[300px]" : "sm:min-w-[150px] sm:max-w-[200px]"
                       }`}
-                      style={badgeStyle()}
                     >
                       <div
                         className="text-[11px] font-semibold uppercase tracking-wide mb-0.5"
@@ -159,15 +142,13 @@ export default function AboutSection() {
           </div>
 
           <div className="order-1 md:order-2 md:col-span-4 flex items-center justify-center md:justify-end h-full">
-            <div
-              className="relative w-full max-w-[280px] md:max-w-xs lg:max-w-sm h-full min-h-[320px] md:min-h-[380px] max-h-[480px] mx-auto md:mx-0 rounded-lg overflow-hidden"
+            <TiltCard
+              max={7}
+              className="float-layer relative w-full max-w-[280px] md:max-w-xs lg:max-w-sm h-full min-h-[320px] md:min-h-[380px] max-h-[480px] mx-auto md:mx-0 rounded-lg overflow-hidden"
               style={{
                 aspectRatio: "4 / 5",
                 border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.08)",
-                boxShadow: isDark ? "0 18px 50px rgba(0,0,0,0.35)" : "0 18px 50px rgba(15,23,42,0.15)",
                 background: isDark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.9)",
-                backdropFilter: "blur(12px)",
-                WebkitBackdropFilter: "blur(12px)",
               }}
             >
               <Image
@@ -178,7 +159,7 @@ export default function AboutSection() {
                 className="object-cover"
                 priority
               />
-            </div>
+            </TiltCard>
           </div>
         </div>
       </div>

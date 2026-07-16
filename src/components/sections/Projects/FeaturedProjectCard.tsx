@@ -3,6 +3,7 @@
 import { ArrowUpRight, Lock } from "lucide-react";
 import type { Locale, TranslationCopy } from "@/domain/i18n";
 import type { Project } from "@/domain/projects";
+import TiltCard from "@/components/ui/TiltCard";
 import ProjectBadge from "./ProjectBadge";
 import ProjectPreview from "./ProjectPreview";
 
@@ -33,15 +34,9 @@ export default function FeaturedProjectCard({
   const showPreview = Boolean(project.preview && liveHref);
 
   return (
-    <div
-      className="group relative flex flex-col md:flex-row md:items-stretch gap-5 md:gap-6 rounded-2xl p-5 md:p-6 transition-all duration-200"
-      style={{
-        border: isDark ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(15,23,42,0.14)",
-        background: isDark ? "rgba(14,18,33,0.78)" : "rgba(255,255,255,0.82)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        boxShadow: isDark ? "0 24px 48px -32px rgba(0,0,0,0.7)" : "0 24px 48px -34px rgba(15,23,42,0.35)",
-      }}
+    <TiltCard
+      max={4}
+      className="glass-panel group relative flex flex-col md:flex-row md:items-stretch gap-5 md:gap-6 rounded-2xl p-5 md:p-6"
     >
       <div className="flex flex-col gap-4 md:flex-1 md:min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
@@ -138,15 +133,19 @@ export default function FeaturedProjectCard({
       </div>
 
       {showPreview && (
-        <div className="md:w-[42%] md:shrink-0 md:self-center">
-          <ProjectPreview
-            src={project.preview as string}
-            href={liveHref as string}
-            label={copy.cards.visit}
-            isDark={isDark}
-          />
+        // Nudged up-and-out with a stronger shadow so it reads as a separate
+        // glass sheet floating above the card rather than a box inside a box.
+        <div className="md:w-[44%] md:shrink-0 md:self-center md:-translate-y-3 md:translate-x-1 transition-transform duration-300 group-hover:md:-translate-y-4">
+          <div className="float-layer rounded-xl">
+            <ProjectPreview
+              src={project.preview as string}
+              href={liveHref as string}
+              label={copy.cards.visit}
+              isDark={isDark}
+            />
+          </div>
         </div>
       )}
-    </div>
+    </TiltCard>
   );
 }

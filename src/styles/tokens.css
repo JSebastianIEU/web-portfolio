@@ -5,10 +5,16 @@
   --text: #0f172a;
   --muted: #4b5563;
   --card: rgba(255, 255, 255, 0.72);
+  --card-strong: rgba(255, 255, 255, 0.82);
+  --card-tile: rgba(15, 23, 42, 0.04);
   --border: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.14);
   --accent: #06b6d4;
   --accent-2: #f97316;
   --shadow: 0 28px 80px -40px rgba(15, 23, 42, 0.6);
+  /* Resting vs floating (detached-layer) card shadows. */
+  --shadow-card: 0 18px 44px -30px rgba(15, 23, 42, 0.35);
+  --shadow-float: 0 26px 60px -28px rgba(15, 23, 42, 0.45);
   --glow: 0 0 0 1px rgba(255, 255, 255, 0.05);
   --grid-base: #ffffff;
   --grid-color: rgba(15, 23, 42, 0.06);
@@ -42,10 +48,15 @@
   --text: #e5e7eb;
   --muted: #94a3b8;
   --card: rgba(14, 18, 33, 0.82);
+  --card-strong: rgba(14, 18, 33, 0.78);
+  --card-tile: rgba(255, 255, 255, 0.04);
   --border: rgba(148, 163, 184, 0.16);
+  --border-strong: rgba(255, 255, 255, 0.16);
   --accent: #22d3ee;
   --accent-2: #fb923c;
   --shadow: 0 20px 70px -30px rgba(0, 0, 0, 0.75);
+  --shadow-card: 0 22px 50px -32px rgba(0, 0, 0, 0.7);
+  --shadow-float: 0 30px 66px -28px rgba(0, 0, 0, 0.8);
   --glow: 0 0 0 1px rgba(255, 255, 255, 0.05);
   --grid-base: #05060d;
   --grid-color: rgba(255, 255, 255, 0.06);

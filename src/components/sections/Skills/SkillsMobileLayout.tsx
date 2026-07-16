@@ -44,17 +44,7 @@ export default function SkillsMobileLayout({ lang, isDark, t, categories, nodes,
 
         <div className="flex flex-col gap-4">
           {groupedSkills.map((group) => (
-            <div
-              key={group.category.id}
-              className="rounded-2xl p-4 shadow-sm"
-              style={{
-                background: isDark
-                  ? "linear-gradient(145deg, rgba(12,16,32,0.92), rgba(9,12,24,0.86))"
-                  : "linear-gradient(145deg, rgba(255,255,255,0.96), rgba(248,249,253,0.92))",
-                border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)"}`,
-                boxShadow: isDark ? "0 14px 38px rgba(0,0,0,0.35)" : "0 16px 34px rgba(15,23,42,0.08)",
-              }}
-            >
+            <div key={group.category.id} className="glass-card rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-3">
                 <span
                   aria-hidden
