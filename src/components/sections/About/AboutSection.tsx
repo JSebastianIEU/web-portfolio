@@ -46,7 +46,7 @@ export default function AboutSection() {
           </div>
 
           <h2
-            className="text-2xl md:text-[2rem] lg:text-4xl font-semibold leading-tight md:leading-[1.15] max-w-[24ch]"
+            className="text-2xl md:text-[2rem] lg:text-4xl 2xl:text-[2.75rem] font-semibold leading-tight md:leading-[1.15] max-w-[24ch]"
             data-parallax="title"
             data-speed="0.28"
             style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
@@ -57,7 +57,7 @@ export default function AboutSection() {
           </h2>
 
           <p
-            className="text-sm md:text-[15px] leading-[1.85] max-w-prose"
+            className="text-sm md:text-[15px] 2xl:text-base leading-[1.85] max-w-prose"
             style={{ color: isDark ? "rgba(229,231,235,0.9)" : "rgba(15,23,42,0.85)" }}
           >
             <span className="transition-opacity duration-200" key={`body-${lang}`}>

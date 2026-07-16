@@ -121,7 +121,7 @@ export default function Home() {
           className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 md:px-6 lg:px-8"
         >
           <div
-            className="relative z-10 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono transition-opacity duration-200 text-center leading-tight md:leading-snug"
+            className="relative z-10 text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-6xl font-mono transition-opacity duration-200 text-center leading-tight md:leading-snug"
             key={`hero-${lang}`}
           >
             <span style={{ color: colors.word, opacity: 0.75 }}>{displayPrefix}</span>

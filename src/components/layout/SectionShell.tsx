@@ -19,7 +19,9 @@ const SectionShell = forwardRef<HTMLElement, SectionShellProps>(
         className={cn("relative w-full px-4 md:px-6 lg:px-8", className)}
         style={{ cursor: "none", ...style }}
       >
-        <div className={cn("max-w-5xl mx-auto", contentClassName)}>{children}</div>
+        {/* Content column grows with the viewport so huge screens don't get a
+            lost 1024px strip in a sea of margin. */}
+        <div className={cn("max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto", contentClassName)}>{children}</div>
       </section>
     );
   },

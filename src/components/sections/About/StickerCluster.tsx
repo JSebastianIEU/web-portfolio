@@ -91,7 +91,7 @@ export default function StickerCluster() {
 
   return (
     <div
-      className="sticker-cluster relative w-full max-w-[320px] md:max-w-sm lg:max-w-md mx-auto md:mx-0"
+      className="sticker-cluster relative w-[min(88vw,380px)] md:w-full md:max-w-sm lg:max-w-md mx-auto md:mx-0"
       style={{ aspectRatio: "4 / 5" }}
       data-skin={isDark ? "neon" : "paper"}
     >
