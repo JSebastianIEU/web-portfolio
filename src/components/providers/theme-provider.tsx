@@ -19,23 +19,24 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+const THEME_COOKIE = "theme";
 
-  // Hydrate theme on client to avoid SSR/client mismatch; ignore lint about setState here.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = window.localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const next = stored === "light" || stored === "dark" ? stored : prefersDark ? "dark" : "light";
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTheme(next);
-  }, []);
+export function ThemeProvider({
+  children,
+  initialTheme,
+}: {
+  children: ReactNode;
+  initialTheme: Theme;
+}) {
+  // Seeded from the server (cookie) — the <html data-theme> is already correct
+  // at first paint, so there's no theme flash.
+  const [theme, setTheme] = useState<Theme>(initialTheme);
 
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.documentElement.dataset.theme = theme;
     localStorage.setItem("theme", theme);
+    document.cookie = `${THEME_COOKIE}=${theme}; path=/; max-age=31536000; samesite=lax`;
   }, [theme]);
 
   const value = useMemo(
