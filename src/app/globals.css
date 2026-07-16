@@ -126,11 +126,10 @@ body {
   -webkit-backdrop-filter: blur(18px);
 }
 
-/* ── Unified glass surfaces ──────────────────────────────────────────────
-   One place for the frosted-sheet look, driven by the theme tokens. All the
-   sections used to hand-roll their own `isDark ? … : …` rgba objects; these
-   classes replace them. Colors resolve from --card/--border/--shadow which
-   already flip via <html data-theme>. */
+/* Unified glass surfaces. One place for the frosted-sheet look, driven by the
+   theme tokens. Sections used to hand-roll per-theme rgba objects; these classes
+   replace them. Colors resolve from --card/--border/--shadow, which flip via
+   <html data-theme>. */
 .glass-card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -153,14 +152,13 @@ body {
   border: 1px solid var(--border);
 }
 
-/* ── Floating tilt ───────────────────────────────────────────────────────
-   The card leans slightly toward the cursor. The rotation angles live in the
-   per-card CSS vars --tilt-x / --tilt-y, written by TiltCard on pointermove
-   (no React re-render, mirrors the --mx/--my cursor channel). Only a
-   composited transform moves — no per-frame repaint. `perspective` sits on the
-   parent so the tilt reads as depth; backdrop-filter stays on the SAME element
-   as the transform (Chrome only breaks backdrop-filter when the transform is
-   on an ANCESTOR), and we deliberately avoid preserve-3d for the same reason. */
+/* Floating tilt. The card leans toward the cursor; the rotation angles live in
+   per-card CSS vars --tilt-x / --tilt-y, written by TiltCard on pointermove (no
+   React re-render, mirrors the --mx/--my cursor channel). Only a composited
+   transform moves, so no per-frame repaint. perspective sits on the parent so
+   the tilt reads as depth; backdrop-filter stays on the SAME element as the
+   transform (Chrome only breaks backdrop-filter when the transform is on an
+   ancestor), and we avoid preserve-3d for the same reason. */
 .tilt-scene {
   perspective: 900px;
 }

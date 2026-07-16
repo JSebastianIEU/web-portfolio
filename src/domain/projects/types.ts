@@ -1,4 +1,4 @@
-export type ProjectStatus = "live" | "prototype" | "in-progress" | "paused";
+export type ProjectStatus = "live" | "prototype" | "in-progress" | "paused" | "published";
 
 export type ProjectType = "personal" | "enterprise" | "hackathon" | "startup";
 

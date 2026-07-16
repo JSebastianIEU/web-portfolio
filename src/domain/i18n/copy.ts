@@ -14,6 +14,7 @@ export const translations: Translations = {
       paused: "Paused",
       prototype: "Prototype",
       "in-progress": "In progress",
+      published: "Published",
     },
     types: {
       personal: "Personal",
@@ -182,6 +183,7 @@ export const translations: Translations = {
       paused: "Pausado",
       prototype: "Prototipo",
       "in-progress": "En progreso",
+      published: "Publicado",
     },
     types: {
       personal: "Personal",

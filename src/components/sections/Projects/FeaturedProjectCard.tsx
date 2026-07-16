@@ -26,7 +26,7 @@ export default function FeaturedProjectCard({
   copy,
   lang,
 }: FeaturedProjectCardProps) {
-  const badgeTone = project.status === "live" ? "accent" : project.status === "paused" ? "warning" : "neutral";
+  const badgeTone = project.status === "live" || project.status === "published" ? "accent" : project.status === "paused" ? "warning" : "neutral";
   const org = lang === "es" ? project.orgES || project.org : project.org;
   const title = lang === "es" ? project.titleES || project.title : project.title;
   const liveHref = project.links.live;

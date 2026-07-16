@@ -21,7 +21,7 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
   const description = lang === "es" ? project.descriptionES || project.description : project.description;
   const title = lang === "es" ? project.titleES || project.title : project.title;
   const subtitle = lang === "es" ? project.subtitleES || project.subtitle : project.subtitle;
-  const badgeTone = project.status === "live" ? "accent" : project.status === "paused" ? "warning" : "neutral";
+  const badgeTone = project.status === "live" || project.status === "published" ? "accent" : project.status === "paused" ? "warning" : "neutral";
 
   const chipStyle = {
     border: isDark ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(15,23,42,0.14)",

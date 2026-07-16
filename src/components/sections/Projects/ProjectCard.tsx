@@ -16,7 +16,7 @@ type ProjectCardProps = {
 };
 
 export default function ProjectCard({ project, onOpen, isDark, displayType, displayStatus, copy, lang }: ProjectCardProps) {
-  const badgeTone = project.status === "live" ? "accent" : project.status === "paused" ? "warning" : "neutral";
+  const badgeTone = project.status === "live" || project.status === "published" ? "accent" : project.status === "paused" ? "warning" : "neutral";
 
   return (
     <div className="glass-card group relative flex flex-col gap-3 rounded-2xl overflow-hidden transition-all duration-150 h-full">

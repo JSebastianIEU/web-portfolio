@@ -202,7 +202,7 @@ export default function ProjectModal({
     </a>
   );
 
-  const badgeTone = project.status === "live" ? "accent" : project.status === "paused" ? "warning" : "neutral";
+  const badgeTone = project.status === "live" || project.status === "published" ? "accent" : project.status === "paused" ? "warning" : "neutral";
 
   if (!isMounted) return null;
 
