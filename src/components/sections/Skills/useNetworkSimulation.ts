@@ -43,6 +43,10 @@ const padY = 40;
 // Wider, softer rings: more spread within each cluster while staying grouped.
 const primaryBand = { min: 105, max: 195 };
 const secondaryBand = { min: 225, max: 360 };
+// Portrait phones get compact absolute rings: the desktop bands (even scaled)
+// would overrun the 2x3 cluster grid on a ~390px-wide stage.
+const primaryBandMobile = { min: 56, max: 98 };
+const secondaryBandMobile = { min: 112, max: 172 };
 const radialBandStrength = 0.05;
 const angleForceStrength = 0.008;
 const jitterDeg = 14;
@@ -116,6 +120,8 @@ export function useNetworkSimulation({
 
     // Precompute deterministic angular slots per category+tier so the
     // per-frame loop never sorts or filters (this was the main jank source).
+    const pBand = isMobile ? primaryBandMobile : primaryBand;
+    const sBand = isMobile ? secondaryBandMobile : secondaryBand;
     const jitterRad = (jitterDeg * Math.PI) / 180;
     const sortedIdsByCatTier: Record<string, string[]> = {};
     nodes.forEach((n) => {
@@ -140,11 +146,13 @@ export function useNetworkSimulation({
       const jitterA = (seed - 0.5) * 2 * jitterRad;
       const slotAngle = catPhase + (slotIndex / totalSlots) * Math.PI * 2 + jitterA;
 
-      const band = n.tier === "primary" ? primaryBand : secondaryBand;
-      const radiusScale = isMobile ? 0.85 : isTablet ? 0.92 : 1;
+      const band = n.tier === "primary" ? pBand : sBand;
+      // Mobile bands are already absolute; tablet compresses the desktop ones.
+      const ringScale = isMobile ? 1 : isTablet ? 0.92 : 1;
+      const nodeScale = isMobile ? 0.78 : isTablet ? 0.92 : 1;
       // Scatter targets across the band (not just its midline) for a more
       // organic, spread-out cluster.
-      const slotRadius = (band.min + (band.max - band.min) * (0.25 + rand() * 0.6)) * radiusScale;
+      const slotRadius = (band.min + (band.max - band.min) * (0.25 + rand() * 0.6)) * ringScale;
 
       const baseR = n.tier === "primary" ? 20 : 14;
       return {
@@ -153,7 +161,7 @@ export function useNetworkSimulation({
         vx: 0,
         vy: 0,
         node: n,
-        r: baseR * radiusScale,
+        r: baseR * nodeScale,
         mass: n.tier === "primary" ? 1.6 : 1,
         seed,
         slotAngle,
@@ -192,7 +200,14 @@ export function useNetworkSimulation({
     const damping = isMobile ? 0.982 : isTablet ? 0.976 : 0.97;
     const maxVelCap = isMobile ? 0.28 : isTablet ? 0.34 : 0.42;
     const angleForce = angleForceStrength;
-    const bandScale = isMobile ? 0.85 : isTablet ? 0.92 : 1;
+    const bandScale = isMobile ? 1 : isTablet ? 0.92 : 1;
+    const stepPBand = isMobile ? primaryBandMobile : primaryBand;
+    const stepSBand = isMobile ? secondaryBandMobile : secondaryBand;
+    // The 2x3 mobile grid packs anchors closer, so cross-cluster repulsion
+    // and title padding shrink with it.
+    const repelRadius = isMobile ? 120 : otherAnchorRepelRadius;
+    const titlePadX = isMobile ? 40 : padX;
+    const titlePadY = isMobile ? 24 : padY;
 
     const gridSize = isMobile ? 120 : isTablet ? 100 : 80;
     const freezeMotion = false;
@@ -254,7 +269,7 @@ export function useNetworkSimulation({
         const dxAnchor = n.x - anchor.x;
         const dyAnchor = n.y - anchor.y;
         const distAnchor = Math.hypot(dxAnchor, dyAnchor) || 1;
-        const band = n.node.tier === "primary" ? primaryBand : secondaryBand;
+        const band = n.node.tier === "primary" ? stepPBand : stepSBand;
         const bandMin = band.min * bandScale;
         const bandMax = band.max * bandScale;
         if (!isHovered) {
@@ -282,8 +297,8 @@ export function useNetworkSimulation({
         const rect = rectMap[n.node.category];
         const titleCenter = titleCenters[n.node.category];
         if (rect && titleCenter) {
-          const halfW = rect.w * 0.5 + padX;
-          const halfH = rect.h * 0.5 + padY;
+          const halfW = rect.w * 0.5 + titlePadX;
+          const halfH = rect.h * 0.5 + titlePadY;
           if (Math.abs(n.x - titleCenter.x) < halfW && Math.abs(n.y - titleCenter.y) < halfH) {
             const pushX = (halfW - Math.abs(n.x - titleCenter.x)) * titleRepelStrength;
             const pushY = (halfH - Math.abs(n.y - titleCenter.y)) * titleRepelStrength;
@@ -298,7 +313,7 @@ export function useNetworkSimulation({
           const dx = n.x - otherAnchor.x;
           const dy = n.y - otherAnchor.y;
           const dist2 = dx * dx + dy * dy;
-          const limit = otherAnchorRepelRadius ** 2;
+          const limit = repelRadius ** 2;
           if (dist2 < limit && dist2 > 0.001) {
             const dist = Math.sqrt(dist2);
             const repel = (limit - dist2) * otherAnchorRepelStrength;
@@ -358,8 +373,8 @@ export function useNetworkSimulation({
           const nearTitle =
             rectMap[n.node.category] &&
             titleCenters[n.node.category] &&
-            Math.abs(n.x - titleCenters[n.node.category].x) < (rectMap[n.node.category].w * 0.5 + padX + 10) &&
-            Math.abs(n.y - titleCenters[n.node.category].y) < (rectMap[n.node.category].h * 0.5 + padY + 10);
+            Math.abs(n.x - titleCenters[n.node.category].x) < (rectMap[n.node.category].w * 0.5 + titlePadX + 10) &&
+            Math.abs(n.y - titleCenters[n.node.category].y) < (rectMap[n.node.category].h * 0.5 + titlePadY + 10);
           if (!nearTitle) {
             ax += Math.sin(time * 0.28 + n.seed * 8) * micro;
             ay += Math.cos(time * 0.21 + n.seed * 9) * micro;
@@ -408,7 +423,7 @@ export function useNetworkSimulation({
           const dx = n.x - pointer.x;
           const dy = n.y - pointer.y;
           const dist2 = dx * dx + dy * dy;
-          const hitRadius = (n.r + 4) ** 2;
+          const hitRadius = (n.r + 8) ** 2;
           if (dist2 < best && dist2 < hitRadius) {
             best = dist2;
             nextHover = n.node.id;

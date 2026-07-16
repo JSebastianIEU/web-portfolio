@@ -92,12 +92,17 @@ export default function SkillsDesktopExperience({ theme, lang, t, categories, no
     if (!el) return;
     const resize = () => {
       const rect = el.getBoundingClientRect();
-      setSize({ w: rect.width, h: Math.max(300, rect.width * 0.6) });
+      // Phones get a portrait stage (2x3 cluster grid); wider screens keep the
+      // landscape ratio, capped so ultrawide monitors don't get a mile of net.
+      const h = isMobile
+        ? Math.min(680, Math.max(540, rect.width * 1.5))
+        : Math.min(820, Math.max(300, rect.width * 0.6));
+      setSize({ w: rect.width, h });
     };
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     lastEdgeBuild.current = 0;
@@ -366,15 +371,36 @@ export default function SkillsDesktopExperience({ theme, lang, t, categories, no
 
   const activeCategory = hoverId ? nodes.find((node) => node.id === hoverId)?.category ?? null : null;
 
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const onPointerMove = (event: React.PointerEvent) => {
     if (!allowPointer) return;
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
     pointerRef.current = { x: event.clientX - rect.left, y: event.clientY - rect.top };
   };
-  const onPointerLeave = () => {
-    pointerRef.current = null;
+  // Touch: a tap acts as a momentary hover — highlights the node under the
+  // finger (tooltip + connections), then releases so the net settles back.
+  const onPointerDown = (event: React.PointerEvent) => {
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    pointerRef.current = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    if (!allowPointer) {
+      if (tapTimer.current) clearTimeout(tapTimer.current);
+      tapTimer.current = setTimeout(() => {
+        pointerRef.current = null;
+      }, 1800);
+    }
   };
+  const onPointerLeave = () => {
+    if (allowPointer) pointerRef.current = null;
+  };
+
+  useEffect(() => {
+    return () => {
+      if (tapTimer.current) clearTimeout(tapTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (!allowPointer) {
@@ -471,11 +497,14 @@ export default function SkillsDesktopExperience({ theme, lang, t, categories, no
             boxShadow: "none",
             backdropFilter: "none",
             WebkitBackdropFilter: "none",
+            // Taps highlight nodes but the page must still scroll under a thumb.
+            touchAction: "pan-y",
           }}
           onPointerMove={onPointerMove}
+          onPointerDown={onPointerDown}
           onPointerLeave={onPointerLeave}
         >
-          <canvas ref={canvasRef} className="block w-full h-full" style={{ minHeight: isMobile ? "280px" : "360px" }} />
+          <canvas ref={canvasRef} className="block w-full h-full" style={{ minHeight: isMobile ? "540px" : "360px" }} />
 
           <div className="pointer-events-none absolute inset-0">
             {categories.map((category) => {
