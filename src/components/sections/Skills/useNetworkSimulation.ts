@@ -35,6 +35,8 @@ type SimulationParams = {
   pointerRef: MutableRefObject<{ x: number; y: number } | null>;
   viewport: "mobile" | "tablet" | "desktop";
   titleAnchors?: Record<string, { x: number; y: number }>;
+  /** When false the rAF loop stops entirely (section off-screen). */
+  running?: boolean;
   onFrame?: (state: { nodes: Vec[]; hoverId: string | null; time: number }) => void;
 };
 
@@ -43,10 +45,10 @@ const padY = 40;
 // Wider, softer rings: more spread within each cluster while staying grouped.
 const primaryBand = { min: 105, max: 195 };
 const secondaryBand = { min: 225, max: 360 };
-// Portrait phones get compact absolute rings: the desktop bands (even scaled)
-// would overrun the 2x3 cluster grid on a ~390px-wide stage.
-const primaryBandMobile = { min: 56, max: 98 };
-const secondaryBandMobile = { min: 112, max: 172 };
+// Portrait phones get compact absolute rings sized for the zigzag rows
+// (~150px of vertical rhythm on a ~390px-wide stage).
+const primaryBandMobile = { min: 50, max: 88 };
+const secondaryBandMobile = { min: 96, max: 142 };
 const radialBandStrength = 0.05;
 const angleForceStrength = 0.008;
 const jitterDeg = 14;
@@ -93,6 +95,7 @@ export function useNetworkSimulation({
   pointerRef,
   viewport,
   titleAnchors,
+  running = true,
   onFrame,
 }: SimulationParams) {
   const isMobile = viewport === "mobile";
@@ -172,7 +175,7 @@ export function useNetworkSimulation({
   }, [categories, height, isMobile, isTablet, links, nodes, width]);
 
   useEffect(() => {
-    if (!width || !height) return;
+    if (!width || !height || !running) return;
     let frame: number;
 
     const rectMap: Record<string, { w: number; h: number }> = {};
@@ -211,6 +214,8 @@ export function useNetworkSimulation({
 
     const gridSize = isMobile ? 120 : isTablet ? 100 : 80;
     const freezeMotion = false;
+
+    lastTimeRef.current = performance.now();
 
     const step = () => {
       const arr = nodesRef.current;
@@ -441,7 +446,7 @@ export function useNetworkSimulation({
 
     frame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frame);
-  }, [categories, categoryRects, height, isMobile, isTablet, links, nodes, onFrame, pointerRef, titleAnchors, width]);
+  }, [categories, categoryRects, height, isMobile, isTablet, links, nodes, onFrame, pointerRef, running, titleAnchors, width]);
 
   return { nodesRef, hoverId };
 }

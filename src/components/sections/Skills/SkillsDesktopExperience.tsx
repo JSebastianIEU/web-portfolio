@@ -30,6 +30,7 @@ export default function SkillsDesktopExperience({ theme, lang, t, categories, no
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
+  const [inView, setInView] = useState(false);
   const [tooltip, setTooltip] = useState<{ id: string; name: string; x: number; y: number } | null>(null);
   const [tooltipCoords, setTooltipCoords] = useState<{ x: number; y: number } | null>(null);
   const [categoryRects, setCategoryRects] = useState<Array<{ id: string; width: number; height: number }>>(
@@ -90,12 +91,23 @@ export default function SkillsDesktopExperience({ theme, lang, t, categories, no
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => setInView(entries[0]?.isIntersecting ?? false),
+      { rootMargin: "160px 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
     const resize = () => {
       const rect = el.getBoundingClientRect();
       // Phones get a portrait stage (2x3 cluster grid); wider screens keep the
       // landscape ratio, capped so ultrawide monitors don't get a mile of net.
       const h = isMobile
-        ? Math.min(680, Math.max(540, rect.width * 1.5))
+        ? Math.min(1000, Math.max(780, rect.width * 2.3))
         : Math.min(820, Math.max(300, rect.width * 0.6));
       setSize({ w: rect.width, h });
     };
@@ -151,15 +163,21 @@ export default function SkillsDesktopExperience({ theme, lang, t, categories, no
     pointerRef,
     viewport: viewportMode,
     titleAnchors: titleAnchorMap,
+    running: inView,
     onFrame: ({ nodes: state, hoverId: frameHover, time }) => {
       const canvas = canvasRef.current;
       if (!canvas || !size.w || !size.h) return;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
-      canvas.width = size.w * dpr;
-      canvas.height = size.h * dpr;
+      const rawDpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+      const dpr = viewportMode === "mobile" ? Math.min(rawDpr, 1.5) : rawDpr;
+      const bw = Math.round(size.w * dpr);
+      const bh = Math.round(size.h * dpr);
+      if (canvas.width !== bw || canvas.height !== bh) {
+        canvas.width = bw;
+        canvas.height = bh;
+      }
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
 
@@ -321,20 +339,12 @@ export default function SkillsDesktopExperience({ theme, lang, t, categories, no
         const tone = dim * visibilityScale;
         ctx.save();
         ctx.translate(node.x, node.y);
-        const shadowBlur =
-          node.node.tier === "primary"
-            ? viewportMode === "mobile"
-              ? 10
-              : viewportMode === "tablet"
-              ? 14
-              : 18
-            : viewportMode === "mobile"
-            ? 6
-            : viewportMode === "tablet"
-            ? 9
-            : 12;
-        ctx.shadowColor = isDark ? `rgba(255,255,255,${0.14 * tone})` : `rgba(15,23,42,${0.16 * tone})`;
-        ctx.shadowBlur = shadowBlur;
+        if (viewportMode !== "mobile") {
+          const shadowBlur =
+            node.node.tier === "primary" ? (viewportMode === "tablet" ? 14 : 18) : viewportMode === "tablet" ? 9 : 12;
+          ctx.shadowColor = isDark ? `rgba(255,255,255,${0.14 * tone})` : `rgba(15,23,42,${0.16 * tone})`;
+          ctx.shadowBlur = shadowBlur;
+        }
         ctx.fillStyle = isDark ? `rgba(255,255,255,${0.07 * tone})` : `rgba(15,23,42,${0.07 * tone})`;
         ctx.beginPath();
         ctx.arc(0, 0, r, 0, Math.PI * 2);
@@ -374,10 +384,17 @@ export default function SkillsDesktopExperience({ theme, lang, t, categories, no
   const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const onPointerMove = (event: React.PointerEvent) => {
-    if (!allowPointer) return;
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
+    // On touch, move events only fire while the finger is down: dragging
+    // across the net sweeps the highlight just like the desktop hover.
     pointerRef.current = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    if (!allowPointer) {
+      if (tapTimer.current) clearTimeout(tapTimer.current);
+      tapTimer.current = setTimeout(() => {
+        pointerRef.current = null;
+      }, 1800);
+    }
   };
   // Touch: a tap acts as a momentary hover — highlights the node under the
   // finger (tooltip + connections), then releases so the net settles back.
@@ -504,7 +521,7 @@ export default function SkillsDesktopExperience({ theme, lang, t, categories, no
           onPointerDown={onPointerDown}
           onPointerLeave={onPointerLeave}
         >
-          <canvas ref={canvasRef} className="block w-full h-full" style={{ minHeight: isMobile ? "540px" : "360px" }} />
+          <canvas ref={canvasRef} className="block w-full h-full" style={{ minHeight: isMobile ? "780px" : "360px" }} />
 
           <div className="pointer-events-none absolute inset-0">
             {categories.map((category) => {
@@ -540,7 +557,7 @@ export default function SkillsDesktopExperience({ theme, lang, t, categories, no
                               : isDark
                               ? "0 6px 20px rgba(0,0,0,0.25)"
                               : "0 6px 18px rgba(0,0,0,0.08)",
-                          fontSize: "clamp(14px,2vw,22px)",
+                          fontSize: "clamp(15px,3.5vw,22px)",
                           transition: "all 0.3s ease",
                         }}
                       >

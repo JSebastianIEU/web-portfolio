@@ -9,15 +9,16 @@ import { useTheme } from "@/components/providers/theme-provider";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
-/* On phones the network runs portrait: clusters in a 2x3 grid instead of the
-   landscape scatter, so every category keeps its own breathing room. */
+/* On phones the network runs portrait as a zigzag: one category per row,
+   alternating right / left, each with its bubbles orbiting its title. Bigger
+   and airier than a 2x3 grid on a narrow screen. */
 const MOBILE_ANCHORS: Record<string, { x: number; y: number }> = {
-  software: { x: 0.26, y: 0.12 },
-  frontend: { x: 0.75, y: 0.18 },
-  data: { x: 0.25, y: 0.45 },
-  db: { x: 0.76, y: 0.5 },
-  cloud: { x: 0.27, y: 0.8 },
-  automation: { x: 0.74, y: 0.86 },
+  software: { x: 0.62, y: 0.08 },
+  frontend: { x: 0.36, y: 0.245 },
+  data: { x: 0.63, y: 0.41 },
+  db: { x: 0.36, y: 0.575 },
+  cloud: { x: 0.63, y: 0.74 },
+  automation: { x: 0.37, y: 0.9 },
 };
 
 export default function SkillsSection() {
