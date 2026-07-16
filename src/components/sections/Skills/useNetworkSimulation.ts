@@ -4,7 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import type { MutableRefObject } from "react";
 import type { SkillCategory, SkillLink, SkillNode } from "@/domain/skills";
 
-type Vec = { x: number; y: number; vx: number; vy: number; node: SkillNode; r: number; mass: number; seed: number };
+type Vec = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  node: SkillNode;
+  r: number;
+  mass: number;
+  seed: number;
+  /** Precomputed angular slot (category phase + per-tier spacing + jitter). */
+  slotAngle: number;
+  /** Precomputed target ring radius (band mid for the node's tier). */
+  slotRadius: number;
+};
 
 type CategoryRect = {
   id: string;
@@ -27,13 +40,14 @@ type SimulationParams = {
 
 const padX = 70;
 const padY = 40;
-const primaryBand = { min: 110, max: 170 };
-const secondaryBand = { min: 210, max: 310 };
-const radialBandStrength = 0.08;
-const angleForceStrength = 0.01;
-const jitterDeg = 8;
-const otherAnchorRepelRadius = 220;
-const otherAnchorRepelStrength = 0.00022;
+// Wider, softer rings: more spread within each cluster while staying grouped.
+const primaryBand = { min: 105, max: 195 };
+const secondaryBand = { min: 225, max: 360 };
+const radialBandStrength = 0.05;
+const angleForceStrength = 0.008;
+const jitterDeg = 14;
+const otherAnchorRepelRadius = 230;
+const otherAnchorRepelStrength = 0.0002;
 const titleRepelStrength = 0.12;
 const maxAccelDesktop = 0.15;
 const maxAccelMobile = 0.12;
@@ -43,7 +57,7 @@ const cursorRadiusMobile = 150;
 const cursorStrengthDesktop = 0.12;
 const cursorStrengthTablet = 0.1;
 const cursorStrengthMobile = 0.08;
-const microMotionAmp = { desktop: 0.012, tablet: 0.01, mobile: 0.006 };
+const microMotionAmp = { desktop: 0.02, tablet: 0.014, mobile: 0.008 };
 
 // deterministic hash for seed
 function hashString(str: string) {
@@ -100,49 +114,50 @@ export function useNetworkSimulation({
     });
     neighborsRef.current = neighbors;
 
-    const totals: Record<string, number> = {};
-    const sortedIdsByCat: Record<string, string[]> = {};
+    // Precompute deterministic angular slots per category+tier so the
+    // per-frame loop never sorts or filters (this was the main jank source).
+    const jitterRad = (jitterDeg * Math.PI) / 180;
+    const sortedIdsByCatTier: Record<string, string[]> = {};
     nodes.forEach((n) => {
-      totals[n.category] = (totals[n.category] || 0) + 1;
+      const key = `${n.category}:${n.tier}`;
+      if (!sortedIdsByCatTier[key]) {
+        sortedIdsByCatTier[key] = nodes
+          .filter((nn) => nn.category === n.category && nn.tier === n.tier)
+          .map((nn) => nn.id)
+          .sort((a, b) => (hashString(a) < hashString(b) ? -1 : 1));
+      }
     });
-    // deterministically sort ids per category for angular slots
-    categories.forEach((c) => {
-      sortedIdsByCat[c.id] = nodes
-        .filter((n) => n.category === c.id)
-        .map((n) => n.id)
-        .sort((a, b) => (hashString(a) < hashString(b) ? -1 : 1));
-    });
-    const perCatIndex: Record<string, number> = {};
 
     const nextNodes: Vec[] = nodes.map((n) => {
       const cat = categories.find((c) => c.id === n.category) ?? categories[0];
       const seed = hashString(n.id);
       const rand = mulberry32(Math.floor(seed * 1e9));
-      const totalInCat = totals[n.category] || 1;
-      const idxInCat = perCatIndex[n.category] || 0;
-      perCatIndex[n.category] = idxInCat + 1;
 
-      const sortedIds = sortedIdsByCat[n.category] || [];
-      const slotIndex = sortedIds.indexOf(n.id) >= 0 ? sortedIds.indexOf(n.id) : idxInCat;
+      const sortedIds = sortedIdsByCatTier[`${n.category}:${n.tier}`] || [];
+      const slotIndex = Math.max(0, sortedIds.indexOf(n.id));
+      const totalSlots = Math.max(1, sortedIds.length);
       const catPhase = hashString(n.category) * Math.PI * 2;
-      const spreadAngle = (slotIndex / totalInCat) * Math.PI * 2;
-      const jitter = (rand() - 0.5) * (Math.PI / 18); // ~±10°
-      const angle = catPhase + spreadAngle + jitter;
+      const jitterA = (seed - 0.5) * 2 * jitterRad;
+      const slotAngle = catPhase + (slotIndex / totalSlots) * Math.PI * 2 + jitterA;
 
-      const radiusBase = n.tier === "primary" ? 115 : 200;
-      const radiusJitter = n.tier === "primary" ? 20 : 40;
-      const r0 = radiusBase + (rand() - 0.5) * radiusJitter;
-      const baseR = n.tier === "primary" ? 20 : 14;
+      const band = n.tier === "primary" ? primaryBand : secondaryBand;
       const radiusScale = isMobile ? 0.85 : isTablet ? 0.92 : 1;
+      // Scatter targets across the band (not just its midline) for a more
+      // organic, spread-out cluster.
+      const slotRadius = (band.min + (band.max - band.min) * (0.25 + rand() * 0.6)) * radiusScale;
+
+      const baseR = n.tier === "primary" ? 20 : 14;
       return {
-        x: cat.anchor.x * width + Math.cos(angle) * r0 * radiusScale,
-        y: cat.anchor.y * height + Math.sin(angle) * r0 * radiusScale,
+        x: cat.anchor.x * width + Math.cos(slotAngle) * slotRadius,
+        y: cat.anchor.y * height + Math.sin(slotAngle) * slotRadius,
         vx: 0,
         vy: 0,
         node: n,
         r: baseR * radiusScale,
         mass: n.tier === "primary" ? 1.6 : 1,
         seed,
+        slotAngle,
+        slotRadius,
       };
     });
     nodesRef.current = nextNodes;
@@ -173,11 +188,11 @@ export function useNetworkSimulation({
     }
 
     const boundsPad = 24;
-    const stiffness = isMobile ? 0.038 : isTablet ? 0.044 : 0.046;
+    const stiffness = isMobile ? 0.032 : isTablet ? 0.037 : 0.039;
     const damping = isMobile ? 0.982 : isTablet ? 0.976 : 0.97;
-    const maxVelCap = isMobile ? 0.28 : isTablet ? 0.34 : 0.4;
+    const maxVelCap = isMobile ? 0.28 : isTablet ? 0.34 : 0.42;
     const angleForce = angleForceStrength;
-    const jitterRad = (jitterDeg * Math.PI) / 180;
+    const bandScale = isMobile ? 0.85 : isTablet ? 0.92 : 1;
 
     const gridSize = isMobile ? 120 : isTablet ? 100 : 80;
     const freezeMotion = false;
@@ -206,8 +221,8 @@ export function useNetworkSimulation({
       if (rawCursor) {
         const prev = cursorSmooth.current || rawCursor;
         cursorSmooth.current = {
-          x: prev.x + (rawCursor.x - prev.x) * 0.12,
-          y: prev.y + (rawCursor.y - prev.y) * 0.12,
+          x: prev.x + (rawCursor.x - prev.x) * 0.16,
+          y: prev.y + (rawCursor.y - prev.y) * 0.16,
         };
       } else {
         cursorSmooth.current = null;
@@ -230,46 +245,37 @@ export function useNetworkSimulation({
         let ax = 0;
         let ay = 0;
         if (!isHovered) {
-          const anchorFactor = n.node.tier === "primary" ? 2.2 : 1.8;
+          const anchorFactor = n.node.tier === "primary" ? 1.7 : 1.25;
           ax = (anchor.x - n.x) * stiffness * anchorFactor;
           ay = (anchor.y - n.y) * stiffness * anchorFactor;
         }
 
-        // ring band force
+        // ring band force (soft: lets nodes drift within a wide band)
         const dxAnchor = n.x - anchor.x;
         const dyAnchor = n.y - anchor.y;
         const distAnchor = Math.hypot(dxAnchor, dyAnchor) || 1;
         const band = n.node.tier === "primary" ? primaryBand : secondaryBand;
+        const bandMin = band.min * bandScale;
+        const bandMax = band.max * bandScale;
         if (!isHovered) {
           let radialForce = 0;
-          if (distAnchor < band.min) {
-            radialForce = (distAnchor - band.min) * radialBandStrength;
-          } else if (distAnchor > band.max) {
-            radialForce = (distAnchor - band.max) * radialBandStrength;
+          if (distAnchor < bandMin) {
+            radialForce = (distAnchor - bandMin) * radialBandStrength;
+          } else if (distAnchor > bandMax) {
+            radialForce = (distAnchor - bandMax) * radialBandStrength;
           } else {
-            const mid = (band.min + band.max) * 0.5;
-            radialForce = (distAnchor - mid) * (radialBandStrength * 0.35);
+            radialForce = (distAnchor - n.slotRadius) * (radialBandStrength * 0.2);
           }
           ax += (-dxAnchor / distAnchor) * radialForce;
           ay += (-dyAnchor / distAnchor) * radialForce;
         }
 
-        // angular slot correction (even spacing per category+tier)
+        // angular slot correction (precomputed; even spacing per category+tier)
         if (!isHovered) {
-          const sameTier = nodes.filter((nn) => nn.category === n.node.category && nn.tier === n.node.tier);
-          const sortedIds = sameTier.map((nn) => nn.id).sort((a, b) => (hashString(a) < hashString(b) ? -1 : 1));
-          const slotIndex = Math.max(0, sortedIds.indexOf(n.node.id));
-          const totalSlots = Math.max(1, sortedIds.length);
-          const baseAngle = hashString(n.node.category) * Math.PI * 2;
-          const targetAngle = baseAngle + (slotIndex / totalSlots) * Math.PI * 2;
-          const radiusTarget = n.node.tier === "primary" ? (primaryBand.min + primaryBand.max) * 0.5 : (secondaryBand.min + secondaryBand.max) * 0.5;
-          const jitterA = (hashString(n.node.id) - 0.5) * 2 * jitterRad;
-          const desiredX = anchor.x + Math.cos(targetAngle + jitterA) * radiusTarget;
-          const desiredY = anchor.y + Math.sin(targetAngle + jitterA) * radiusTarget;
-          const slotDx = desiredX - n.x;
-          const slotDy = desiredY - n.y;
-          ax += slotDx * angleForce;
-          ay += slotDy * angleForce;
+          const desiredX = anchor.x + Math.cos(n.slotAngle) * n.slotRadius;
+          const desiredY = anchor.y + Math.sin(n.slotAngle) * n.slotRadius;
+          ax += (desiredX - n.x) * angleForce;
+          ay += (desiredY - n.y) * angleForce;
         }
 
         // title exclusion (use title center, not cluster anchor) with strong padding
@@ -314,7 +320,7 @@ export function useNetworkSimulation({
               const dx = n.x - o.x;
               const dy = n.y - o.y;
               const dist2 = dx * dx + dy * dy;
-              const minDist = (n.r + o.r + 30) ** 2;
+              const minDist = (n.r + o.r + 34) ** 2;
               if (dist2 < minDist && dist2 > 0.01) {
                 const dist = Math.sqrt(dist2);
                 const push = (minDist - dist2) * 0.0048;
@@ -337,9 +343,8 @@ export function useNetworkSimulation({
             const falloff = 1 - dist / radius;
             const baseForce = strength * falloff * falloff;
             // reduce influence if near band edges
-            const band = n.node.tier === "primary" ? primaryBand : secondaryBand;
-            const distAnchor = Math.hypot(n.x - anchor.x, n.y - anchor.y);
-            const atEdge = distAnchor < band.min + 8 || distAnchor > band.max - 8;
+            const distToAnchor = Math.hypot(n.x - anchor.x, n.y - anchor.y);
+            const atEdge = distToAnchor < bandMin + 8 || distToAnchor > bandMax - 8;
             const scale = atEdge ? 0.35 : 1;
             const force = baseForce * scale;
             ax += (dx / dist) * force;
@@ -356,8 +361,8 @@ export function useNetworkSimulation({
             Math.abs(n.x - titleCenters[n.node.category].x) < (rectMap[n.node.category].w * 0.5 + padX + 10) &&
             Math.abs(n.y - titleCenters[n.node.category].y) < (rectMap[n.node.category].h * 0.5 + padY + 10);
           if (!nearTitle) {
-            ax += Math.sin(time * 0.4 + n.seed * 8) * micro;
-            ay += Math.cos(time * 0.3 + n.seed * 9) * micro;
+            ax += Math.sin(time * 0.28 + n.seed * 8) * micro;
+            ay += Math.cos(time * 0.21 + n.seed * 9) * micro;
           }
         }
 
@@ -385,8 +390,10 @@ export function useNetworkSimulation({
         // keep gentle motion; disable sleep zeroing to avoid stuck nodes
         sleepCounter.current[n.node.id] = 0;
 
-        n.x += n.vx;
-        n.y += n.vy;
+        // dt-scaled so speed is identical on 60Hz and 120Hz displays
+        const frameScale = dt / fixedDt;
+        n.x += n.vx * frameScale;
+        n.y += n.vy * frameScale;
 
         n.x = Math.min(width - boundsPad, Math.max(boundsPad, n.x));
         n.y = Math.min(height - boundsPad, Math.max(boundsPad, n.y));
