@@ -253,4 +253,47 @@ export const projectsData: Project[] = [
       live: "",
     },
   },
+  {
+    id: "ie-tower-vpr",
+    slug: "ie-tower-vpr",
+    title: "IE Tower Visual Place Recognition",
+    titleES: "Reconocimiento visual de lugares en IE Tower",
+    subtitle: "Photo of any indoor spot → which floor of the building it's on, via image embeddings + FAISS.",
+    subtitleES: "Una foto de cualquier lugar interior → en qué piso del edificio está, con embeddings + FAISS.",
+    description:
+      "A modular visual place recognition pipeline for IE Tower: given a photo of an indoor location, it returns the most likely floor across 25 labels (21 above-ground floors plus 4 basements) along with the closest gallery frames. Every stage is a standalone, idempotent script and every artifact is reproducible; the backbone, retrieval metric and split strategy are all swap-in parameters.",
+    descriptionES:
+      "Un pipeline modular de reconocimiento visual de lugares para IE Tower: dada una foto de un lugar interior, devuelve el piso más probable entre 25 etiquetas (21 pisos sobre tierra más 4 sótanos) junto con los frames más cercanos de la galería. Cada etapa es un script independiente e idempotente y cada artefacto es reproducible; el backbone, la métrica de recuperación y la estrategia de splits son parámetros intercambiables.",
+    category: "open-source",
+    type: "personal",
+    status: "in-progress",
+    role: "Computer Vision Engineer",
+    stack: ["Python", "DINOv2", "FAISS", "PyTorch", "ffmpeg", "Marimo"],
+    highlights: [
+      "Predicts the floor from an indoor photo across 25 labels using a frozen DINOv2 ViT-S/14 backbone and a FAISS Flat-IP index over L2-normalized embeddings",
+      "52.8% Top-1 / 72.0% Top-5 accuracy and 57.7% mAP on ~430 held-out queries over a 2,877-frame gallery, on CPU",
+      "Fully reproducible 6-stage pipeline (sync → frame extraction → hierarchy annotation → splits → embeddings/index → evaluation) that auto-skips work already on disk",
+    ],
+    highlightsES: [
+      "Predice el piso desde una foto interior entre 25 etiquetas usando un backbone DINOv2 ViT-S/14 congelado y un índice FAISS Flat-IP sobre embeddings normalizados L2",
+      "52.8% Top-1 / 72.0% Top-5 de precisión y 57.7% mAP sobre ~430 queries de validación en una galería de 2,877 frames, en CPU",
+      "Pipeline reproducible de 6 etapas (sync → extracción de frames → anotación jerárquica → splits → embeddings/índice → evaluación) que auto-omite el trabajo ya hecho",
+    ],
+    architecture: [
+      "ffmpeg extracts frames at 1 FPS from recorded walkthroughs into a per-floor gallery with a single reproducible metadata CSV",
+      "A frozen DINOv2 backbone produces embeddings indexed with FAISS Flat-IP; retrieval returns nearest gallery frames and a hierarchical floor prediction",
+      "Evaluation reports Top-K accuracy and mAP; a Marimo dashboard and a Jupyter notebook provide the interactive demo layer",
+    ],
+    architectureES: [
+      "ffmpeg extrae frames a 1 FPS de los recorridos grabados hacia una galería por piso con un único CSV de metadatos reproducible",
+      "Un backbone DINOv2 congelado produce embeddings indexados con FAISS Flat-IP; la recuperación devuelve los frames más cercanos y una predicción jerárquica de piso",
+      "La evaluación reporta precisión Top-K y mAP; un dashboard Marimo y un notebook de Jupyter son la capa de demo interactiva",
+    ],
+    links: {
+      github: "https://github.com/JSebastianIEU/ie-tower-visual-place-recognition",
+      caseStudy: "",
+      video: "",
+      live: "",
+    },
+  },
 ];
