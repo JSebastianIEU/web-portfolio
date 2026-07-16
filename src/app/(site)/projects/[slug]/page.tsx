@@ -3,15 +3,16 @@ import { findProjectBySlug, getProjects } from "@/domain/projects";
 import ProjectDetailScreen from "@/components/sections/Projects/ProjectDetailScreen";
 
 type ProjectPageProps = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export function generateStaticParams() {
   return getProjects().map((project) => ({ slug: project.slug }));
 }
 
-export default function ProjectDetailPage({ params }: ProjectPageProps) {
-  const project = findProjectBySlug(params.slug);
+export default async function ProjectDetailPage({ params }: ProjectPageProps) {
+  const { slug } = await params;
+  const project = findProjectBySlug(slug);
   if (!project) {
     return notFound();
   }
