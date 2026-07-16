@@ -2,13 +2,14 @@
 
 import { useMemo, useState } from "react";
 import SectionShell from "@/components/layout/SectionShell";
+import FeaturedProjectCard from "@/components/sections/Projects/FeaturedProjectCard";
 import ProjectCarousel from "@/components/sections/Projects/ProjectCarousel";
 import ProjectModal from "@/components/sections/Projects/ProjectModal";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { buildProjectCarousel, findProjectById, getProjects } from "@/domain/projects";
+import { buildProjectCarousel, findProjectById, getProjectsByCategory } from "@/domain/projects";
 
 export default function ProjectsSection() {
   const { theme } = useTheme();
@@ -19,10 +20,11 @@ export default function ProjectsSection() {
   const isTabletRaw = useMediaQuery("(max-width: 1024px)");
   const isTablet = !isMobile && isTabletRaw;
 
-  const projects = getProjects();
-  const loopProjects = useMemo(() => buildProjectCarousel(projects, 3), [projects]);
-  const repeatCount = projects.length
-    ? Math.max(1, Math.round(loopProjects.length / projects.length))
+  const professionalProjects = getProjectsByCategory("professional");
+  const openSourceProjects = getProjectsByCategory("open-source");
+  const loopProjects = useMemo(() => buildProjectCarousel(openSourceProjects, 3), [openSourceProjects]);
+  const repeatCount = openSourceProjects.length
+    ? Math.max(1, Math.round(loopProjects.length / openSourceProjects.length))
     : 1;
 
   const copy = dictionary.projects;
@@ -54,22 +56,57 @@ export default function ProjectsSection() {
           </p>
         </div>
 
-        <div className="relative flex-1 overflow-hidden">
-          <ProjectCarousel
-            projects={loopProjects}
-            copy={copy}
-            isDark={isDark}
-            lang={lang}
-            typeMap={typeMap}
-            statusMap={statusMap}
-            isMobile={isMobile}
-            isTablet={isTablet}
-            repeatCount={repeatCount}
-            onOpen={(id) => setOpenId(id)}
-            activeIndex={activeIndex}
-            onActiveIndexChange={setActiveIndex}
-            totalProjects={projects.length}
-          />
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-lg md:text-xl font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+              {copy.groups.professional.title}
+            </h3>
+            <p className="text-xs md:text-sm" style={{ color: isDark ? "rgba(226,232,240,0.65)" : "rgba(15,23,42,0.6)" }}>
+              {copy.groups.professional.subcopy}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {professionalProjects.map((project) => (
+              <FeaturedProjectCard
+                key={project.id}
+                project={project}
+                onOpen={() => setOpenId(project.id)}
+                isDark={isDark}
+                displayType={typeMap[project.type]}
+                displayStatus={statusMap[project.status]}
+                copy={copy}
+                lang={lang}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-lg md:text-xl font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+              {copy.groups.openSource.title}
+            </h3>
+            <p className="text-xs md:text-sm" style={{ color: isDark ? "rgba(226,232,240,0.65)" : "rgba(15,23,42,0.6)" }}>
+              {copy.groups.openSource.subcopy}
+            </p>
+          </div>
+          <div className="relative flex-1 overflow-hidden">
+            <ProjectCarousel
+              projects={loopProjects}
+              copy={copy}
+              isDark={isDark}
+              lang={lang}
+              typeMap={typeMap}
+              statusMap={statusMap}
+              isMobile={isMobile}
+              isTablet={isTablet}
+              repeatCount={repeatCount}
+              onOpen={(id) => setOpenId(id)}
+              activeIndex={activeIndex}
+              onActiveIndexChange={setActiveIndex}
+              totalProjects={openSourceProjects.length}
+            />
+          </div>
         </div>
       </div>
 

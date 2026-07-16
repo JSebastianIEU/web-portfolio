@@ -1,8 +1,12 @@
 import { projectsData } from "@/data/projectsData";
-import type { Project } from "./types";
+import type { Project, ProjectCategory } from "./types";
 
 export function getProjects(): Project[] {
   return projectsData;
+}
+
+export function getProjectsByCategory(category: ProjectCategory): Project[] {
+  return projectsData.filter((project) => project.category === category);
 }
 
 export function findProjectById(id: string): Project | undefined {

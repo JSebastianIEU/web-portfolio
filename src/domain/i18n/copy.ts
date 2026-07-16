@@ -23,7 +23,17 @@ export const translations: Translations = {
     },
     projects: {
       title: "Projects",
-      subcopy: "Selected work across personal builds, startups, and enterprise problems.",
+      subcopy: "Selected work across real products, startups, and open-source builds.",
+      groups: {
+        professional: {
+          title: "Real-world work",
+          subcopy: "Products running in production — client work and my own ventures. Code is private, but you can try them live.",
+        },
+        openSource: {
+          title: "Open source & writing",
+          subcopy: "Personal builds and experiments with public code or published write-ups.",
+        },
+      },
       cards: {
         caseStudy: "Case Study",
         demoVideo: "Demo Video",
@@ -31,6 +41,8 @@ export const translations: Translations = {
         liveDemo: "Live Demo",
         soon: "— soon",
         offline: "Offline (infra paused)",
+        privateCode: "Private code",
+        tryIt: "Try it live",
       },
       modal: {
         whatBuilt: "What I built",
@@ -136,7 +148,17 @@ export const translations: Translations = {
     },
     projects: {
       title: "Proyectos",
-      subcopy: "Trabajo seleccionado en builds personales, startups y entornos enterprise.",
+      subcopy: "Trabajo seleccionado entre productos reales, startups y builds open source.",
+      groups: {
+        professional: {
+          title: "Trabajo real",
+          subcopy: "Productos corriendo en producción — trabajo para clientes y empresas propias. El código es privado, pero puedes probarlos en vivo.",
+        },
+        openSource: {
+          title: "Open source y publicaciones",
+          subcopy: "Builds personales y experimentos con código público o artículos publicados.",
+        },
+      },
       cards: {
         caseStudy: "Case Study",
         demoVideo: "Video demo",
@@ -144,6 +166,8 @@ export const translations: Translations = {
         liveDemo: "Demo en vivo",
         soon: "— próximamente",
         offline: "Offline (infra pausada)",
+        privateCode: "Código privado",
+        tryIt: "Probar en vivo",
       },
       modal: {
         whatBuilt: "Lo que construí",

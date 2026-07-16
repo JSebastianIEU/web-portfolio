@@ -25,6 +25,16 @@ export type TranslationCopy = {
   projects: {
     title: string;
     subcopy: string;
+    groups: {
+      professional: {
+        title: string;
+        subcopy: string;
+      };
+      openSource: {
+        title: string;
+        subcopy: string;
+      };
+    };
     cards: {
       caseStudy: string;
       demoVideo: string;
@@ -32,6 +42,8 @@ export type TranslationCopy = {
       liveDemo: string;
       soon: string;
       offline: string;
+      privateCode: string;
+      tryIt: string;
     };
     modal: {
       whatBuilt: string;

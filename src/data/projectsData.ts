@@ -2,16 +2,137 @@ import type { Project } from "@/domain/projects";
 
 export const projectsData: Project[] = [
   {
+    id: "craig-ai",
+    slug: "craig-ai",
+    title: "Craig",
+    titleES: "Craig",
+    subtitle: "AI agent that quotes, charges and manages end-to-end orders for a print shop.",
+    subtitleES: "Agente de IA que cotiza, cobra y gestiona pedidos completos para una imprenta.",
+    description:
+      "Craig serves a Dublin print shop's customers over web chat and email: it gathers specs through interactive UI (chips, sliders, to-scale size cards), prices jobs exactly from the live catalogue — never guessing — and runs the full cycle: approval, payment links, production tracking on a kanban board, artwork reminder sequences and post-delivery reviews. It turns inquiries into paid orders with zero human touch for standard cases.",
+    descriptionES:
+      "Craig atiende a los clientes de una imprenta de Dublín por chat web y email: recoge especificaciones con UI interactiva (chips, sliders, tarjetas a escala), calcula precios exactos desde el catálogo real — nunca los inventa — y gestiona el ciclo completo: aprobación, link de pago, seguimiento de producción en un kanban, recordatorios de artwork y reviews post-entrega. Convierte consultas en pedidos pagados sin intervención humana en los casos estándar.",
+    category: "professional",
+    org: "Strategos AI",
+    orgES: "Strategos AI",
+    codePrivate: true,
+    type: "enterprise",
+    status: "live",
+    role: "Lead engineer — end to end",
+    timeframe: "2026 — present",
+    stack: [
+      "Python",
+      "FastAPI",
+      "DeepSeek (tool-calling)",
+      "PostgreSQL",
+      "Next.js",
+      "Stripe Connect",
+      "Cloud Run",
+      "Supabase",
+      "Tailwind",
+    ],
+    highlights: [
+      "An LLM that never invents prices: strict tool-calling against a deterministic pricing engine (6 strategies) plus ~15 server-side anti-hallucination gates",
+      "Spec machine generated from the live catalogue: quantity sliders, size cards drawn to real scale, multi-step flows where impossible options simply disappear",
+      "Full order funnel: payment webhook → drag-and-drop production kanban → automated artwork reminders → post-delivery reviews with HMAC-signed tokens",
+      "Multi-channel, one mind: the same agent runs the web widget and the email inbox (confidence-based triage and threading), multi-tenant from day one",
+    ],
+    highlightsES: [
+      "Un LLM que jamás inventa precios: tool-calling estricto contra un motor de precios determinista (6 estrategias) y ~15 gates anti-alucinación en el servidor",
+      "“Spec machine” generada del catálogo vivo: sliders de cantidad, tarjetas de tamaño a escala real y flujos multi-paso donde las opciones imposibles desaparecen",
+      "Funnel de pedido completo: webhook de pago → kanban de producción drag & drop → recordatorios de artwork automáticos → reviews post-entrega con tokens firmados HMAC",
+      "Multi-canal, una sola mente: el mismo agente en el widget web y en el inbox de email (triage con clasificador de confianza), multi-tenant desde el día uno",
+    ],
+    architecture: [
+      "Embeddable vanilla-JS widget (zero build) plus a Next.js admin dashboard for approvals, kanban, catalogue and attribution analytics",
+      "FastAPI backend with a pure pricing engine decoupled from the LLM, idempotent migrations, scheduled jobs and payment webhooks; multi-tenant Postgres",
+      "LLM with strict function-calling (the model can only call pricing/escalation tools), an email triage classifier, and a gate layer validating every reply",
+    ],
+    architectureES: [
+      "Widget embebible en vanilla JS (cero build) y dashboard admin en Next.js para aprobaciones, kanban, catálogo y analytics de atribución",
+      "Backend FastAPI con motor de precios puro desacoplado del LLM, migraciones idempotentes, jobs programados y webhooks de pago; Postgres multi-tenant",
+      "LLM con function-calling estricto (solo puede llamar herramientas de precio/escalación), clasificador de triage para email y capa de gates que valida cada respuesta",
+    ],
+    links: {
+      github: "",
+      caseStudy: "https://craig-explainer-261w4un7h-jsebastianieus-projects.vercel.app",
+      video: "",
+      live: "",
+    },
+  },
+  {
+    id: "boletapp",
+    slug: "boletapp",
+    title: "Boletapp",
+    titleES: "Boletapp",
+    logo: "/logos/boletapp.svg",
+    subtitle: "Anti-fraud ticketing platform for nightclubs and concerts in Colombia.",
+    subtitleES: "Plataforma de boletería antifraude para discotecas y conciertos en Colombia.",
+    description:
+      "Boletapp is an end-to-end ticketing and access-control platform for nightlife and large events: white-label sales pages, checkout with local payment methods, door scanning, and a live operations dashboard. It closes the industry's revenue leak — tickets forwarded over WhatsApp that get scanned twice, untraceable promoter commissions, and unpaid table reservations — with cryptographically verifiable tickets and automated payouts.",
+    descriptionES:
+      "Boletapp es una plataforma end-to-end de venta y control de acceso para vida nocturna y eventos masivos: página de venta con marca del organizador, checkout con métodos de pago locales, scanner de puerta y panel de operación en vivo. Resuelve el hueco de ingresos del sector — boletas reenviadas por WhatsApp que entran varias veces, comisiones de promotores sin trazabilidad y reservados que nadie paga — con boletas criptográficamente verificables y liquidación automática.",
+    category: "professional",
+    org: "Founder — Colombia",
+    orgES: "Fundador — Colombia",
+    codePrivate: true,
+    type: "startup",
+    status: "live",
+    role: "Technical founder & sole developer",
+    timeframe: "2026 — present",
+    stack: [
+      "Next.js",
+      "TypeScript",
+      "React Native/Expo",
+      "FastAPI",
+      "PostgreSQL + RLS",
+      "Cloud Run",
+      "Cloud KMS",
+      "BigQuery",
+      "Wompi",
+      "Turborepo",
+    ],
+    highlights: [
+      "Rotating anti-fraud QR: HMAC-derived codes that rotate constantly, so a forwarded screenshot is worthless — the same crypto engine runs in TypeScript and Python with shared test vectors enforcing bit-for-bit parity",
+      "Offline-first door scanner: validates from any phone's browser with no connectivity and across multiple doors at once, reconciling later with single-use guarantees",
+      "AI-powered bookkeeping: a receipt photo or PDF becomes a ledger entry via local Spanish OCR plus LLM structuring; cloud and SMS costs import themselves via BigQuery",
+      "Live organizer dashboard: real-time sales, capacity and promoter commissions, an interactive table/floor-plan editor, plus calendar and map views of events",
+    ],
+    highlightsES: [
+      "QR rotativo antifraude: códigos derivados por HMAC que rotan constantemente; un pantallazo reenviado no sirve — el mismo motor criptográfico corre en TypeScript y Python con test-vectors compartidos que garantizan paridad bit a bit",
+      "Scanner offline-first: valida en la puerta desde el navegador de cualquier celular, sin señal y con varias puertas en simultáneo, reconciliando después con garantía de un solo uso",
+      "Contabilidad con IA: una foto o PDF del recibo se convierte en asiento contable vía OCR local en español + estructuración con LLM; los costos de cloud/SMS se importan solos vía BigQuery",
+      "Panel del organizador en vivo: ventas, aforo y comisiones de promotores en tiempo real, editor interactivo de mesas y vistas de calendario y mapa de eventos",
+    ],
+    architecture: [
+      "Server-rendered web app with a BFF layer, per-organizer white-labeling and a PWA scanner; cross-platform mobile app sharing the crypto engine and domain types through a monorepo",
+      "Modular Python monolith organized by domain (identity, catalog, sales, payments, tickets, access control, finance), multi-tenant with database-level isolation and KMS-managed per-event keys",
+      "Two-stage receipt pipeline (local OCR → LLM structuring), automated cost ingestion from the data warehouse, and a reporting layer with spreadsheet exports",
+    ],
+    architectureES: [
+      "Web con renderizado en servidor y arquitectura BFF, marca blanca por organizador y PWA para el scanner; app móvil multiplataforma compartiendo el motor criptográfico y los tipos vía monorepo",
+      "Monolito modular en Python con módulos por dominio (identidad, catálogo, ventas, pagos, boletas, control de acceso, finanzas), multi-tenant con aislamiento a nivel de base de datos y claves de evento gestionadas por KMS",
+      "Pipeline de recibos en dos pasos (OCR local → estructuración con LLM), ingesta automatizada de costos desde el data warehouse y capa de reportería con exportes",
+    ],
+    links: {
+      github: "",
+      caseStudy: "https://boletapp.co/pitch",
+      video: "",
+      live: "https://boletapp.co",
+    },
+  },
+  {
     id: "qr-forge",
     slug: "qr-forge",
     title: "QR-Forge",
     titleES: "QR-Forge",
     subtitle: "Custom QR generator with SVG/PNG export and design controls.",
-    subtitleES: "Generador de cÃ³digos QR con exportaciÃ³n SVG/PNG y controles de diseÃ±o.",
+    subtitleES: "Generador de códigos QR con exportación SVG/PNG y controles de diseño.",
     description:
       "A design-forward QR builder that lets you control colors, backgrounds, error correction, and export formats without leaving the browser.",
     descriptionES:
-      "Un generador de QR orientado al diseÃ±o que permite controlar colores, fondos, correcciÃ³n de errores y exportar en varios formatos sin salir del navegador.",
+      "Un generador de QR orientado al diseño que permite controlar colores, fondos, corrección de errores y exportar en varios formatos sin salir del navegador.",
+    category: "open-source",
     type: "personal",
     status: "prototype",
     role: "Full-stack",
@@ -23,7 +144,7 @@ export const projectsData: Project[] = [
     ],
     highlightsES: [
       "Vista previa en vivo con control de colores de fondo y primer plano",
-      "ExportaciÃ³n a SVG/PNG con tamaÃ±os predefinidos",
+      "Exportación a SVG/PNG con tamaños predefinidos",
       "Presets compartibles para mantener consistencia de marca",
     ],
     architecture: [
@@ -32,11 +153,10 @@ export const projectsData: Project[] = [
       "Preset serialization for quick reuse",
     ],
     architectureES: [
-      "AplicaciÃ³n Next.js con renderizado en cliente para vista instantÃ¡nea",
-      "GeneraciÃ³n de QR mediante una pipeline ligera de SVG/Canvas",
-      "SerializaciÃ³n de presets para reutilizaciÃ³n rÃ¡pida",
+      "Aplicación Next.js con renderizado en cliente para vista instantánea",
+      "Generación de QR mediante una pipeline ligera de SVG/Canvas",
+      "Serialización de presets para reutilización rápida",
     ],
-    thumbnail: "/images/placeholders/qr-forge.jpg",
     links: {
       github: "",
       caseStudy: "",
@@ -55,6 +175,7 @@ export const projectsData: Project[] = [
       "A multi-role platform to register, match, and resolve lost items, with realtime updates and moderated conversations between users and staff.",
     descriptionES:
       "Plataforma multi-rol para registrar, asociar y resolver objetos perdidos, con actualizaciones en tiempo real y conversaciones moderadas entre usuarios y personal.",
+    category: "open-source",
     type: "enterprise",
     status: "paused",
     role: "Lead engineer",
@@ -67,7 +188,7 @@ export const projectsData: Project[] = [
     highlightsES: [
       "Flujos basados en roles para administradores, moderadores y usuarios",
       "Chat en tiempo real y actualizaciones de estado en los tickets",
-      "Auto-asociaciÃ³n entre reportes y objetos encontrados",
+      "Auto-asociación entre reportes y objetos encontrados",
     ],
     architecture: [
       "Next.js front-end with server components for data fetching",
@@ -75,11 +196,10 @@ export const projectsData: Project[] = [
       "PostgreSQL for ticketing; Redis for pub/sub notifications",
     ],
     architectureES: [
-      "Frontend Next.js con server components para obtenciÃ³n de datos",
+      "Frontend Next.js con server components para obtención de datos",
       "API en Node.js con canal WebSocket para actualizaciones en vivo",
       "PostgreSQL para tickets; Redis para pub/sub de notificaciones",
     ],
-    thumbnail: "/images/placeholders/lost-found.jpg",
     links: {
       github: "",
       caseStudy: "",
@@ -97,7 +217,8 @@ export const projectsData: Project[] = [
     description:
       "Hackathon prototype for translating legal documents while preserving terminology, structure, and redaction requirements.",
     descriptionES:
-      "Prototipo de hackathon para traducir documentos legales preservando terminologÃ­a, estructura y requisitos de redacciÃ³n.",
+      "Prototipo de hackathon para traducir documentos legales preservando terminología, estructura y requisitos de redacción.",
+    category: "open-source",
     type: "hackathon",
     status: "prototype",
     role: "Full-stack / ML",
@@ -108,7 +229,7 @@ export const projectsData: Project[] = [
       "Privacy-first handling of documents",
     ],
     highlightsES: [
-      "Consistencia terminolÃ³gica con glosarios",
+      "Consistencia terminológica con glosarios",
       "Salidas estructuradas alineadas a las secciones originales",
       "Manejo de documentos con enfoque de privacidad",
     ],
@@ -118,11 +239,10 @@ export const projectsData: Project[] = [
       "Next.js front-end for uploads, review, and exports",
     ],
     architectureES: [
-      "Backend FastAPI orquestando pipelines de traducciÃ³n",
+      "Backend FastAPI orquestando pipelines de traducción",
       "Prompts conscientes de secciones para conservar la estructura",
-      "Frontend Next.js para cargas, revisiÃ³n y exportaciones",
+      "Frontend Next.js para cargas, revisión y exportaciones",
     ],
-    thumbnail: "/images/placeholders/legal-translator.jpg",
     links: {
       github: "",
       caseStudy: "",
@@ -140,7 +260,8 @@ export const projectsData: Project[] = [
     description:
       "Startup initiative to forecast content performance, guide scheduling, and surface actionable insights across channels.",
     descriptionES:
-      "Iniciativa startup para predecir el rendimiento de contenido, guiar la programaciÃ³n y mostrar insights accionables en mÃºltiples canales.",
+      "Iniciativa startup para predecir el rendimiento de contenido, guiar la programación y mostrar insights accionables en múltiples canales.",
+    category: "open-source",
     type: "startup",
     status: "in-progress",
     role: "Product & Engineering",
@@ -151,9 +272,9 @@ export const projectsData: Project[] = [
       "Dashboards for scheduling and creative guidance",
     ],
     highlightsES: [
-      "Pipelines de ingesta para mÃ©tricas multicanal",
-      "Modelos de scoring para predicciÃ³n de rendimiento",
-      "Dashboards para calendarizaciÃ³n y guÃ­a creativa",
+      "Pipelines de ingesta para métricas multicanal",
+      "Modelos de scoring para predicción de rendimiento",
+      "Dashboards para calendarización y guía creativa",
     ],
     architecture: [
       "Next.js front-end with typed contracts",
@@ -162,10 +283,9 @@ export const projectsData: Project[] = [
     ],
     architectureES: [
       "Frontend Next.js con contratos tipados",
-      "Supabase para auth y storage; Postgres para analÃ­tica",
+      "Supabase para auth y storage; Postgres para analítica",
       "Pipelines Airflow/Python para features y scoring",
     ],
-    thumbnail: "/images/placeholders/predictive-intel.jpg",
     links: {
       github: "",
       caseStudy: "",

@@ -347,7 +347,7 @@ export default function ProjectModal({
           {divider}
 
           <div className="flex flex-wrap gap-3">
-            {linkRow(copy.cards.github, project.links.github, copy.modal.githubSoon)}
+            {linkRow(copy.cards.github, project.links.github, project.codePrivate ? copy.cards.privateCode : copy.modal.githubSoon)}
             {linkRow(copy.cards.caseStudy, project.links.caseStudy, copy.modal.caseSoon)}
             {linkRow(copy.cards.demoVideo, project.links.video, copy.modal.videoSoon)}
             {linkRow(copy.cards.liveDemo, project.links.live, copy.modal.liveOffline)}
