@@ -126,6 +126,93 @@ body {
   -webkit-backdrop-filter: blur(18px);
 }
 
+/* ── Unified glass surfaces ──────────────────────────────────────────────
+   One place for the frosted-sheet look, driven by the theme tokens. All the
+   sections used to hand-roll their own `isDark ? … : …` rgba objects; these
+   classes replace them. Colors resolve from --card/--border/--shadow which
+   already flip via <html data-theme>. */
+.glass-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.glass-panel {
+  background: var(--card-strong);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+/* Small inset surface (info tiles, chips-as-cards) — no blur, cheap. */
+.glass-tile {
+  background: var(--card-tile);
+  border: 1px solid var(--border);
+}
+
+/* ── Floating tilt ───────────────────────────────────────────────────────
+   The card leans slightly toward the cursor. The rotation angles live in the
+   per-card CSS vars --tilt-x / --tilt-y, written by TiltCard on pointermove
+   (no React re-render, mirrors the --mx/--my cursor channel). Only a
+   composited transform moves — no per-frame repaint. `perspective` sits on the
+   parent so the tilt reads as depth; backdrop-filter stays on the SAME element
+   as the transform (Chrome only breaks backdrop-filter when the transform is
+   on an ANCESTOR), and we deliberately avoid preserve-3d for the same reason. */
+.tilt-scene {
+  perspective: 900px;
+}
+
+.tilt-card {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.tilt-card[data-tilting="true"] {
+  /* While actively tracking the pointer, follow instantly (no lag); the
+     transition only smooths the release back to flat. */
+  transition: none;
+}
+
+/* A layer that sits visually detached above the card surface. */
+.float-layer {
+  box-shadow: var(--shadow-float);
+}
+
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  .tilt-card {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Contact wizard: each step slides in when it mounts (keyed by step index). */
+@keyframes wizardStepIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wizard-step {
+  animation: wizardStepIn 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wizard-step {
+    animation: none;
+  }
+}
+
 .text-muted {
   color: var(--muted);
 }

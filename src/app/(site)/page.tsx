@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import SiteChrome from "@/components/layout/SiteChrome";
 import BetweenSectionsCta from "@/components/sections/Common/BetweenSectionsCta";
 import { AboutSection } from "@/components/sections/About";
-import { ContactSection } from "@/components/sections/Contact";
+import ContactInvite from "@/components/sections/Contact/ContactInvite";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { CustomCursorDot, useCustomCursor } from "@/components/ui/CustomCursor";
@@ -162,7 +162,7 @@ export default function Home() {
         <BetweenSectionsCta onEnterLink={enterLink} onLeaveLink={leaveLink} />
         <SkillsSection />
         <ProjectsSection />
-        <ContactSection />
+        <ContactInvite enterLink={enterLink} leaveLink={leaveLink} />
       </SiteChrome>
 
       {enableCustomCursor && <CustomCursorDot variant={cursorVariant} isDark={isDark} />}

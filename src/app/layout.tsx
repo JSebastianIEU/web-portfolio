@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Sora } from "next/font/google";
 import { Providers } from "@/components/providers";
+import { readServerPrefs } from "@/lib/serverPrefs";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -68,18 +69,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { lang, theme } = await readServerPrefs();
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        suppressHydrationWarning
-        className={`${display.variable} ${body.variable} antialiased`}
-      >
-        <Providers>{children}</Providers>
+    <html lang={lang} data-theme={theme}>
+      <body className={`${display.variable} ${body.variable} antialiased`}>
+        <Providers initialLang={lang} initialTheme={theme}>
+          {children}
+        </Providers>
       </body>
     </html>
   );

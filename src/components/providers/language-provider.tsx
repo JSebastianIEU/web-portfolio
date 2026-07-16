@@ -14,18 +14,25 @@ type LanguageContextValue = {
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Locale>(() => {
-    if (typeof window === "undefined") return "en";
-    const stored = window.localStorage.getItem("lang");
-    const browser = window.navigator.language?.toLowerCase() || "en";
-    return stored === "es" || stored === "en" ? stored : browser.startsWith("es") ? "es" : "en";
-  });
+const LANG_COOKIE = "lang";
+
+export function LanguageProvider({
+  children,
+  initialLang,
+}: {
+  children: ReactNode;
+  initialLang: Locale;
+}) {
+  // Seeded from the server (cookie) so SSR and the first client render agree —
+  // no hydration mismatch, no flash. The client no longer reads localStorage
+  // at init; it only persists on change below.
+  const [lang, setLang] = useState<Locale>(initialLang);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     document.documentElement.lang = lang;
     window.localStorage.setItem("lang", lang);
+    document.cookie = `${LANG_COOKIE}=${lang}; path=/; max-age=31536000; samesite=lax`;
   }, [lang]);
 
   const dictionary = useMemo(() => getTranslation(lang), [lang]);

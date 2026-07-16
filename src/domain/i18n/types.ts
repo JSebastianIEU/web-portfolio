@@ -91,6 +91,36 @@ export type TranslationCopy = {
       emailInvalid: string;
       messageLength: string;
     };
+    wizard: {
+      eyebrow: string;
+      cta: string;
+      steps: [string, string, string, string];
+      q1: string;
+      account: { company: string; individual: string };
+      q2: string;
+      intents: {
+        company: Array<{ id: string; label: string }>;
+        individual: Array<{ id: string; label: string }>;
+      };
+      q3: string;
+      q3hint: string;
+      messagePlaceholder: string;
+      q4: string;
+      namePlaceholder: string;
+      emailPlaceholder: string;
+      companyPlaceholder: string;
+      review: string;
+      summaryWho: string;
+      summaryGoal: string;
+      summaryMessage: string;
+      back: string;
+      next: string;
+      send: string;
+      sending: string;
+      successTitle: string;
+      successBody: string;
+      another: string;
+    };
   };
   hero: {
     phrases: Phrase[];
