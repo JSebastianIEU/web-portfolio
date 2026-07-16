@@ -77,7 +77,7 @@ export default function BetweenSectionsCta({ onEnterLink, onLeaveLink }: Props) 
         </a>
 
         <a
-          href="#contact"
+          href="/contact"
           onMouseEnter={onEnterLink}
           onFocus={onEnterLink}
           onMouseLeave={onLeaveLink}
