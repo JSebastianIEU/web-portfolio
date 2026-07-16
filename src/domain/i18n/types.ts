@@ -98,14 +98,18 @@ export type TranslationCopy = {
       steps: [string, string, string, string];
       q1: string;
       account: { company: string; individual: string };
-      q2: string;
+      /* The goal question adapts to who is asking. */
+      q2: { company: string; individual: string };
       intents: {
         company: Array<{ id: string; label: string }>;
         individual: Array<{ id: string; label: string }>;
       };
-      q3: string;
-      q3hint: string;
-      messagePlaceholder: string;
+      /* The story step adapts to the chosen goal: hiring asks about the
+         role, a project asks about the build, a question just asks. */
+      story: Record<
+        "company" | "individual",
+        Record<string, { q: string; hint: string; placeholder: string }>
+      >;
       q4: string;
       namePlaceholder: string;
       emailPlaceholder: string;

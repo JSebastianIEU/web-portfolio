@@ -35,6 +35,9 @@ export default function ContactWizard({ copy, isDark, enterLink, leaveLink }: Co
   const intents = account ? w.intents[account] : [];
   const intentLabel = intents.find((i) => i.id === intentId)?.label ?? "";
   const accountLabel = account ? w.account[account] : "";
+  // The story prompt follows the chosen goal (a role gets asked about the
+  // role, a build about the build); falls back to the account's "other".
+  const story = account ? w.story[account][intentId ?? "other"] ?? w.story[account].other : null;
 
   const chipStyle = useMemo(
     () => ({
@@ -230,10 +233,10 @@ export default function ContactWizard({ copy, isDark, enterLink, leaveLink }: Co
           </>
         )}
 
-        {step === 1 && (
+        {step === 1 && account && (
           <>
             <h2 className="text-2xl md:text-3xl font-semibold" style={bigText}>
-              {w.q2}
+              {w.q2[account]}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {intents.map((i) => chip(i.label, intentId === i.id, () => pickIntent(i.id), i.id))}
@@ -241,13 +244,13 @@ export default function ContactWizard({ copy, isDark, enterLink, leaveLink }: Co
           </>
         )}
 
-        {step === 2 && (
+        {step === 2 && story && (
           <>
             <h2 className="text-2xl md:text-3xl font-semibold" style={bigText}>
-              {w.q3}
+              {story.q}
             </h2>
             <p className="text-sm" style={subtle}>
-              {w.q3hint}
+              {story.hint}
             </p>
             <textarea
               autoFocus
@@ -256,7 +259,7 @@ export default function ContactWizard({ copy, isDark, enterLink, leaveLink }: Co
                 setMessage(e.target.value);
                 setError(null);
               }}
-              placeholder={w.messagePlaceholder}
+              placeholder={story.placeholder}
               maxLength={2000}
               className="w-full bg-transparent text-base md:text-lg leading-relaxed resize-none min-h-[140px] focus:outline-none"
               style={{ color: isDark ? "#f8fafc" : "#0f172a", cursor: "none" }}
