@@ -48,14 +48,6 @@ export default function BackgroundGridSpotlight() {
     root.setProperty("--grid-base", baseColor);
     root.setProperty("--grid-size", "50px");
     root.setProperty("--grid-mask-radius", `${maskRadius}px`);
-    root.setProperty(
-      "--grid-mask",
-      `radial-gradient(${maskRadius}px circle at var(--mx) var(--my),
-        rgba(0,0,0,1) 0%,
-        rgba(0,0,0,0.65) 40%,
-        rgba(0,0,0,0.25) 70%,
-        rgba(0,0,0,0) 100%)`
-    );
   }, [baseColor, gridColor, gridGlowColor, maskRadius, plateGridColor]);
 
   // Keep grid pattern moving with scroll so it feels world-locked, not viewport-locked.
@@ -68,6 +60,9 @@ export default function BackgroundGridSpotlight() {
       const y = window.scrollY;
       root.setProperty("--grid-offset-x", "0px");
       root.setProperty("--grid-offset-y", `${-y}px`);
+      // Tile-modulo shift for the full-grid (no custom cursor) variant:
+      // moves the composited layer instead of repainting the pattern.
+      root.setProperty("--grid-shift-y", `${-(y % 50)}px`);
     };
 
     const onScroll = () => {
@@ -83,11 +78,5 @@ export default function BackgroundGridSpotlight() {
     };
   }, []);
 
-  return (
-    <>
-      <div className="grid-base-layer" aria-hidden="true" />
-      <div className="grid-pattern-layer" aria-hidden="true" />
-      <div className="grid-spotlight-layer" aria-hidden="true" />
-    </>
-  );
+  return <div className="grid-spotlight-layer" aria-hidden="true" />;
 }
