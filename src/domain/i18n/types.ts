@@ -44,6 +44,9 @@ export type TranslationCopy = {
       offline: string;
       privateCode: string;
       tryIt: string;
+      visit: string;
+      viewDetails: string;
+      newTab: string;
     };
     modal: {
       whatBuilt: string;

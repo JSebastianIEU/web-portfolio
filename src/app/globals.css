@@ -316,3 +316,14 @@ body {
     transition: none !important;
   }
 }
+
+/* Live-site preview: the blur/dot reveal is a hover affordance, not motion,
+   so it still fires under reduced motion — the easing is what gets dropped.
+   The hover scale stays: it snaps rather than animates, and it is what keeps
+   the blur's soft edges out of frame. */
+@media (prefers-reduced-motion: reduce) {
+  .preview-img,
+  .preview-overlay {
+    transition: none !important;
+  }
+}

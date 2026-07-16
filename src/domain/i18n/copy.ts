@@ -43,6 +43,9 @@ export const translations: Translations = {
         offline: "Offline (infra paused)",
         privateCode: "Private code",
         tryIt: "Try it live",
+        visit: "Visit",
+        viewDetails: "View details for {project}",
+        newTab: "opens in a new tab",
       },
       modal: {
         whatBuilt: "What I built",
@@ -168,6 +171,9 @@ export const translations: Translations = {
         offline: "Offline (infra pausada)",
         privateCode: "Código privado",
         tryIt: "Probar en vivo",
+        visit: "Visitar",
+        viewDetails: "Ver detalles de {project}",
+        newTab: "abre en una pestaña nueva",
       },
       modal: {
         whatBuilt: "Lo que construí",
