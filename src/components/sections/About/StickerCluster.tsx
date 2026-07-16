@@ -16,8 +16,8 @@ import { useI18n } from "@/components/providers/language-provider";
  * The composition leans on colombia's flag as overlap real estate: meditando
  * sits right on top of it, vangogh clips its upper corner, linkedin rides
  * over meditando's leg. Face-safety map (container coords, at rest):
- * colombia x68-90/y4-21, vangogh x16-29/y3-14, meditando x36-45/y48-57,
- * linkedin x3-21/y42-55 - nothing in front of a face covers it. If you
+ * colombia x68-90/y4-21, vangogh x16-29/y3-14, meditando x48-57/y50-59,
+ * linkedin x13-35/y40-56 - nothing in front of a face covers it. If you
  * retune positions, re-check that rule before shipping.
  */
 const STICKERS = [
@@ -41,7 +41,7 @@ const STICKERS = [
     alt: "Sebastian meditating cross-legged in a lotus pose, smiling",
     altES: "Sebastián meditando con las piernas cruzadas en pose de loto, sonriendo",
     neon: "#22d3ee",
-    layout: { left: "10%", top: "46%", width: "68%", rot: "4deg", z: 20, tilt: 5.5, stagger: "60ms" },
+    layout: { left: "22%", top: "48%", width: "68%", rot: "4deg", z: 20, tilt: 5.5, stagger: "60ms" },
   },
   {
     id: "vangogh",
@@ -63,7 +63,7 @@ const STICKERS = [
     alt: "Studio portrait of Sebastian smiling",
     altES: "Retrato de estudio de Sebastián sonriendo",
     neon: "#a78bfa",
-    layout: { left: "-6%", top: "40%", width: "36%", rot: "-6deg", z: 40, tilt: 9, stagger: "180ms" },
+    layout: { left: "2%", top: "38%", width: "44%", rot: "-6deg", z: 40, tilt: 9, stagger: "180ms" },
   },
 ];
 
