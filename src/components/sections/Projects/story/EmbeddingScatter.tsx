@@ -52,6 +52,7 @@ export default function EmbeddingScatter({ points, isDark, lang }: Props) {
           {points.map((p, i) => (
             <circle
               key={i}
+              className="tk-dot"
               cx={map(p.x)}
               cy={map(1 - p.y)}
               r={0.85}

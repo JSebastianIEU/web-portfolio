@@ -73,11 +73,10 @@ export default function VarianceHeatmap({ rows, ks, isDark, lang }: Props) {
             {row.values.map((v, ci) => (
               <div
                 key={ci}
-                className="tower-band rounded-md flex items-center justify-center py-2.5 tabular-nums font-mono text-[13px] font-semibold"
+                className="tk-pop rounded-md flex items-center justify-center py-2.5 tabular-nums font-mono text-[13px] font-semibold"
                 style={{
                   background: cell(v),
                   color: isDark ? "#0b1120" : "#0b1120",
-                  ["--d" as string]: `${(ri * ks.length + ci) * 45}ms`,
                 }}
               >
                 {v.toFixed(1)}

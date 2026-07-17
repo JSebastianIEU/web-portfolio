@@ -926,6 +926,84 @@ body {
   }
 }
 
+/* === Graph entrance reveals ===========================================
+   Each data graph animates in as it scrolls into view, scrubbed by each
+   element's own view() timeline — so cells/points higher in a graph arrive
+   before the lower ones, a natural stagger with zero JS. The reveals live in
+   the entry range, which completes before a sticky stage pins. Browsers
+   without scroll-driven animations, and reduced-motion readers, skip straight
+   to the final graph (no hidden state, since the from-keyframe only applies
+   while the animation is attached). */
+@keyframes tkPop {
+  from {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes tkDotIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tkGrow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes tkRise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Heatmap cells / reframe dots: pop in. */
+    .tk-pop {
+      animation: tkPop linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 32%;
+    }
+    /* Scatter points: fade in, top of the cloud first. */
+    .tk-dot {
+      animation: tkDotIn linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 42%;
+    }
+    /* Bars: grow from the left to their real width. */
+    .tk-grow {
+      transform-origin: left center;
+      animation: tkGrow linear both;
+      animation-timeline: view();
+      animation-range: entry 6% cover 40%;
+    }
+    /* Whole-graph reveal (e.g. the null-distribution sketch). */
+    .tk-rise {
+      animation: tkRise linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 34%;
+    }
+  }
+}
+
 /* Contact wizard: each step slides in when it mounts (keyed by step index). */
 @keyframes wizardStepIn {
   from {

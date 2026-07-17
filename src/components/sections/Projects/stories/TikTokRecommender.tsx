@@ -165,7 +165,7 @@ export default function TikTokRecommender({ isDark, lang }: Props) {
                     <span
                       className="vpr-bar block h-full rounded-full"
                       style={{
-                        ["--w" as string]: `${Math.round((h.freq / maxFreq) * 100)}%`,
+                        width: `${Math.round((h.freq / maxFreq) * 100)}%`,
                         background: i === 0 ? "#22d3ee" : isDark ? "rgba(226,232,240,0.42)" : "rgba(15,23,42,0.32)",
                         ["--d" as string]: `${i * 70 + 90}ms`,
                       }}

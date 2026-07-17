@@ -110,12 +110,13 @@ export default function TikTokScrollytelling({ isDark, lang }: Props) {
                   {row.dots.map((x, i) => (
                     <span
                       key={i}
-                      className="absolute top-1/2 w-2.5 h-2.5 rounded-full"
+                      className="tk-pop absolute w-2.5 h-2.5 rounded-full"
                       style={{
+                        top: "50%",
                         left: `${x}%`,
-                        transform: "translate(-50%,-50%)",
+                        marginLeft: "-5px",
+                        marginTop: "-5px",
                         background: row.color,
-                        opacity: 0.85,
                       }}
                     />
                   ))}
@@ -192,7 +193,7 @@ export default function TikTokScrollytelling({ isDark, lang }: Props) {
             {[
               { label: es ? "solo tabla puente" : "bridge table only", pct: recs.meta.coverageBefore, on: false },
               { label: es ? "+ extracción del caption" : "+ inline caption extraction", pct: recs.meta.coveragePct, on: true },
-            ].map((row, i) => (
+            ].map((row) => (
               <div key={row.label} className="flex flex-col gap-1.5">
                 <div className="flex items-baseline justify-between">
                   <span className="text-[11.5px]" style={{ color: isDark ? "rgba(226,232,240,0.85)" : "rgba(15,23,42,0.8)" }}>
@@ -205,19 +206,18 @@ export default function TikTokScrollytelling({ isDark, lang }: Props) {
                     {row.pct}%
                   </span>
                 </div>
-                <span
-                  className="h-3 rounded-full overflow-hidden"
+                <div
+                  className="h-3 w-full rounded-full overflow-hidden"
                   style={{ background: isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.07)" }}
                 >
-                  <span
-                    className="vpr-bar block h-full rounded-full"
+                  <div
+                    className="tk-grow h-full rounded-full"
                     style={{
-                      ["--w" as string]: `${row.pct}%`,
-                      ["--d" as string]: `${i * 160}ms`,
+                      width: `${row.pct}%`,
                       background: row.on ? accent : isDark ? "rgba(226,232,240,0.4)" : "rgba(15,23,42,0.3)",
                     }}
                   />
-                </span>
+                </div>
               </div>
             ))}
             <span className="font-mono text-[10px]" style={{ color: faint }}>
@@ -288,7 +288,7 @@ export default function TikTokScrollytelling({ isDark, lang }: Props) {
       <StoryChapter index="06" eyebrow={es ? "La prueba" : "The test"}>
         <StoryStage>
           <div className="flex flex-col gap-3 w-full max-w-sm">
-            <svg viewBox="0 0 200 96" className="w-full h-auto" role="img" aria-label={es ? "Distribución de varianzas de 1.000 grupos aleatorios; el vecindario semántico cae a la izquierda" : "Variance distribution of 1,000 random groups; the semantic neighborhood sits to the left"}>
+            <svg viewBox="0 0 200 96" className="tk-rise w-full h-auto" role="img" aria-label={es ? "Distribución de varianzas de 1.000 grupos aleatorios; el vecindario semántico cae a la izquierda" : "Variance distribution of 1,000 random groups; the semantic neighborhood sits to the left"}>
               {/* null distribution bell */}
               <path
                 d="M10 84 C55 84 55 20 100 20 C145 20 145 84 190 84"
