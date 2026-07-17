@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Locale, TranslationCopy } from "@/domain/i18n";
 import type { Project } from "@/domain/projects";
+import { clearCarouselScroll, peekCarouselScroll } from "./openProject";
 import ProjectCard from "./ProjectCard";
 
 type ProjectCarouselProps = {
@@ -43,13 +44,42 @@ export default function ProjectCarousel({
   useEffect(() => {
     const slider = sliderRef.current;
     if (!slider) return;
+    // If we're returning from a project page, land on the card the visitor
+    // opened, not the carousel's default start position.
+    //
+    // Three things make this fiddly:
+    //  - React dev-mode double-invokes this effect on the SAME node. If the
+    //    "already positioned" flag lived in the closure, the second setup would
+    //    start fresh and re-center to the default, undoing the restore. So the
+    //    flag lives on the node (dataset), shared across both invocations — the
+    //    second setup sees it's positioned and leaves the scroll alone.
+    //  - The section also mounts a hidden responsive twin whose scrollWidth is
+    //    0, so we only act once genuinely laid out and only that instance
+    //    consumes the saved value.
+    //  - A laid-out carousel positions exactly once, then stays put: the
+    //    ResizeObserver fires an initial echo at the same width; re-running the
+    //    centering there would undo the restore. We skip it and only re-center
+    //    on a genuine width change (rotate/resize).
+    const restore = peekCarouselScroll();
     const measure = () => {
       const firstCard = slider.querySelector<HTMLElement>("[data-project-card]");
       const cardWidth = firstCard ? firstCard.getBoundingClientRect().width : 0;
+      const width = slider.clientWidth;
       baseWidthRef.current = repeatCount > 0 ? slider.scrollWidth / repeatCount : slider.scrollWidth;
+      if (slider.scrollWidth === 0) return;
+      const positioned = slider.dataset.cxPositioned === "1";
+      const resized = positioned && width !== Number(slider.dataset.cxWidth || "0");
+      if (positioned && !resized) return;
       slider.style.scrollBehavior = "auto";
-      slider.scrollLeft = baseWidthRef.current + (cardWidth ? cardWidth * 0.1 : 0);
+      if (restore !== null && !resized && restore <= slider.scrollWidth) {
+        slider.scrollLeft = restore;
+        clearCarouselScroll();
+      } else {
+        slider.scrollLeft = baseWidthRef.current + (cardWidth ? cardWidth * 0.1 : 0);
+      }
       slider.style.scrollBehavior = "";
+      slider.dataset.cxPositioned = "1";
+      slider.dataset.cxWidth = String(width);
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -185,6 +215,7 @@ export default function ProjectCarousel({
     <>
     <div
       ref={sliderRef}
+      data-project-carousel
       className={`flex ${isMobile ? "gap-4" : "gap-4 md:gap-5"} overflow-x-auto no-scrollbar ${isMobile ? "px-4" : "px-1"} py-1 cursor-default`}
       style={{
         scrollBehavior: "smooth",

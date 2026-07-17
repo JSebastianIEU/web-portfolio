@@ -17,15 +17,52 @@ type ReturnPoint = { y: number; slug: string };
  * explicit in-page Back button too — so we record the exact y ourselves and
  * replay it, rather than trusting history to have the right entry.
  */
+const CAROUSEL_KEY = "projects:carousel";
+
 export function openProject(router: Router, slug: string) {
   try {
     const point: ReturnPoint = { y: window.scrollY, slug };
     sessionStorage.setItem(KEY, JSON.stringify(point));
+    // On mobile the open-source projects live in a horizontal carousel that
+    // resets to its start on remount — so remember its scroll too, or Back
+    // lands on the first card (QR Forge) instead of the one you tapped.
+    const car = document.querySelector<HTMLElement>("[data-project-carousel]");
+    if (car) sessionStorage.setItem(CAROUSEL_KEY, String(car.scrollLeft));
   } catch {
     // Private mode / storage disabled: navigation still works, Back just
     // falls back to the browser's own restoration.
   }
   morphTo(() => router.push(`/projects/${slug}`));
+}
+
+/**
+ * The carousel's scroll to restore on the next mount, if we're coming back.
+ *
+ * Read-only on purpose: the projects section mounts the carousel twice (a
+ * responsive mobile/desktop pair), and only one is laid out at a time. If this
+ * *removed* the value, whichever instance mounted first — often the hidden one
+ * with no layout — would swallow the restore and the visible carousel would
+ * fall back to its default centre. So we peek here and let the instance that
+ * actually applies it call clearCarouselScroll().
+ */
+export function peekCarouselScroll(): number | null {
+  try {
+    const raw = sessionStorage.getItem(CAROUSEL_KEY);
+    if (raw === null) return null;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Drop the pending carousel restore once a laid-out carousel has applied it. */
+export function clearCarouselScroll() {
+  try {
+    sessionStorage.removeItem(CAROUSEL_KEY);
+  } catch {
+    /* nothing to clean up */
+  }
 }
 
 /** Where the visitor came from, if they arrived by clicking a card. */

@@ -127,7 +127,11 @@ export function StoryStat({ value, label, accent }: StatProps) {
         };
         raf = requestAnimationFrame(tick);
       },
-      { threshold: 0.5 },
+      // Trip the count once the stat has climbed into the reading zone — the
+      // bottom 45% of the viewport is ignored, so it fires when the number is
+      // actually in front of the reader, not the instant it peeks up from the
+      // fold (where the 1s count would finish before they looked).
+      { rootMargin: "0px 0px -45% 0px", threshold: 0 },
     );
     io.observe(el);
     return () => {

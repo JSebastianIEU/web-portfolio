@@ -34,20 +34,16 @@ type Sample = {
 type EvalSample = { truth: string; top5: Array<{ label: string; pct: number }>; nnSim: number };
 const REAL = evalData.samples as Record<string, EvalSample>;
 
-/** Every frame the demo offers, in order. All predictions come from the real
-    run; the labels here are only what to call each area in the UI. */
+/** Every frame the demo offers, in order. Six frames, each visually
+    unambiguous. All predictions come from the real run; the labels here are
+    only what to call each area in the UI. */
 const AREAS: Array<{ id: string; en: string; es: string }> = [
   { id: "hallway", en: "Hallway", es: "Pasillo" },
   { id: "central", en: "Central space", es: "Espacio central" },
   { id: "classroom", en: "Classroom", es: "Aula" },
-  { id: "studyroom", en: "Study room", es: "Sala de estudio" },
+  { id: "cafeteria", en: "Cafeteria", es: "Cafetería" },
   { id: "stairs", en: "Stairwell", es: "Escalera" },
   { id: "elevator", en: "Lift lobby", es: "Ascensores" },
-  { id: "cafeteria", en: "Cafeteria", es: "Cafetería" },
-  { id: "food", en: "Food counter", es: "Mostrador" },
-  { id: "lounge", en: "Piano lounge", es: "Piano lounge" },
-  { id: "workspace", en: "Open workspace", es: "Espacio abierto" },
-  { id: "auditorium", en: "Auditorium", es: "Auditorio" },
 ];
 
 const SAMPLES: Sample[] = AREAS.filter((a) => REAL[a.id]).map((a) => ({
@@ -98,47 +94,21 @@ export default function IeTowerSimulator({ isDark, lang }: Props) {
   const margin = sample.predictions[0].pct - (sample.predictions.find((p) => p.label === sample.truth)?.pct ?? 0);
 
   return (
-    <div className="glass-card rounded-2xl p-4 md:p-6 flex flex-col gap-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-col gap-0.5">
-          <h3 className="text-base md:text-lg font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
-            {es ? "Pásale una foto al modelo" : "Hand the model a photo"}
-          </h3>
-          <p className="text-[11.5px]" style={{ color: isDark ? "rgba(148,163,184,0.85)" : "rgba(71,85,105,0.85)" }}>
-            {es
-              ? "Frames reales del dataset, apartados de la galería para validar."
-              : "Real dataset frames, held out from the gallery for validation."}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={run}
-            disabled={state === "running"}
-            data-cursor="pointer"
-            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-transform hover:scale-[1.03] disabled:opacity-60"
-            style={{ background: isDark ? "#f8fafc" : "#0f172a", color: isDark ? "#0f172a" : "#f8fafc", cursor: "none" }}
-          >
-            {state === "running" ? (es ? "Buscando…" : "Searching…") : es ? "Ejecutar" : "Run inference"}
-            <Play size={14} aria-hidden />
-          </button>
-          {state === "done" && (
-            <button
-              type="button"
-              onClick={() => setState("idle")}
-              data-cursor="pointer"
-              aria-label={es ? "Reiniciar" : "Reset"}
-              className="glass-tile inline-flex items-center justify-center rounded-full h-9 w-9"
-              style={{ cursor: "none" }}
-            >
-              <RotateCcw size={14} aria-hidden />
-            </button>
-          )}
-        </div>
+    <div className="glass-card rounded-2xl p-4 md:p-6 flex flex-col gap-4 md:gap-5">
+      <div className="flex flex-col gap-0.5">
+        <h3 className="text-base md:text-lg font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+          {es ? "Pásale una foto al modelo" : "Hand the model a photo"}
+        </h3>
+        <p className="text-[11.5px]" style={{ color: isDark ? "rgba(148,163,184,0.85)" : "rgba(71,85,105,0.85)" }}>
+          {es
+            ? "Frames reales del dataset, apartados de la galería para validar."
+            : "Real dataset frames, held out from the gallery for validation."}
+        </p>
       </div>
 
-      {/* Sample picker */}
-      <div className="flex flex-wrap gap-2">
+      {/* Sample picker: a single scrolling row on phones (no 4-line wrap that
+          shoves the run button under the nav), wraps freely on wider screens. */}
+      <div className="flex gap-2 overflow-x-auto no-scrollbar flex-nowrap md:flex-wrap -mx-1 px-1">
         {SAMPLES.map((s, i) => (
           <button
             key={s.id}
@@ -146,7 +116,7 @@ export default function IeTowerSimulator({ isDark, lang }: Props) {
             onClick={() => pick(i)}
             data-cursor="pointer"
             aria-pressed={i === active}
-            className="rounded-full px-3 py-1.5 text-[11.5px] font-semibold transition-colors"
+            className="shrink-0 rounded-full px-3 py-1.5 text-[11.5px] font-semibold transition-colors whitespace-nowrap"
             style={{
               cursor: "none",
               border:
@@ -214,7 +184,7 @@ export default function IeTowerSimulator({ isDark, lang }: Props) {
           >
             {es ? "Top-5 recuperado" : "Retrieved Top-5"}
           </span>
-          <div className="flex flex-col gap-1.5 min-h-[190px]" aria-live="polite">
+          <div className="flex flex-col gap-1.5 min-h-[120px] md:min-h-[190px]" aria-live="polite">
             {state !== "done" ? (
               <p className="text-[12px] my-auto" style={{ color: isDark ? "rgba(148,163,184,0.7)" : "rgba(71,85,105,0.7)" }}>
                 {state === "running"
@@ -272,13 +242,41 @@ export default function IeTowerSimulator({ isDark, lang }: Props) {
                       ? `✗ Falla por ${margin.toFixed(1)} puntos contra una planta vecina${inTop5 ? ", pero la verdad queda en el Top-5" : ""}.`
                       : `✗ Missed by ${margin.toFixed(1)} points to a neighbouring floor${inTop5 ? ", but the truth stays in the Top-5" : ""}.`
                     : es
-                    ? `✗ Falla por ${margin.toFixed(1)} puntos contra una planta lejana${inTop5 ? ", aunque la verdad queda en el Top-5" : ""}. Las escaleras son idénticas en todo el edificio: no hay pista visual de altura.`
-                    : `✗ Missed by ${margin.toFixed(1)} points to a distant floor${inTop5 ? ", though the truth stays in the Top-5" : ""}. Stairwells are identical throughout the building: there is no visual clue to height.`}
+                    ? `✗ Falla por ${margin.toFixed(1)} puntos contra una planta lejana${inTop5 ? ", aunque la verdad queda en el Top-5" : " y la verdad ni entra en el Top-5"}. Este tipo de espacio se repite idéntico en todo el edificio: no hay pista visual de altura.`
+                    : `✗ Missed by ${margin.toFixed(1)} points to a distant floor${inTop5 ? ", though the truth stays in the Top-5" : ", and the truth isn't even in the Top-5"}. This kind of space repeats identically throughout the building: there is no visual clue to height.`}
                 </p>
               </>
             )}
           </div>
         </div>
+      </div>
+
+      {/* Action row: full-width on phones so it never collides with the fixed
+          nav (it used to live up in the header and slid under it). */}
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={run}
+          disabled={state === "running"}
+          data-cursor="pointer"
+          className="flex-1 md:flex-none inline-flex items-center justify-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold transition-transform hover:scale-[1.02] disabled:opacity-60"
+          style={{ background: isDark ? "#f8fafc" : "#0f172a", color: isDark ? "#0f172a" : "#f8fafc", cursor: "none" }}
+        >
+          {state === "running" ? (es ? "Buscando…" : "Searching…") : es ? "Ejecutar" : "Run inference"}
+          <Play size={15} aria-hidden />
+        </button>
+        {state === "done" && (
+          <button
+            type="button"
+            onClick={() => setState("idle")}
+            data-cursor="pointer"
+            aria-label={es ? "Reiniciar" : "Reset"}
+            className="glass-tile inline-flex items-center justify-center rounded-full h-10 w-10 shrink-0"
+            style={{ cursor: "none" }}
+          >
+            <RotateCcw size={15} aria-hidden />
+          </button>
+        )}
       </div>
 
       <p className="text-[10px] leading-relaxed" style={{ color: isDark ? "rgba(148,163,184,0.6)" : "rgba(71,85,105,0.6)" }}>

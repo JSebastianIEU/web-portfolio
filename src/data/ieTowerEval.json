@@ -10,7 +10,6 @@
  "samples": {
   "hallway": {
    "truth": "floor10",
-   "area": "hallway",
    "top5": [
     {
      "label": "floor10",
@@ -37,7 +36,6 @@
   },
   "central": {
    "truth": "floor10",
-   "area": "central",
    "top5": [
     {
      "label": "floor10",
@@ -62,90 +60,8 @@
    ],
    "nnSim": 0.866
   },
-  "stairs": {
-   "truth": "floor10",
-   "area": "stairs",
-   "top5": [
-    {
-     "label": "floor22",
-     "pct": 27.4
-    },
-    {
-     "label": "floor10",
-     "pct": 26.0
-    },
-    {
-     "label": "floor20",
-     "pct": 12.3
-    },
-    {
-     "label": "floor21",
-     "pct": 6.5
-    },
-    {
-     "label": "floor11",
-     "pct": 6.2
-    }
-   ],
-   "nnSim": 0.923
-  },
-  "auditorium": {
-   "truth": "basement4",
-   "area": "auditorium_main",
-   "top5": [
-    {
-     "label": "basement4",
-     "pct": 26.9
-    },
-    {
-     "label": "floor17",
-     "pct": 15.4
-    },
-    {
-     "label": "floor13",
-     "pct": 9.5
-    },
-    {
-     "label": "floor23",
-     "pct": 9.0
-    },
-    {
-     "label": "floor7",
-     "pct": 6.1
-    }
-   ],
-   "nnSim": 0.939
-  },
-  "cafeteria": {
-   "truth": "basement4",
-   "area": "cateferia_belowview",
-   "top5": [
-    {
-     "label": "basement4",
-     "pct": 33.8
-    },
-    {
-     "label": "basement0",
-     "pct": 17.8
-    },
-    {
-     "label": "floor11",
-     "pct": 10.7
-    },
-    {
-     "label": "floor10",
-     "pct": 9.6
-    },
-    {
-     "label": "basement2",
-     "pct": 6.4
-    }
-   ],
-   "nnSim": 0.489
-  },
   "classroom": {
    "truth": "floor10",
-   "area": "classroom",
    "top5": [
     {
      "label": "floor10",
@@ -170,63 +86,8 @@
    ],
    "nnSim": 0.885
   },
-  "studyroom": {
-   "truth": "floor17",
-   "area": "studyroom",
-   "top5": [
-    {
-     "label": "floor10",
-     "pct": 13.9
-    },
-    {
-     "label": "floor20",
-     "pct": 10.6
-    },
-    {
-     "label": "floor18",
-     "pct": 10.4
-    },
-    {
-     "label": "floor3",
-     "pct": 10.2
-    },
-    {
-     "label": "floor15",
-     "pct": 6.8
-    }
-   ],
-   "nnSim": 0.481
-  },
-  "elevator": {
-   "truth": "floor10",
-   "area": "elevator",
-   "top5": [
-    {
-     "label": "floor12",
-     "pct": 30.1
-    },
-    {
-     "label": "floor16",
-     "pct": 16.4
-    },
-    {
-     "label": "floor13",
-     "pct": 13.3
-    },
-    {
-     "label": "floor14",
-     "pct": 10.0
-    },
-    {
-     "label": "floor10",
-     "pct": 6.6
-    }
-   ],
-   "nnSim": 0.952
-  },
-  "food": {
+  "cafeteria": {
    "truth": "basement3",
-   "area": "food_counter",
    "top5": [
     {
      "label": "basement3",
@@ -251,59 +112,57 @@
    ],
    "nnSim": 0.906
   },
-  "workspace": {
-   "truth": "basement2",
-   "area": "open_workspace",
-   "top5": [
-    {
-     "label": "floor21",
-     "pct": 13.9
-    },
-    {
-     "label": "basement2",
-     "pct": 13.5
-    },
-    {
-     "label": "floor14",
-     "pct": 12.8
-    },
-    {
-     "label": "basement0",
-     "pct": 9.9
-    },
-    {
-     "label": "floor17",
-     "pct": 6.8
-    }
-   ],
-   "nnSim": 0.614
-  },
-  "lounge": {
+  "stairs": {
    "truth": "basement4",
-   "area": "pianolounge_ceiling",
    "top5": [
     {
      "label": "basement4",
-     "pct": 43.5
-    },
-    {
-     "label": "basement3",
-     "pct": 17.3
+     "pct": 24.3
     },
     {
      "label": "floor10",
-     "pct": 8.1
-    },
-    {
-     "label": "floor13",
-     "pct": 5.8
+     "pct": 23.3
     },
     {
      "label": "floor4",
-     "pct": 5.6
+     "pct": 19.9
+    },
+    {
+     "label": "floor16",
+     "pct": 13.2
+    },
+    {
+     "label": "floor22",
+     "pct": 9.9
     }
    ],
-   "nnSim": 0.811
+   "nnSim": 0.775
+  },
+  "elevator": {
+   "truth": "floor10",
+   "top5": [
+    {
+     "label": "floor4",
+     "pct": 13.6
+    },
+    {
+     "label": "floor12",
+     "pct": 10.5
+    },
+    {
+     "label": "floor7",
+     "pct": 9.7
+    },
+    {
+     "label": "floor19",
+     "pct": 9.6
+    },
+    {
+     "label": "floor5",
+     "pct": 9.4
+    }
+   ],
+   "nnSim": 0.808
   }
  },
  "perClass": {
