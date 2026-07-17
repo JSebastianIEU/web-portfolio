@@ -452,6 +452,23 @@ body {
   }
 }
 
+/* Back out of a story: rides along the whole scroll so the way out is never
+   more than a glance away. Sits under the nav capsule, above the story. */
+.back-to-projects {
+  position: sticky;
+  top: calc(4.5rem + env(safe-area-inset-top, 0px));
+  z-index: 30;
+  align-self: flex-start;
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+}
+
+@media (min-width: 640px) {
+  .back-to-projects {
+    top: 6.5rem;
+  }
+}
+
 /* === Project scrollytelling ===========================================
    A vertical story: the visual sticks while the prose scrolls past it.
    Every reveal is scroll-driven CSS (animation-timeline: view()) — no scroll
@@ -588,48 +605,119 @@ body {
   color: color-mix(in srgb, var(--text) 55%, transparent);
 }
 
-/* Dataset gallery: a draggable strip of real frames. */
-.dataset-strip {
+/* Dataset gallery: a photo-wall mosaic that pans with the scroll.
+   The viewport clips; the mosaic inside is wider than it and slides left as
+   the chapter passes, so scrolling *is* the way through the frames. */
+.dataset-mosaic-wrap {
   display: flex;
-  gap: 0.6rem;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity;
-  padding-bottom: 0.25rem;
-  cursor: grab;
-}
-
-.dataset-strip.is-dragging {
-  cursor: grabbing;
-  scroll-snap-type: none;
-}
-
-.dataset-strip:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--text) 45%, transparent);
-  outline-offset: 4px;
-  border-radius: 8px;
-}
-
-.dataset-frame {
-  flex: 0 0 auto;
-  width: 132px;
-  margin: 0;
-  scroll-snap-align: start;
-  transition: width 380ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.dataset-strip.is-expanded .dataset-frame {
-  width: 248px;
-}
-
-.dataset-frame img {
+  flex-direction: column;
+  gap: 0.5rem;
   width: 100%;
-  height: auto;
+  min-width: 0;
+}
+
+.dataset-mosaic-viewport {
+  overflow: hidden;
+  border-radius: 12px;
+  /* Fade the edges so tiles enter and leave instead of being chopped. */
+  mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+}
+
+.dataset-mosaic {
+  display: grid;
+  grid-auto-flow: column dense;
+  grid-template-rows: repeat(3, 84px);
+  grid-auto-columns: 116px;
+  gap: 6px;
+  width: max-content;
+  will-change: transform;
+}
+
+.dataset-tile {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
   border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+}
+
+.dataset-tile[data-wide="true"] {
+  grid-column: span 2;
+}
+
+.dataset-tile[data-tall="true"] {
+  grid-row: span 2;
+}
+
+.dataset-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
   user-select: none;
   -webkit-user-drag: none;
-  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+}
+
+.dataset-tile-cap {
+  position: absolute;
+  left: 5px;
+  bottom: 4px;
+  font-size: 8.5px;
+  letter-spacing: 0.04em;
+  color: rgba(248, 250, 252, 0.92);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+}
+
+/* The pan itself: scrubbed by the page scroll, never by a JS handler.
+   The timeline is the CHAPTER's, not the mosaic's own: the mosaic lives in a
+   sticky stage, so a view() on itself stalls the moment the stage pins — the
+   element stops moving through the scrollport even though the page is still
+   scrolling. The chapter box does travel, so it drives the pan. */
+@keyframes mosaicPan {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    /* Slide by exactly the overflow: the last tile lands flush. */
+    transform: translate3d(calc(-100% + var(--mosaic-view, 100%)), 0, 0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .story-chapter {
+    view-timeline-name: --chapter;
+  }
+  .dataset-mosaic {
+    animation: mosaicPan linear both;
+    animation-timeline: --chapter;
+    animation-range: entry 60% exit 40%;
+  }
+}
+
+/* Without scroll-driven animations, fall back to a normal scroller so the
+   frames are still reachable. */
+@supports not (animation-timeline: view()) {
+  .dataset-mosaic-viewport {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .dataset-mosaic {
+    grid-template-rows: repeat(2, 76px);
+    grid-auto-columns: 104px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dataset-mosaic {
+    animation: none;
+  }
+  .dataset-mosaic-viewport {
+    overflow-x: auto;
+  }
 }
 
 /* Scroll-driven reveals. */

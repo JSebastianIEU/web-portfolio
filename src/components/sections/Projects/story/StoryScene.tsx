@@ -78,55 +78,68 @@ function format(n: number, decimals: number, grouped: boolean) {
 }
 
 /**
- * A headline number that counts up when it scrolls into view.
+ * A headline number that counts up once, when it scrolls into view.
  *
  * The final value is rendered as plain text on the server, so it is correct
- * before hydration, copyable and indexable; the count-up only replaces it once
- * JS is running and the stat is actually on screen. Reduced motion skips
- * straight to the number.
+ * before hydration, copyable and indexable; the count-up only overwrites it
+ * while it runs, then hands the text back. Reduced motion skips straight to
+ * the number.
+ *
+ * The whole animation lives in a ref-guarded effect keyed on `value` (a
+ * string). Depending on a parsed *object* here would re-run the effect on
+ * every tick — cancelling and restarting the count forever, so it never
+ * landed on the number.
  */
 export function StoryStat({ value, label, accent }: StatProps) {
-  const parsed = parseValue(value);
   const ref = useRef<HTMLDivElement>(null);
   const [display, setDisplay] = useState<string | null>(null);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || !parsed) return;
+    if (!el) return;
+    const parsed = parseValue(value);
+    if (!parsed) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let raf = 0;
-    let done = false;
+    let started = false;
+    const DURATION = 1000;
+
     const io = new IntersectionObserver(
       (entries) => {
-        if (!entries[0]?.isIntersecting || done) return;
-        done = true;
+        if (!entries[0]?.isIntersecting || started) return;
+        started = true;
         io.disconnect();
-        const DURATION = 900;
         const start = performance.now();
         const tick = (now: number) => {
           const t = Math.min(1, (now - start) / DURATION);
           // Fast out of the gate, gentle landing.
           const eased = 1 - Math.pow(1 - t, 3);
-          setDisplay(format(parsed.n * eased, parsed.decimals, parsed.grouped));
-          if (t < 1) raf = requestAnimationFrame(tick);
-          else setDisplay(null); // hand back to the server-rendered text
+          if (t < 1) {
+            setDisplay(format(parsed.n * eased, parsed.decimals, parsed.grouped));
+            raf = requestAnimationFrame(tick);
+          } else {
+            // Land on the real string, not a re-formatted float.
+            setDisplay(null);
+          }
         };
         raf = requestAnimationFrame(tick);
       },
-      { threshold: 0.6 },
+      { threshold: 0.5 },
     );
     io.observe(el);
     return () => {
       io.disconnect();
       cancelAnimationFrame(raf);
     };
-  }, [parsed]);
+  }, [value]);
+
+  const parsed = display !== null ? parseValue(value) : null;
 
   return (
     <div className="story-stat" data-accent={accent ? "true" : undefined} ref={ref}>
       <span className="story-stat-value tabular-nums">
-        {display !== null && parsed ? `${parsed.prefix}${display}${parsed.suffix}` : value}
+        {parsed ? `${parsed.prefix}${display}${parsed.suffix}` : value}
       </span>
       <span className="story-stat-label">{label}</span>
     </div>
