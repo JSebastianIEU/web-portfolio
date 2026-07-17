@@ -1,6 +1,7 @@
 "use client";
 
 import type { Locale } from "@/domain/i18n";
+import CreditedMedia, { type Credit } from "../story/ImageCredit";
 import { StoryBeat, StoryChapter, StoryProse, StoryStage, StoryStat } from "../story/StoryScene";
 import TowerDiagram from "../story/TowerDiagram";
 import IeTowerSimulator from "./IeTowerSimulator";
@@ -13,6 +14,15 @@ type Props = { isDark: boolean; lang: Locale };
  * past it. Copy lives inline (not in the i18n dictionary) because it is
  * long-form narrative specific to this one project.
  */
+/* The building's drawings are the architects' work, not mine — published by
+   Arquitectura Viva. Credited on every use; see the note in the README. */
+const DRAWING_CREDIT: Credit = {
+  author: "Fenwick Iribarren Architects",
+  source: "Arquitectura Viva",
+  href: "https://arquitecturaviva.com/works/torre-caleido-en-madrid",
+  rights: "© All rights reserved",
+};
+
 export default function IeTowerScrollytelling({ isDark, lang }: Props) {
   const es = lang === "es";
 
@@ -74,8 +84,65 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
         </StoryProse>
       </StoryChapter>
 
+      {/* 02b — The architects' drawings */}
+      <StoryChapter index="03" eyebrow={es ? "Los planos" : "The drawings"}>
+        <StoryStage>
+          <div className="flex gap-3 items-start">
+            <CreditedMedia credit={DRAWING_CREDIT} isDark={isDark} label={es ? "Dibujo de" : "Drawing by"} className="flex-1">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/projects/ie-tower/plan-section.webp"
+                alt={
+                  es
+                    ? "Sección longitudinal de la torre mostrando las plantas apiladas sobre el podio y el parking"
+                    : "Long section of the tower showing the floors stacked over the podium and parking"
+                }
+                width={560}
+                height={1733}
+                loading="lazy"
+                className="w-full h-auto block"
+                style={{ background: "#fff" }}
+              />
+            </CreditedMedia>
+            <CreditedMedia credit={DRAWING_CREDIT} isDark={isDark} label={es ? "Dibujo de" : "Drawing by"} className="flex-1">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/projects/ie-tower/plan-floors.webp"
+                alt={
+                  es
+                    ? "Plantas tipo de la torre a distintas cotas, casi idénticas entre sí"
+                    : "Typical floor plans at different levels, near-identical to each other"
+                }
+                width={560}
+                height={1515}
+                loading="lazy"
+                className="w-full h-auto block"
+                style={{ background: "#fff" }}
+              />
+            </CreditedMedia>
+          </div>
+        </StoryStage>
+        <StoryProse>
+          <StoryBeat title={es ? "La prueba está en los planos" : "The proof is in the plans"}>
+            {es
+              ? "Mira las plantas tipo apiladas: mismo núcleo, mismos ascensores, mismo pasillo perimetral, una y otra vez. Lo que para un arquitecto es eficiencia — un módulo que se repite veintiuna veces — para un modelo de visión es una trampa."
+              : "Look at the typical floors stacked up: same core, same lifts, same perimeter corridor, over and over. What is efficiency to an architect — one module repeated twenty-one times — is a trap for a vision model."}
+          </StoryBeat>
+          <StoryBeat title={es ? "Dónde sí hay pistas" : "Where the clues actually are"}>
+            {es
+              ? "La sección lo explica: lo único que rompe la repetición está abajo (auditorio, biblioteca, acceso) y arriba (terrazas, talleres). Justo las plantas que el modelo acierta. En medio, veintiuna copias del mismo plano."
+              : "The section explains it: the only things breaking the repetition sit at the bottom (auditorium, library, main access) and at the top (terraces, workshops). Exactly the floors the model gets right. In between, twenty-one copies of the same plan."}
+          </StoryBeat>
+          <StoryBeat title={es ? "Crédito" : "Credit"}>
+            {es
+              ? "Estos dibujos son de Fenwick Iribarren Architects, los arquitectos de la torre, publicados por Arquitectura Viva. Pasa el cursor por encima para ver la fuente. Yo solo puse el modelo."
+              : "These drawings are by Fenwick Iribarren Architects, the tower's architects, published by Arquitectura Viva. Hover to see the source. I only brought the model."}
+          </StoryBeat>
+        </StoryProse>
+      </StoryChapter>
+
       {/* 03 — The dataset */}
-      <StoryChapter index="03" eyebrow={es ? "Los datos" : "The data"}>
+      <StoryChapter index="04" eyebrow={es ? "Los datos" : "The data"}>
         <StoryStage>
           <div className="grid grid-cols-8 gap-1 w-full max-w-sm" aria-hidden>
             {Array.from({ length: 64 }).map((_, i) => (
@@ -110,7 +177,7 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
       </StoryChapter>
 
       {/* 04 — The model */}
-      <StoryChapter index="04" eyebrow={es ? "El modelo" : "The model"}>
+      <StoryChapter index="05" eyebrow={es ? "El modelo" : "The model"}>
         <StoryStage>
           <div className="flex flex-col gap-3 w-full max-w-xs">
             {[
@@ -155,7 +222,7 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
       </StoryChapter>
 
       {/* 05 — Results */}
-      <StoryChapter index="05" eyebrow={es ? "Resultados" : "Results"}>
+      <StoryChapter index="06" eyebrow={es ? "Resultados" : "Results"}>
         <StoryStage>
           <div className="flex flex-col gap-7">
             <StoryStat value="52.8%" label="Top-1" accent />
@@ -181,14 +248,14 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
       </StoryChapter>
 
       {/* 06 — Try it */}
-      <StoryChapter index="06" eyebrow={es ? "Pruébalo" : "Try it"}>
+      <StoryChapter index="07" eyebrow={es ? "Pruébalo" : "Try it"}>
         <div className="md:col-span-2">
           <IeTowerSimulator isDark={isDark} lang={lang} />
         </div>
       </StoryChapter>
 
       {/* 06b — The ablation */}
-      <StoryChapter index="07" eyebrow={es ? "La ablación" : "The ablation"}>
+      <StoryChapter index="08" eyebrow={es ? "La ablación" : "The ablation"}>
         <StoryStage>
           <div className="flex flex-col gap-2 w-full max-w-sm">
             {[
@@ -262,7 +329,7 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
       </StoryChapter>
 
       {/* 08 — What's broken */}
-      <StoryChapter index="08" eyebrow={es ? "Lo que falla" : "What's broken"}>
+      <StoryChapter index="09" eyebrow={es ? "Lo que falla" : "What's broken"}>
         <StoryStage>
           <div className="flex flex-col gap-2.5 w-full max-w-xs">
             {[
