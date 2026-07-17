@@ -238,7 +238,7 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
       </StoryChapter>
 
       {/* 06 — Try it */}
-      <StoryChapter index="07" eyebrow={es ? "Pruébalo" : "Try it"}>
+      <StoryChapter index="07" eyebrow={es ? "Pruébalo" : "Try it"} id="try-it">
         <div className="md:col-span-2">
           <IeTowerSimulator isDark={isDark} lang={lang} />
         </div>

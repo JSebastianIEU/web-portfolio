@@ -6,6 +6,7 @@ import type { Locale, TranslationCopy } from "@/domain/i18n";
 import type { Project } from "@/domain/projects";
 import BackToProjects from "./BackToProjects";
 import ProjectBadge from "./ProjectBadge";
+import SkipToDemo from "./story/SkipToDemo";
 import { projectScrollytelling } from "./stories";
 
 type ProjectDetailProps = {
@@ -56,6 +57,7 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
           <p className="text-sm md:text-base" style={{ color: isDark ? "rgba(226,232,240,0.82)" : "rgba(15,23,42,0.78)" }}>
             {subtitle}
           </p>
+          {Story && <SkipToDemo target="try-it" label={copy.cards.skipToDemo} isDark={isDark} />}
         </div>
 
         {Story ? (

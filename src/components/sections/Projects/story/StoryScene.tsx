@@ -6,6 +6,8 @@ type StoryChapterProps = {
   /** Two-digit beat number shown in the rail. */
   index: string;
   eyebrow: string;
+  /** Anchor, so a chapter can be jumped to (e.g. skipping to the demo). */
+  id?: string;
   children: ReactNode;
 };
 
@@ -14,9 +16,9 @@ type StoryChapterProps = {
  * prose scrolls past it, then releases at the end of the chapter — the classic
  * scrollytelling rhythm, done with position:sticky rather than scroll handlers.
  */
-export function StoryChapter({ index, eyebrow, children }: StoryChapterProps) {
+export function StoryChapter({ index, eyebrow, id, children }: StoryChapterProps) {
   return (
-    <section className="story-chapter relative w-full">
+    <section id={id} className="story-chapter relative w-full">
       <div className="story-rail" aria-hidden>
         <span className="story-rail-num">{index}</span>
         <span className="story-rail-line" />
