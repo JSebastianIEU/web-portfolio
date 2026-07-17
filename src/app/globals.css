@@ -894,6 +894,38 @@ body {
   }
 }
 
+/* TikTok recommender: a light sweep reads the caption while neighbours are
+   retrieved, then the hashtag bars grow in (reusing .vpr-bar). Bounded to the
+   widget and only after an explicit click. */
+@keyframes tkEncode {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.tk-encode-line {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.28), transparent);
+}
+
+.tk-caption.is-encoding .tk-encode-line {
+  opacity: 1;
+  animation: tkEncode 900ms ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-caption.is-encoding .tk-encode-line {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 /* Contact wizard: each step slides in when it mounts (keyed by step index). */
 @keyframes wizardStepIn {
   from {
