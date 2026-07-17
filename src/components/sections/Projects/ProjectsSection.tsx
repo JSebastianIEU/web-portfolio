@@ -1,15 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import SectionShell from "@/components/layout/SectionShell";
 import FeaturedProjectCard from "@/components/sections/Projects/FeaturedProjectCard";
 import ProjectCarousel from "@/components/sections/Projects/ProjectCarousel";
-import ProjectModal from "@/components/sections/Projects/ProjectModal";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { buildProjectCarousel, findProjectById, getProjectsByCategory } from "@/domain/projects";
+import { openProject } from "@/components/sections/Projects/openProject";
 
 export default function ProjectsSection() {
   const { theme } = useTheme();
@@ -31,9 +32,15 @@ export default function ProjectsSection() {
   const typeMap = dictionary.types;
   const statusMap = dictionary.statuses;
 
-  const [openId, setOpenId] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const selected = useMemo(() => (openId ? findProjectById(openId) ?? null : null), [openId]);
+  const router = useRouter();
+
+  // A card opens the project's own story page (with a morph), not a modal.
+  // The scroll position is remembered so Back lands exactly where you left.
+  const open = (id: string) => {
+    const project = findProjectById(id);
+    if (project) openProject(router, project.slug);
+  };
 
   return (
     <SectionShell
@@ -70,7 +77,7 @@ export default function ProjectsSection() {
               <FeaturedProjectCard
                 key={project.id}
                 project={project}
-                onOpen={() => setOpenId(project.id)}
+                onOpen={() => open(project.id)}
                 isDark={isDark}
                 displayType={typeMap[project.type]}
                 displayStatus={statusMap[project.status]}
@@ -101,7 +108,7 @@ export default function ProjectsSection() {
               isMobile={isMobile}
               isTablet={isTablet}
               repeatCount={repeatCount}
-              onOpen={(id) => setOpenId(id)}
+              onOpen={(id) => open(id)}
               activeIndex={activeIndex}
               onActiveIndexChange={setActiveIndex}
               totalProjects={openSourceProjects.length}
@@ -110,18 +117,6 @@ export default function ProjectsSection() {
         </div>
       </div>
 
-      {selected && (
-        <ProjectModal
-          project={selected}
-          displayType={typeMap[selected.type]}
-          displayStatus={statusMap[selected.status]}
-          copy={copy}
-          onClose={() => setOpenId(null)}
-          isDark={isDark}
-          isCompact={isMobile || isTablet}
-          lang={lang}
-        />
-      )}
     </SectionShell>
   );
 }

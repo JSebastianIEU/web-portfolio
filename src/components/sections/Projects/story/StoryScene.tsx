@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 type StoryChapterProps = {
   /** Two-digit beat number shown in the rail. */
@@ -58,14 +58,76 @@ type StatProps = {
   accent?: boolean;
 };
 
+/** Splits "2,877" or "52.8%" into a number and whatever wraps it. */
+function parseValue(value: string) {
+  const match = value.match(/^([^\d-]*)([\d.,]+)(.*)$/);
+  if (!match) return null;
+  const [, prefix, digits, suffix] = match;
+  const decimals = digits.includes(".") ? digits.split(".")[1].length : 0;
+  const grouped = digits.includes(",");
+  const n = Number(digits.replace(/,/g, ""));
+  if (!Number.isFinite(n)) return null;
+  return { prefix, suffix, n, decimals, grouped };
+}
+
+function format(n: number, decimals: number, grouped: boolean) {
+  const s = n.toFixed(decimals);
+  if (!grouped) return s;
+  const [int, dec] = s.split(".");
+  return int.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (dec ? `.${dec}` : "");
+}
+
 /**
- * A headline number. The digits are plain text (no JS counter) so they are
- * copyable, indexable and correct before hydration; only the reveal animates.
+ * A headline number that counts up when it scrolls into view.
+ *
+ * The final value is rendered as plain text on the server, so it is correct
+ * before hydration, copyable and indexable; the count-up only replaces it once
+ * JS is running and the stat is actually on screen. Reduced motion skips
+ * straight to the number.
  */
 export function StoryStat({ value, label, accent }: StatProps) {
+  const parsed = parseValue(value);
+  const ref = useRef<HTMLDivElement>(null);
+  const [display, setDisplay] = useState<string | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !parsed) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let raf = 0;
+    let done = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting || done) return;
+        done = true;
+        io.disconnect();
+        const DURATION = 900;
+        const start = performance.now();
+        const tick = (now: number) => {
+          const t = Math.min(1, (now - start) / DURATION);
+          // Fast out of the gate, gentle landing.
+          const eased = 1 - Math.pow(1 - t, 3);
+          setDisplay(format(parsed.n * eased, parsed.decimals, parsed.grouped));
+          if (t < 1) raf = requestAnimationFrame(tick);
+          else setDisplay(null); // hand back to the server-rendered text
+        };
+        raf = requestAnimationFrame(tick);
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf);
+    };
+  }, [parsed]);
+
   return (
-    <div className="story-stat" data-accent={accent ? "true" : undefined}>
-      <span className="story-stat-value tabular-nums">{value}</span>
+    <div className="story-stat" data-accent={accent ? "true" : undefined} ref={ref}>
+      <span className="story-stat-value tabular-nums">
+        {display !== null && parsed ? `${parsed.prefix}${display}${parsed.suffix}` : value}
+      </span>
       <span className="story-stat-label">{label}</span>
     </div>
   );

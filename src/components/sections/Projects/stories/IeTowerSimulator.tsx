@@ -34,17 +34,30 @@ type Sample = {
 type EvalSample = { truth: string; top5: Array<{ label: string; pct: number }>; nnSim: number };
 const REAL = evalData.samples as Record<string, EvalSample>;
 
-/** Frames, in the order they are offered. Predictions come from the real run. */
-const SAMPLES: Sample[] = [
-  { id: "hallway", src: "/images/projects/ie-tower/q-hallway.webp", areaEN: "Hallway", areaES: "Pasillo" },
-  { id: "central", src: "/images/projects/ie-tower/q-central.webp", areaEN: "Central space", areaES: "Espacio central" },
-  { id: "stairs", src: "/images/projects/ie-tower/q-stairs.webp", areaEN: "Stairwell", areaES: "Escalera" },
-  { id: "auditorium", src: "/images/projects/ie-tower/q-auditorium.webp", areaEN: "Auditorium", areaES: "Auditorio" },
-].map((s) => ({
-  ...s,
-  truth: REAL[s.id].truth,
-  predictions: REAL[s.id].top5,
-  nnSim: REAL[s.id].nnSim,
+/** Every frame the demo offers, in order. All predictions come from the real
+    run; the labels here are only what to call each area in the UI. */
+const AREAS: Array<{ id: string; en: string; es: string }> = [
+  { id: "hallway", en: "Hallway", es: "Pasillo" },
+  { id: "central", en: "Central space", es: "Espacio central" },
+  { id: "classroom", en: "Classroom", es: "Aula" },
+  { id: "studyroom", en: "Study room", es: "Sala de estudio" },
+  { id: "stairs", en: "Stairwell", es: "Escalera" },
+  { id: "elevator", en: "Lift lobby", es: "Ascensores" },
+  { id: "cafeteria", en: "Cafeteria", es: "Cafetería" },
+  { id: "food", en: "Food counter", es: "Mostrador" },
+  { id: "lounge", en: "Piano lounge", es: "Piano lounge" },
+  { id: "workspace", en: "Open workspace", es: "Espacio abierto" },
+  { id: "auditorium", en: "Auditorium", es: "Auditorio" },
+];
+
+const SAMPLES: Sample[] = AREAS.filter((a) => REAL[a.id]).map((a) => ({
+  id: a.id,
+  src: `/images/projects/ie-tower/q-${a.id}.webp`,
+  areaEN: a.en,
+  areaES: a.es,
+  truth: REAL[a.id].truth,
+  predictions: REAL[a.id].top5,
+  nnSim: REAL[a.id].nnSim,
 }));
 
 /** Renders a dataset label the way a person reads it. */

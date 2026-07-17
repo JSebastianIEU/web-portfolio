@@ -479,6 +479,15 @@ body {
   justify-content: center;
   min-height: 40vh;
   margin-bottom: 2rem;
+  /* Flex/grid items default to min-width:auto, so a wide child (the dataset
+     strip) would push the stage to its full content width instead of
+     scrolling inside it. */
+  min-width: 0;
+}
+
+.story-stage > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -579,11 +588,81 @@ body {
   color: color-mix(in srgb, var(--text) 55%, transparent);
 }
 
+/* Dataset gallery: a draggable strip of real frames. */
+.dataset-strip {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  padding-bottom: 0.25rem;
+  cursor: grab;
+}
+
+.dataset-strip.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+}
+
+.dataset-strip:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--text) 45%, transparent);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.dataset-frame {
+  flex: 0 0 auto;
+  width: 132px;
+  margin: 0;
+  scroll-snap-align: start;
+  transition: width 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dataset-strip.is-expanded .dataset-frame {
+  width: 248px;
+}
+
+.dataset-frame img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+}
+
 /* Scroll-driven reveals. */
 @keyframes storyIn {
   from {
     opacity: 0;
     transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Headings get a touch more travel and a slight blur-off, so the prose reads
+   as arriving rather than just appearing. */
+@keyframes storyTitleIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+    letter-spacing: 0.01em;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: normal;
+  }
+}
+
+@keyframes storyLineIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -609,10 +688,27 @@ body {
     animation-timeline: view();
     animation-range: entry 8% cover 32%;
   }
+  /* Title and body travel at different rates inside the same beat, so the
+     heading lands first and the paragraph follows it in. */
+  .story-beat-title {
+    animation: storyTitleIn linear both;
+    animation-timeline: view();
+    animation-range: entry 6% cover 30%;
+  }
+  .story-beat-body {
+    animation: storyLineIn linear both;
+    animation-timeline: view();
+    animation-range: entry 14% cover 38%;
+  }
   .tower-band {
     animation: towerBandIn linear both;
     animation-timeline: view();
     animation-range: entry 0% cover 26%;
+  }
+  .dataset-frame {
+    animation: storyLineIn linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 24%;
   }
 }
 
@@ -650,10 +746,14 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .story-beat,
   .story-stat,
-  .tower-band {
+  .story-beat-title,
+  .story-beat-body,
+  .tower-band,
+  .dataset-frame {
     animation: none;
   }
-  .credited-badge {
+  .credited-badge,
+  .dataset-frame {
     transition: none;
   }
 }

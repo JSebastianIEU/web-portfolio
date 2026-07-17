@@ -3,11 +3,14 @@
   "top1": 0.527778,
   "top5": 0.720238,
   "mAP": 0.577202,
-  "queries": 504
+  "queries": 504,
+  "gallery": 2373,
+  "frames": 2877
  },
  "samples": {
   "hallway": {
    "truth": "floor10",
+   "area": "hallway",
    "top5": [
     {
      "label": "floor10",
@@ -34,6 +37,7 @@
   },
   "central": {
    "truth": "floor10",
+   "area": "central",
    "top5": [
     {
      "label": "floor10",
@@ -60,6 +64,7 @@
   },
   "stairs": {
    "truth": "floor10",
+   "area": "stairs",
    "top5": [
     {
      "label": "floor22",
@@ -86,6 +91,7 @@
   },
   "auditorium": {
    "truth": "basement4",
+   "area": "auditorium_main",
    "top5": [
     {
      "label": "basement4",
@@ -109,33 +115,324 @@
     }
    ],
    "nnSim": 0.939
+  },
+  "cafeteria": {
+   "truth": "basement4",
+   "area": "cateferia_belowview",
+   "top5": [
+    {
+     "label": "basement4",
+     "pct": 33.8
+    },
+    {
+     "label": "basement0",
+     "pct": 17.8
+    },
+    {
+     "label": "floor11",
+     "pct": 10.7
+    },
+    {
+     "label": "floor10",
+     "pct": 9.6
+    },
+    {
+     "label": "basement2",
+     "pct": 6.4
+    }
+   ],
+   "nnSim": 0.489
+  },
+  "classroom": {
+   "truth": "floor10",
+   "area": "classroom",
+   "top5": [
+    {
+     "label": "floor10",
+     "pct": 32.7
+    },
+    {
+     "label": "basement2",
+     "pct": 28.8
+    },
+    {
+     "label": "floor4",
+     "pct": 18.7
+    },
+    {
+     "label": "floor11",
+     "pct": 5.7
+    },
+    {
+     "label": "floor12",
+     "pct": 5.7
+    }
+   ],
+   "nnSim": 0.885
+  },
+  "studyroom": {
+   "truth": "floor17",
+   "area": "studyroom",
+   "top5": [
+    {
+     "label": "floor10",
+     "pct": 13.9
+    },
+    {
+     "label": "floor20",
+     "pct": 10.6
+    },
+    {
+     "label": "floor18",
+     "pct": 10.4
+    },
+    {
+     "label": "floor3",
+     "pct": 10.2
+    },
+    {
+     "label": "floor15",
+     "pct": 6.8
+    }
+   ],
+   "nnSim": 0.481
+  },
+  "elevator": {
+   "truth": "floor10",
+   "area": "elevator",
+   "top5": [
+    {
+     "label": "floor12",
+     "pct": 30.1
+    },
+    {
+     "label": "floor16",
+     "pct": 16.4
+    },
+    {
+     "label": "floor13",
+     "pct": 13.3
+    },
+    {
+     "label": "floor14",
+     "pct": 10.0
+    },
+    {
+     "label": "floor10",
+     "pct": 6.6
+    }
+   ],
+   "nnSim": 0.952
+  },
+  "food": {
+   "truth": "basement3",
+   "area": "food_counter",
+   "top5": [
+    {
+     "label": "basement3",
+     "pct": 63.3
+    },
+    {
+     "label": "floor10",
+     "pct": 12.2
+    },
+    {
+     "label": "floor22",
+     "pct": 10.1
+    },
+    {
+     "label": "floor4",
+     "pct": 3.4
+    },
+    {
+     "label": "floor15",
+     "pct": 2.8
+    }
+   ],
+   "nnSim": 0.906
+  },
+  "workspace": {
+   "truth": "basement2",
+   "area": "open_workspace",
+   "top5": [
+    {
+     "label": "floor21",
+     "pct": 13.9
+    },
+    {
+     "label": "basement2",
+     "pct": 13.5
+    },
+    {
+     "label": "floor14",
+     "pct": 12.8
+    },
+    {
+     "label": "basement0",
+     "pct": 9.9
+    },
+    {
+     "label": "floor17",
+     "pct": 6.8
+    }
+   ],
+   "nnSim": 0.614
+  },
+  "lounge": {
+   "truth": "basement4",
+   "area": "pianolounge_ceiling",
+   "top5": [
+    {
+     "label": "basement4",
+     "pct": 43.5
+    },
+    {
+     "label": "basement3",
+     "pct": 17.3
+    },
+    {
+     "label": "floor10",
+     "pct": 8.1
+    },
+    {
+     "label": "floor13",
+     "pct": 5.8
+    },
+    {
+     "label": "floor4",
+     "pct": 5.6
+    }
+   ],
+   "nnSim": 0.811
   }
  },
  "perClass": {
-  "basement0": 0.7692,
-  "basement2": 0.8095,
-  "basement3": 0.8667,
-  "basement4": 0.7857,
-  "floor10": 0.4839,
-  "floor11": 0.4783,
-  "floor12": 0.55,
-  "floor13": 0.5455,
-  "floor14": 0.4444,
-  "floor15": 0.2632,
-  "floor16": 0.4583,
-  "floor17": 0.4762,
-  "floor18": 0.2222,
-  "floor19": 0.6,
-  "floor20": 0.4231,
-  "floor21": 0.7143,
-  "floor22": 0.5294,
-  "floor23": 0.5833,
-  "floor3": 0.6316,
-  "floor4": 0.4074,
-  "floor5": 0.4,
-  "floor6": 0.4762,
-  "floor7": 0.5385,
-  "floor8": 0.3846,
-  "floor9": 0.5185
- }
+  "basement0": {
+   "top1": 0.7692,
+   "queries": 13
+  },
+  "basement2": {
+   "top1": 0.8095,
+   "queries": 21
+  },
+  "basement3": {
+   "top1": 0.8667,
+   "queries": 15
+  },
+  "basement4": {
+   "top1": 0.7857,
+   "queries": 28
+  },
+  "floor10": {
+   "top1": 0.4839,
+   "queries": 31
+  },
+  "floor11": {
+   "top1": 0.4783,
+   "queries": 23
+  },
+  "floor12": {
+   "top1": 0.55,
+   "queries": 20
+  },
+  "floor13": {
+   "top1": 0.5455,
+   "queries": 22
+  },
+  "floor14": {
+   "top1": 0.4444,
+   "queries": 18
+  },
+  "floor15": {
+   "top1": 0.2632,
+   "queries": 19
+  },
+  "floor16": {
+   "top1": 0.4583,
+   "queries": 24
+  },
+  "floor17": {
+   "top1": 0.4762,
+   "queries": 21
+  },
+  "floor18": {
+   "top1": 0.2222,
+   "queries": 18
+  },
+  "floor19": {
+   "top1": 0.6,
+   "queries": 10
+  },
+  "floor20": {
+   "top1": 0.4231,
+   "queries": 26
+  },
+  "floor21": {
+   "top1": 0.7143,
+   "queries": 14
+  },
+  "floor22": {
+   "top1": 0.5294,
+   "queries": 34
+  },
+  "floor23": {
+   "top1": 0.5833,
+   "queries": 12
+  },
+  "floor3": {
+   "top1": 0.6316,
+   "queries": 19
+  },
+  "floor4": {
+   "top1": 0.4074,
+   "queries": 27
+  },
+  "floor5": {
+   "top1": 0.4,
+   "queries": 15
+  },
+  "floor6": {
+   "top1": 0.4762,
+   "queries": 21
+  },
+  "floor7": {
+   "top1": 0.5385,
+   "queries": 13
+  },
+  "floor8": {
+   "top1": 0.3846,
+   "queries": 13
+  },
+  "floor9": {
+   "top1": 0.5185,
+   "queries": 27
+  }
+ },
+ "gallery": [
+  "floor10",
+  "floor11",
+  "floor12",
+  "floor13",
+  "floor14",
+  "floor15",
+  "floor16",
+  "floor17",
+  "floor18",
+  "floor19",
+  "floor20",
+  "floor21",
+  "floor22",
+  "floor23",
+  "floor3",
+  "floor4",
+  "floor5",
+  "floor6",
+  "floor7",
+  "floor8",
+  "floor9",
+  "basement0",
+  "basement2",
+  "basement3",
+  "basement4"
+ ]
 }

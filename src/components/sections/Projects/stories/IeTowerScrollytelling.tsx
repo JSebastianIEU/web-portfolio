@@ -1,6 +1,8 @@
 "use client";
 
 import type { Locale } from "@/domain/i18n";
+import evalData from "@/data/ieTowerEval.json";
+import DatasetGallery from "../story/DatasetGallery";
 import CreditedMedia, { type Credit } from "../story/ImageCredit";
 import { StoryBeat, StoryChapter, StoryProse, StoryStage, StoryStat } from "../story/StoryScene";
 import TowerDiagram from "../story/TowerDiagram";
@@ -144,19 +146,7 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
       {/* 03 — The dataset */}
       <StoryChapter index="04" eyebrow={es ? "Los datos" : "The data"}>
         <StoryStage>
-          <div className="grid grid-cols-8 gap-1 w-full max-w-sm" aria-hidden>
-            {Array.from({ length: 64 }).map((_, i) => (
-              <span
-                key={i}
-                className="tower-band aspect-square rounded-[2px]"
-                style={{
-                  background: isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.07)",
-                  border: isDark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(15,23,42,0.05)",
-                  ["--d" as string]: `${i * 9}ms`,
-                }}
-              />
-            ))}
-          </div>
+          <DatasetGallery labels={evalData.gallery} isDark={isDark} lang={lang} />
         </StoryStage>
         <StoryProse>
           <StoryBeat title={es ? "Caminar el edificio entero" : "Walking the whole building"}>

@@ -47,6 +47,7 @@ export const translations: Translations = {
         visit: "Visit",
         viewDetails: "View details for {project}",
         newTab: "opens in a new tab",
+        back: "Back to projects",
       },
       modal: {
         whatBuilt: "What I built",
@@ -259,6 +260,7 @@ export const translations: Translations = {
         visit: "Visitar",
         viewDetails: "Ver detalles de {project}",
         newTab: "abre en una pestaña nueva",
+        back: "Volver a proyectos",
       },
       modal: {
         whatBuilt: "Lo que construí",

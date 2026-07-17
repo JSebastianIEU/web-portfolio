@@ -48,6 +48,7 @@ export type TranslationCopy = {
       visit: string;
       viewDetails: string;
       newTab: string;
+      back: string;
     };
     modal: {
       whatBuilt: string;

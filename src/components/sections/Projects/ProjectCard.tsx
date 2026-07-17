@@ -26,7 +26,7 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
         data-cursor="pointer"
         className="aspect-[16/9] w-full overflow-hidden relative"
         style={{ background: isDark ? "rgba(255,255,255,0.03)" : "rgba(15,23,42,0.04)" }}
-        aria-label={`View details for ${project.titleES || project.title}`}
+        aria-label={copy.cards.viewDetails.replace("{project}", lang === "es" ? project.titleES || project.title : project.title)}
       >
         <div
           className="absolute inset-0"

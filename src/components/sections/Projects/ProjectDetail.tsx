@@ -4,6 +4,7 @@ import Link from "next/link";
 import SectionShell from "@/components/layout/SectionShell";
 import type { Locale, TranslationCopy } from "@/domain/i18n";
 import type { Project } from "@/domain/projects";
+import BackToProjects from "./BackToProjects";
 import ProjectBadge from "./ProjectBadge";
 import { projectScrollytelling } from "./stories";
 
@@ -42,6 +43,7 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
   return (
     <SectionShell id={project.slug} className="relative w-full py-12 md:py-16">
       <div className="flex flex-col gap-6">
+        <BackToProjects slug={project.slug} label={copy.cards.back} isDark={isDark} />
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 flex-wrap">
             <ProjectBadge label={typeLabel} tone="neutral" isDark={isDark} />
