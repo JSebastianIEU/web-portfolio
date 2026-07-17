@@ -53,7 +53,7 @@ export default function SkillsSection() {
     <SectionShell
       id="skills"
       ref={revealRef}
-      className="reveal relative min-h-[60vh] flex items-center justify-center py-12 md:py-14 overflow-hidden"
+      className="reveal relative min-h-[55svh] md:min-h-[60vh] flex items-center justify-center py-12 md:py-14 overflow-hidden"
       contentClassName="relative w-full"
     >
       <SkillsDesktopExperience

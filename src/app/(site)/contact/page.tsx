@@ -22,7 +22,7 @@ export default function ContactPage() {
         onLeaveLink={leaveLink}
         mainClassName="relative z-[10]"
       >
-        <SectionShell className="min-h-screen flex items-center py-20 md:py-24">
+        <SectionShell className="min-h-[100svh] flex items-center py-20 md:py-24">
           <div className="w-full max-w-2xl mx-auto flex flex-col gap-6">
             <div className="flex flex-col gap-1">
               <span

@@ -1,16 +1,31 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
 
-html,
-body {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-  overflow-y: auto;
+/* Single scroll container on the root only. Having overflow-y:auto on BOTH
+   html and body nests two scrollers, which on iOS reads as "it bounces and
+   won't let me scroll down". overscroll-behavior-y:none kills the rubber-band
+   rebound. Smooth scroll stays for anchor jumps but is disabled under
+   reduced-motion. */
+html {
+  /* clip (not hidden) so overflow-y stays visible and the body never becomes
+     a second scroll container — the root html is the only scroller. */
+  overflow-x: clip;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: auto;
+  overscroll-behavior-y: none;
   touch-action: pan-y;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  overflow-x: clip;
+  scrollbar-width: none !important;
 }
 
 /* Hide scrollbar for main document (all devices) */

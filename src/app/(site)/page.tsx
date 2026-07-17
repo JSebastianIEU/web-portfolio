@@ -114,11 +114,11 @@ export default function Home() {
         showSpotlight={enableCustomCursor && showSpotlight}
         onEnterLink={enterLink}
         onLeaveLink={leaveLink}
-        mainClassName="relative z-[10] overflow-x-hidden"
+        mainClassName="relative z-[10] overflow-x-clip"
       >
         <section
           id="hero"
-          className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 md:px-6 lg:px-8"
+          className="relative min-h-[100svh] flex items-center justify-center overflow-hidden px-4 md:px-6 lg:px-8"
         >
           <div
             className="relative z-10 text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-6xl font-mono transition-opacity duration-200 text-center leading-tight md:leading-snug"

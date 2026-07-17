@@ -21,7 +21,7 @@ export default function AboutSection() {
     <SectionShell
       id="about"
       ref={revealRef}
-      className="reveal relative min-h-[86vh] flex items-center justify-center py-14 md:py-20"
+      className="reveal relative min-h-[78svh] md:min-h-[86vh] flex items-center justify-center py-14 md:py-20"
       contentClassName="relative w-full"
     >
       <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-14 items-center">

@@ -14,7 +14,7 @@ export default function NotFound() {
   return (
     <>
       <SiteChrome showSpotlight={enableCustomCursor} mainClassName="relative z-[10]">
-        <SectionShell className="flex min-h-screen items-center justify-center">
+        <SectionShell className="flex min-h-[100svh] items-center justify-center">
           <div className="flex flex-col items-center gap-4 text-center">
             <h1 className="text-2xl font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
               Page not found

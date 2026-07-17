@@ -23,10 +23,10 @@ import { useI18n } from "@/components/providers/language-provider";
 const STICKERS = [
   {
     id: "colombia",
-    neonSrc: "/stickers/neon colombia.png", // literal space in the filename, encoded below
-    paperSrc: "/stickers/papercolombia.png",
-    neonSize: { w: 596, h: 800 },
-    paperSize: { w: 617, h: 800 },
+    neonSrc: "/stickers/neon colombia.webp", // literal space in the filename, encoded below
+    paperSrc: "/stickers/papercolombia.webp",
+    neonSize: { w: 462, h: 620 },
+    paperSize: { w: 478, h: 620 },
     alt: "Sebastian seated in a cowboy hat, holding a large Colombian flag",
     altES: "Sebastián sentado con sombrero, sosteniendo una bandera de Colombia",
     neon: "#facc15",
@@ -34,10 +34,10 @@ const STICKERS = [
   },
   {
     id: "meditando",
-    neonSrc: "/stickers/neonmeditando.png",
-    paperSrc: "/stickers/papermeditando.png",
-    neonSize: { w: 800, h: 756 },
-    paperSize: { w: 800, h: 756 },
+    neonSrc: "/stickers/neonmeditando.webp",
+    paperSrc: "/stickers/papermeditando.webp",
+    neonSize: { w: 620, h: 586 },
+    paperSize: { w: 620, h: 586 },
     alt: "Sebastian meditating cross-legged in a lotus pose, smiling",
     altES: "Sebastián meditando con las piernas cruzadas en pose de loto, sonriendo",
     neon: "#22d3ee",
@@ -45,10 +45,10 @@ const STICKERS = [
   },
   {
     id: "vangogh",
-    neonSrc: "/stickers/neonvangogh.png",
-    paperSrc: "/stickers/papervanghog.png", // "vanghog" is the real filename
-    neonSize: { w: 660, h: 800 },
-    paperSize: { w: 668, h: 800 },
+    neonSrc: "/stickers/neonvangogh.webp",
+    paperSrc: "/stickers/papervanghog.webp", // "vanghog" is the real filename
+    neonSize: { w: 512, h: 620 },
+    paperSize: { w: 518, h: 620 },
     alt: "Sebastian in a Van Gogh t-shirt pointing both hands up",
     altES: "Sebastián con una camiseta de Van Gogh señalando hacia arriba con ambas manos",
     neon: "#f472b6",
@@ -56,10 +56,10 @@ const STICKERS = [
   },
   {
     id: "linkedin",
-    neonSrc: "/stickers/neonlinkedin.png",
-    paperSrc: "/stickers/paperlinkedin.png",
-    neonSize: { w: 553, h: 800 },
-    paperSize: { w: 575, h: 800 },
+    neonSrc: "/stickers/neonlinkedin.webp",
+    paperSrc: "/stickers/paperlinkedin.webp",
+    neonSize: { w: 429, h: 620 },
+    paperSize: { w: 446, h: 620 },
     alt: "Studio portrait of Sebastian smiling",
     altES: "Retrato de estudio de Sebastián sonriendo",
     neon: "#a78bfa",
