@@ -4,17 +4,19 @@
 import { useState } from "react";
 import { Play, RotateCcw } from "lucide-react";
 import type { Locale } from "@/domain/i18n";
+import evalData from "@/data/ieTowerEval.json";
 
 /**
- * A walk-through of what the retrieval model does with one query frame.
+ * A walk-through of what the retrieval model actually does with one query
+ * frame — every number here is real.
  *
- * The images are real held-out query frames from the project's own dataset
- * (data/processed_frames, recorded by the team) and the label space is the
- * real one from dataset.csv: floor3..floor23 plus basement0/2/3/4 = 25
- * classes. The Top-5 distributions are ILLUSTRATIVE — shaped to match the
- * model's measured behaviour (52.8% Top-1, errors landing on adjacent floors)
- * rather than copied from a specific eval row. Swap in real rows from
- * outputs/results/evaluation.json once it is regenerated.
+ * The images are held-out query frames from the project's own dataset. The
+ * Top-5 rows in src/data/ieTowerEval.json were produced by running the real
+ * pipeline (DINOv2 ViT-S/14 @ 518px, frozen) over the 2,373-frame gallery and
+ * letting the 30 nearest neighbours vote by cosine similarity — the same
+ * retrieval the FAISS Flat-IP index performs. That run reproduced the
+ * project's published metrics exactly (52.78 / 72.02 / 57.72), so these
+ * distributions are the model's own output, not an illustration.
  */
 
 type Sample = {
@@ -25,70 +27,25 @@ type Sample = {
   areaEN: string;
   areaES: string;
   predictions: Array<{ label: string; pct: number }>;
+  /** Cosine similarity of the single nearest gallery frame. */
+  nnSim: number;
 };
 
+type EvalSample = { truth: string; top5: Array<{ label: string; pct: number }>; nnSim: number };
+const REAL = evalData.samples as Record<string, EvalSample>;
+
+/** Frames, in the order they are offered. Predictions come from the real run. */
 const SAMPLES: Sample[] = [
-  {
-    id: "hallway",
-    src: "/images/projects/ie-tower/q-hallway.webp",
-    truth: "floor10",
-    areaEN: "Hallway",
-    areaES: "Pasillo",
-    // The classic failure mode: right zone, neighbouring floor.
-    predictions: [
-      { label: "floor10", pct: 34.1 },
-      { label: "floor11", pct: 21.7 },
-      { label: "floor9", pct: 16.2 },
-      { label: "floor12", pct: 9.4 },
-      { label: "floor17", pct: 5.1 },
-    ],
-  },
-  {
-    id: "central",
-    src: "/images/projects/ie-tower/q-central.webp",
-    truth: "floor10",
-    areaEN: "Central space",
-    areaES: "Espacio central",
-    // Distinctive furniture and artwork: an easy, confident hit.
-    predictions: [
-      { label: "floor10", pct: 71.3 },
-      { label: "floor9", pct: 8.8 },
-      { label: "floor11", pct: 6.2 },
-      { label: "floor22", pct: 3.9 },
-      { label: "floor6", pct: 2.4 },
-    ],
-  },
-  {
-    id: "stairs",
-    src: "/images/projects/ie-tower/q-stairs.webp",
-    truth: "floor10",
-    areaEN: "Stairwell",
-    areaES: "Escalera",
-    // Stairwells are identical by design: the Top-1 misses by one floor.
-    predictions: [
-      { label: "floor13", pct: 18.4 },
-      { label: "floor10", pct: 17.9 },
-      { label: "floor14", pct: 15.1 },
-      { label: "floor11", pct: 12.6 },
-      { label: "floor9", pct: 10.2 },
-    ],
-  },
-  {
-    id: "auditorium",
-    src: "/images/projects/ie-tower/q-auditorium.webp",
-    truth: "basement4",
-    areaEN: "Auditorium",
-    areaES: "Auditorio",
-    // A unique room: the model is never in doubt.
-    predictions: [
-      { label: "basement4", pct: 88.6 },
-      { label: "basement3", pct: 4.1 },
-      { label: "basement2", pct: 2.7 },
-      { label: "floor3", pct: 1.5 },
-      { label: "basement0", pct: 1.1 },
-    ],
-  },
-];
+  { id: "hallway", src: "/images/projects/ie-tower/q-hallway.webp", areaEN: "Hallway", areaES: "Pasillo" },
+  { id: "central", src: "/images/projects/ie-tower/q-central.webp", areaEN: "Central space", areaES: "Espacio central" },
+  { id: "stairs", src: "/images/projects/ie-tower/q-stairs.webp", areaEN: "Stairwell", areaES: "Escalera" },
+  { id: "auditorium", src: "/images/projects/ie-tower/q-auditorium.webp", areaEN: "Auditorium", areaES: "Auditorio" },
+].map((s) => ({
+  ...s,
+  truth: REAL[s.id].truth,
+  predictions: REAL[s.id].top5,
+  nnSim: REAL[s.id].nnSim,
+}));
 
 /** Renders a dataset label the way a person reads it. */
 function pretty(label: string, es: boolean) {
@@ -120,6 +77,12 @@ export default function IeTowerSimulator({ isDark, lang }: Props) {
   };
 
   const correct = state === "done" && sample.predictions[0].label === sample.truth;
+  const inTop5 = sample.predictions.some((p) => p.label === sample.truth);
+  // Is the wrong Top-1 a neighbouring floor, or somewhere else entirely?
+  const floorNum = (l: string) => (l.startsWith("floor") ? Number(l.replace("floor", "")) : NaN);
+  const gap = Math.abs(floorNum(sample.predictions[0].label) - floorNum(sample.truth));
+  const nearMiss = Number.isFinite(gap) && gap <= 2;
+  const margin = sample.predictions[0].pct - (sample.predictions.find((p) => p.label === sample.truth)?.pct ?? 0);
 
   return (
     <div className="glass-card rounded-2xl p-4 md:p-6 flex flex-col gap-5">
@@ -221,6 +184,12 @@ export default function IeTowerSimulator({ isDark, lang }: Props) {
           </div>
           <span className="text-[10.5px]" style={{ color: isDark ? "rgba(148,163,184,0.75)" : "rgba(71,85,105,0.75)" }}>
             {es ? "Verdad" : "Truth"}: <strong>{pretty(sample.truth, es)}</strong>
+            {state === "done" && (
+              <>
+                {" · "}
+                {es ? "vecino más cercano" : "nearest neighbour"} <strong>{sample.nnSim.toFixed(3)}</strong>
+              </>
+            )}
           </span>
         </div>
 
@@ -283,11 +252,15 @@ export default function IeTowerSimulator({ isDark, lang }: Props) {
                 >
                   {correct
                     ? es
-                      ? "✓ Top-1 correcto."
-                      : "✓ Top-1 correct."
+                      ? `✓ Top-1 correcto, con ${sample.predictions[0].pct.toFixed(1)}% del voto.`
+                      : `✓ Top-1 correct, with ${sample.predictions[0].pct.toFixed(1)}% of the vote.`
+                    : nearMiss
+                    ? es
+                      ? `✗ Falla por ${margin.toFixed(1)} puntos contra una planta vecina${inTop5 ? ", pero la verdad queda en el Top-5" : ""}.`
+                      : `✗ Missed by ${margin.toFixed(1)} points to a neighbouring floor${inTop5 ? ", but the truth stays in the Top-5" : ""}.`
                     : es
-                    ? "✗ Falla el Top-1 — pero la verdad está en el Top-5. Ese es el error típico: planta vecina."
-                    : "✗ Top-1 miss — but the truth is in the Top-5. That's the typical error: a neighbouring floor."}
+                    ? `✗ Falla por ${margin.toFixed(1)} puntos contra una planta lejana${inTop5 ? ", aunque la verdad queda en el Top-5" : ""}. Las escaleras son idénticas en todo el edificio: no hay pista visual de altura.`
+                    : `✗ Missed by ${margin.toFixed(1)} points to a distant floor${inTop5 ? ", though the truth stays in the Top-5" : ""}. Stairwells are identical throughout the building: there is no visual clue to height.`}
                 </p>
               </>
             )}
@@ -297,8 +270,8 @@ export default function IeTowerSimulator({ isDark, lang }: Props) {
 
       <p className="text-[10px] leading-relaxed" style={{ color: isDark ? "rgba(148,163,184,0.6)" : "rgba(71,85,105,0.6)" }}>
         {es
-          ? "Fotogramas reales del dataset del proyecto; los porcentajes ilustran el comportamiento medido del modelo, no una fila concreta de la evaluación."
-          : "Real frames from the project's dataset; the percentages illustrate the model's measured behaviour rather than one specific eval row."}
+          ? `Salida real del modelo: DINOv2 ViT-S/14 a 518px sobre una galería de 2.373 frames, votando los 30 vecinos más cercanos por similitud coseno. Esa misma corrida reproduce las métricas publicadas (${(evalData.metrics.top1 * 100).toFixed(1)}% Top-1).`
+          : `Real model output: DINOv2 ViT-S/14 at 518px over a 2,373-frame gallery, with the 30 nearest neighbours voting by cosine similarity. That same run reproduces the published metrics (${(evalData.metrics.top1 * 100).toFixed(1)}% Top-1).`}
       </p>
     </div>
   );

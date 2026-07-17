@@ -1,0 +1,141 @@
+{
+ "metrics": {
+  "top1": 0.527778,
+  "top5": 0.720238,
+  "mAP": 0.577202,
+  "queries": 504
+ },
+ "samples": {
+  "hallway": {
+   "truth": "floor10",
+   "top5": [
+    {
+     "label": "floor10",
+     "pct": 16.9
+    },
+    {
+     "label": "floor11",
+     "pct": 13.4
+    },
+    {
+     "label": "floor4",
+     "pct": 13.2
+    },
+    {
+     "label": "floor15",
+     "pct": 13.2
+    },
+    {
+     "label": "floor3",
+     "pct": 10.1
+    }
+   ],
+   "nnSim": 0.908
+  },
+  "central": {
+   "truth": "floor10",
+   "top5": [
+    {
+     "label": "floor10",
+     "pct": 22.5
+    },
+    {
+     "label": "floor15",
+     "pct": 19.1
+    },
+    {
+     "label": "floor4",
+     "pct": 16.9
+    },
+    {
+     "label": "floor16",
+     "pct": 12.5
+    },
+    {
+     "label": "floor21",
+     "pct": 6.7
+    }
+   ],
+   "nnSim": 0.866
+  },
+  "stairs": {
+   "truth": "floor10",
+   "top5": [
+    {
+     "label": "floor22",
+     "pct": 27.4
+    },
+    {
+     "label": "floor10",
+     "pct": 26.0
+    },
+    {
+     "label": "floor20",
+     "pct": 12.3
+    },
+    {
+     "label": "floor21",
+     "pct": 6.5
+    },
+    {
+     "label": "floor11",
+     "pct": 6.2
+    }
+   ],
+   "nnSim": 0.923
+  },
+  "auditorium": {
+   "truth": "basement4",
+   "top5": [
+    {
+     "label": "basement4",
+     "pct": 26.9
+    },
+    {
+     "label": "floor17",
+     "pct": 15.4
+    },
+    {
+     "label": "floor13",
+     "pct": 9.5
+    },
+    {
+     "label": "floor23",
+     "pct": 9.0
+    },
+    {
+     "label": "floor7",
+     "pct": 6.1
+    }
+   ],
+   "nnSim": 0.939
+  }
+ },
+ "perClass": {
+  "basement0": 0.7692,
+  "basement2": 0.8095,
+  "basement3": 0.8667,
+  "basement4": 0.7857,
+  "floor10": 0.4839,
+  "floor11": 0.4783,
+  "floor12": 0.55,
+  "floor13": 0.5455,
+  "floor14": 0.4444,
+  "floor15": 0.2632,
+  "floor16": 0.4583,
+  "floor17": 0.4762,
+  "floor18": 0.2222,
+  "floor19": 0.6,
+  "floor20": 0.4231,
+  "floor21": 0.7143,
+  "floor22": 0.5294,
+  "floor23": 0.5833,
+  "floor3": 0.6316,
+  "floor4": 0.4074,
+  "floor5": 0.4,
+  "floor6": 0.4762,
+  "floor7": 0.5385,
+  "floor8": 0.3846,
+  "floor9": 0.5185
+ }
+}

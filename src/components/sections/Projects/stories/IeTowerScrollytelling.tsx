@@ -162,7 +162,7 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
             <StoryStat value="72.0%" label="Top-5" />
             <StoryStat value="57.7%" label="mAP" />
             <p className="text-[11px] max-w-[22ch] leading-relaxed" style={{ color: isDark ? "rgba(148,163,184,0.75)" : "rgba(71,85,105,0.75)" }}>
-              {es ? "Azar: 4%. Mejor configuración, en CPU." : "Chance: 4%. Best configuration, on CPU."}
+              {es ? "Azar: 4%. Reproducido sobre 504 queries." : "Chance: 4%. Reproduced over 504 queries."}
             </p>
           </div>
         </StoryStage>
@@ -264,26 +264,66 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
       {/* 08 — What's broken */}
       <StoryChapter index="08" eyebrow={es ? "Lo que falla" : "What's broken"}>
         <StoryStage>
-          <TowerDiagram isDark={isDark} lang={lang} active="floor10" />
+          <div className="flex flex-col gap-2.5 w-full max-w-xs">
+            {[
+              { k: es ? "Sótano 3" : "Basement 3", v: 86.7, on: true },
+              { k: es ? "Sótano 2" : "Basement 2", v: 81.0, on: true },
+              { k: es ? "Sótano 4" : "Basement 4", v: 78.6, on: true },
+              { k: es ? "Planta 10" : "Floor 10", v: 48.4, on: false },
+              { k: es ? "Planta 15" : "Floor 15", v: 26.3, on: false },
+              { k: es ? "Planta 18" : "Floor 18", v: 22.2, on: false },
+            ].map((row, i) => (
+              <div key={row.k} className="tower-band flex items-center gap-2.5" style={{ ["--d" as string]: `${i * 70}ms` }}>
+                <span
+                  className="text-[11px] w-[74px] shrink-0"
+                  style={{ color: isDark ? "rgba(226,232,240,0.82)" : "rgba(15,23,42,0.78)" }}
+                >
+                  {row.k}
+                </span>
+                <span
+                  className="flex-1 h-[7px] rounded-full overflow-hidden"
+                  style={{ background: isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.07)" }}
+                >
+                  <span
+                    className="block h-full rounded-full"
+                    style={{
+                      width: `${row.v}%`,
+                      background: row.on ? "#22d3ee" : isDark ? "rgba(251,146,60,0.7)" : "rgba(234,88,12,0.6)",
+                    }}
+                  />
+                </span>
+                <span
+                  className="font-mono text-[10px] w-[36px] text-right tabular-nums"
+                  style={{ color: isDark ? "rgba(148,163,184,0.8)" : "rgba(71,85,105,0.8)" }}
+                >
+                  {row.v}%
+                </span>
+              </div>
+            ))}
+            <p className="text-[10px] mt-1" style={{ color: isDark ? "rgba(148,163,184,0.6)" : "rgba(71,85,105,0.6)" }}>
+              {es ? "Top-1 por clase, medido sobre 504 queries." : "Per-class Top-1, measured over 504 queries."}
+            </p>
+          </div>
         </StoryStage>
         <StoryProse>
-          <StoryBeat title={es ? "Confusión vertical" : "Vertical confusion"}>
+          <StoryBeat title={es ? "Los sótanos son lo fácil" : "The basements are the easy part"}>
             {es
-              ? "El error dominante: acertar el sitio y fallar la altura. Plantas de aulas consecutivas son visualmente indistinguibles incluso para una persona; el modelo hereda esa ambigüedad."
-              : "The dominant error: right place, wrong height. Consecutive classroom floors are visually indistinguishable even to a person; the model inherits that ambiguity."}
+              ? "Contra la intuición, lo que el modelo clava son los sótanos: 87%, 81%, 79%. Tienen auditorio, parking, salas con forma propia. Cada uno es visualmente único, así que su vecindario en el espacio de embeddings no se parece a nada más."
+              : "Against intuition, what the model nails are the basements: 87%, 81%, 79%. They have the auditorium, the parking, rooms with a shape of their own. Each is visually unique, so its neighbourhood in embedding space looks like nothing else."}
           </StoryBeat>
-          <StoryBeat title={es ? "Una sola pasada por planta" : "One pass per floor"}>
+          <StoryBeat title={es ? "Las plantas de aulas son el infierno" : "The classroom floors are the hell"}>
             {es
-              ? "Cada planta se grabó una vez, un día, con una luz. El modelo no ha visto la misma esquina de tarde, ni con sillas movidas, ni con gente. Eso limita el techo mucho más que la arquitectura del modelo."
-              : "Each floor was recorded once, on one day, in one light. The model has never seen the same corner in the evening, with chairs moved, with people in it. That caps the ceiling far more than the model architecture does."}
+              ? "La planta 18 acierta un 22%; la 15, un 26%. Son las plantas repetidas — mismo pasillo, mismo suelo, mismos muebles, distinta altura. El modelo no falla por malo: falla porque la información no está en la imagen."
+              : "Floor 18 lands 22%; floor 15, 26%. These are the repeated floors — same corridor, same flooring, same furniture, different height. The model isn't failing because it's bad: it's failing because the information isn't in the image."}
           </StoryBeat>
-          <StoryBeat title={es ? "Lo siguiente" : "What's next"}>
+          <StoryBeat title={es ? "Dónde miraría después" : "Where I'd look next"}>
             {es
-              ? "Más pasadas por planta en distintos momentos, y un desempate jerárquico que decida primero la zona y luego la altura. El pipeline ya está partido para poder cambiar solo esa etapa."
-              : "More passes per floor at different times, and a hierarchical tie-break that settles the zone first and the height second. The pipeline is already split so only that stage has to change."}
+              ? "Los números dicen dónde invertir: no en un backbone mayor (ya vimos que no paga), sino en darle a las plantas repetidas algo que las distinga — más pasadas en distintos momentos, o un desempate jerárquico que resuelva primero la zona y luego la altura. El pipeline ya está partido para cambiar solo esa etapa."
+              : "The numbers say where to invest: not in a bigger backbone (we saw that doesn't pay), but in giving the repeated floors something that tells them apart — more passes at different times, or a hierarchical tie-break that settles the zone first and the height second. The pipeline is already split so only that stage has to change."}
           </StoryBeat>
         </StoryProse>
       </StoryChapter>
+
     </div>
   );
 }
