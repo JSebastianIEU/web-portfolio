@@ -5,6 +5,7 @@ import SectionShell from "@/components/layout/SectionShell";
 import type { Locale, TranslationCopy } from "@/domain/i18n";
 import type { Project } from "@/domain/projects";
 import ProjectBadge from "./ProjectBadge";
+import { projectScrollytelling } from "./stories";
 
 type ProjectDetailProps = {
   project: Project;
@@ -22,6 +23,9 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
   const title = lang === "es" ? project.titleES || project.title : project.title;
   const subtitle = lang === "es" ? project.subtitleES || project.subtitle : project.subtitle;
   const badgeTone = project.status === "live" || project.status === "published" ? "accent" : project.status === "paused" ? "warning" : "neutral";
+  // Projects with a story tell it instead of listing bullets; the rest keep
+  // the generic highlights/architecture layout.
+  const Story = projectScrollytelling[project.id];
 
   const chipStyle = {
     border: isDark ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(15,23,42,0.14)",
@@ -52,35 +56,41 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
           </p>
         </div>
 
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
-            {copy.detail.overview}
-          </h3>
-          <p style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.82)" }}>{description}</p>
-        </div>
+        {Story ? (
+          <Story isDark={isDark} lang={lang} />
+        ) : (
+          <>
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
+                {copy.detail.overview}
+              </h3>
+              <p style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.82)" }}>{description}</p>
+            </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-3">
-            <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
-              {copy.detail.highlights}
-            </h4>
-            <ul className="space-y-2 text-sm" style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.8)" }}>
-              {highlights.map((item) => (
-                <li key={item}>• {item}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="space-y-3">
-            <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
-              {copy.detail.architecture}
-            </h4>
-            <ul className="space-y-2 text-sm" style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.8)" }}>
-              {architecture.map((item) => (
-                <li key={item}>• {item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
+                  {copy.detail.highlights}
+                </h4>
+                <ul className="space-y-2 text-sm" style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.8)" }}>
+                  {highlights.map((item) => (
+                    <li key={item}>• {item}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
+                  {copy.detail.architecture}
+                </h4>
+                <ul className="space-y-2 text-sm" style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.8)" }}>
+                  {architecture.map((item) => (
+                    <li key={item}>• {item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </>
+        )}
 
         <div className="space-y-3">
           <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
@@ -95,6 +105,7 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
           </div>
         </div>
 
+        {!Story && (
         <div className="space-y-3">
           <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
             {copy.detail.media}
@@ -120,6 +131,7 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
             </div>
           </div>
         </div>
+        )}
 
         <div className="flex flex-wrap gap-3">
           {project.links.github && (

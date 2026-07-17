@@ -7,6 +7,7 @@ import Link from "next/link";
 import type { Locale, TranslationCopy } from "@/domain/i18n";
 import type { Project } from "@/domain/projects";
 import ProjectBadge from "./ProjectBadge";
+import { projectStories } from "./stories";
 
 type ProjectModalProps = {
   project: Project;
@@ -203,6 +204,7 @@ export default function ProjectModal({
   );
 
   const badgeTone = project.status === "live" || project.status === "published" ? "accent" : project.status === "paused" ? "warning" : "neutral";
+  const Story = projectStories[project.id];
 
   if (!isMounted) return null;
 
@@ -325,6 +327,13 @@ export default function ProjectModal({
               </ul>
             </div>
           </div>
+
+          {Story && (
+            <>
+              {divider}
+              <Story isDark={isDark} lang={lang} />
+            </>
+          )}
 
           {divider}
 

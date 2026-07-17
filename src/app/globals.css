@@ -452,6 +452,260 @@ body {
   }
 }
 
+/* === Project scrollytelling ===========================================
+   A vertical story: the visual sticks while the prose scrolls past it.
+   Every reveal is scroll-driven CSS (animation-timeline: view()) — no scroll
+   listeners, no per-frame JS, consistent with the paint rules above. */
+.story-chapter {
+  position: relative;
+  padding-block: clamp(3rem, 10vh, 7rem);
+}
+
+@media (min-width: 768px) {
+  .story-chapter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+}
+
+/* Single column (phones): the visual just sits above its prose. Sticky here
+   would pin it while the following prose rides up and over it. */
+.story-stage {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  /* Two columns: now the visual can hold while the prose scrolls beside it.
+     align-self:start (the grid default here) is what lets sticky engage. */
+  .story-stage {
+    position: sticky;
+    top: 14vh;
+    min-height: 72vh;
+    margin-bottom: 0;
+  }
+}
+
+.story-prose {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 11vh, 7rem);
+  padding-block: 2vh;
+}
+
+@media (min-width: 768px) {
+  /* Give the prose at least the stage's height and centre it, so a short
+     chapter doesn't leave a dead gap under the last beat. */
+  .story-prose {
+    min-height: 72vh;
+    justify-content: center;
+  }
+}
+
+.story-beat-title {
+  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: 0.6rem;
+  color: var(--text);
+}
+
+.story-beat-body {
+  font-size: clamp(0.9rem, 1.15vw, 1rem);
+  line-height: 1.85;
+  color: color-mix(in srgb, var(--text) 78%, transparent);
+  max-width: 46ch;
+}
+
+/* The numbered rail that labels each chapter. */
+.story-rail {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.5rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 50%, transparent);
+}
+
+@media (min-width: 768px) {
+  .story-rail {
+    grid-column: 1 / -1;
+  }
+}
+
+.story-rail-num {
+  font-weight: 700;
+  color: color-mix(in srgb, var(--text) 85%, transparent);
+}
+
+.story-rail-line {
+  height: 1px;
+  width: clamp(1.5rem, 5vw, 4rem);
+  background: color-mix(in srgb, var(--text) 22%, transparent);
+}
+
+/* Headline numbers. */
+.story-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.story-stat-value {
+  font-size: clamp(1.9rem, 4.2vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.story-stat[data-accent="true"] .story-stat-value {
+  color: #22d3ee;
+}
+
+.story-stat-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: color-mix(in srgb, var(--text) 55%, transparent);
+}
+
+/* Scroll-driven reveals. */
+@keyframes storyIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes towerBandIn {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .story-beat,
+  .story-stat {
+    animation: storyIn linear both;
+    animation-timeline: view();
+    animation-range: entry 8% cover 32%;
+  }
+  .tower-band {
+    animation: towerBandIn linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 26%;
+  }
+}
+
+/* Fallback: browsers without scroll-driven animations get a plain fade-in
+   tied to the section's existing reveal state, not a stuck-invisible page. */
+@supports not (animation-timeline: view()) {
+  .story-beat,
+  .story-stat {
+    animation: storyIn 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+/* Third-party media credit: always present, rises on hover/focus. */
+.credited-badge {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.credited:hover .credited-badge,
+.credited:focus-within .credited-badge {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* No hover (touch): the credit stays visible — attribution shouldn't depend
+   on a pointer the device doesn't have. */
+@media (hover: none) {
+  .credited-badge {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-beat,
+  .story-stat,
+  .tower-band {
+    animation: none;
+  }
+  .credited-badge {
+    transition: none;
+  }
+}
+
+/* IE Tower VPR simulator: a scan line sweeps the query image while the
+   pipeline chips light up, then the Top-5 bars grow in. Everything is bounded
+   to the widget and runs only after an explicit click. */
+@keyframes vprScan {
+  from {
+    top: -12%;
+  }
+  to {
+    top: 108%;
+  }
+}
+
+.vpr-scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.95), transparent);
+  box-shadow: 0 0 14px 2px rgba(103, 232, 249, 0.6);
+  animation: vprScan 700ms linear infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes vprBarIn {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.vpr-bar {
+  transform-origin: left center;
+  animation: vprBarIn 500ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vpr-scanline {
+    animation: none;
+    top: 50%;
+  }
+  .vpr-bar {
+    animation: none;
+  }
+}
+
 /* Contact wizard: each step slides in when it mounts (keyed by step index). */
 @keyframes wizardStepIn {
   from {
