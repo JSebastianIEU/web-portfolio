@@ -63,8 +63,8 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
           </StoryBeat>
           <StoryBeat title={es ? "25 etiquetas" : "25 labels"}>
             {es
-              ? "21 plantas sobre rasante y 4 sótanos. Cada banda del esquema es una clase del modelo. Adivinar al azar acierta un 4% de las veces: esa es la línea base que hay que batir."
-              : "21 floors above ground and 4 basements. Every band in the schematic is one class. Random guessing lands 4% of the time: that's the baseline to beat."}
+              ? "Las 21 plantas que ocupa la escuela (de la 3 a la 23) más cuatro sótanos: 25 clases. Cada banda del esquema es una etiqueta real del dataset. Adivinar al azar acierta un 4% de las veces — esa es la línea base a batir."
+              : "The 21 floors the school occupies (3 through 23) plus four basements: 25 classes. Every band in the schematic is a real dataset label. Random guessing lands 4% of the time — that's the baseline to beat."}
           </StoryBeat>
           <StoryBeat title={es ? "Por qué es difícil" : "Why it's hard"}>
             {es
@@ -98,8 +98,8 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
               : "There was no dataset, so we recorded one: video walkthroughs of every floor and basement, phone in hand. ffmpeg slices them at 1 frame per second and each frame inherits its floor's label."}
           </StoryBeat>
           <div className="flex gap-8 flex-wrap">
-            <StoryStat value="2,877" label={es ? "frames de galería" : "gallery frames"} />
-            <StoryStat value="~430" label={es ? "queries de validación" : "held-out queries"} />
+            <StoryStat value="2,877" label={es ? "frames etiquetados" : "labelled frames"} />
+            <StoryStat value="504" label={es ? "queries de validación" : "held-out queries"} />
           </div>
           <StoryBeat title={es ? "Reproducible o no cuenta" : "Reproducible or it doesn't count"}>
             {es
@@ -187,10 +187,84 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
         </div>
       </StoryChapter>
 
-      {/* 07 — What's broken */}
-      <StoryChapter index="07" eyebrow={es ? "Lo que falla" : "What's broken"}>
+      {/* 06b — The ablation */}
+      <StoryChapter index="07" eyebrow={es ? "La ablación" : "The ablation"}>
         <StoryStage>
-          <TowerDiagram isDark={isDark} lang={lang} active={9} />
+          <div className="flex flex-col gap-2 w-full max-w-sm">
+            {[
+              { k: "ResNet50", t1: 46.8, sec: "338", on: false },
+              { k: "DINOv2 S/14", t1: 49.2, sec: "372", on: false },
+              { k: "DINOv2 B/14", t1: 49.4, sec: "1051", on: false },
+              { k: "DINOv2 S/14 · hi-res", t1: 52.8, sec: "—", on: true },
+            ].map((row, i) => (
+              <div
+                key={row.k}
+                className="tower-band flex items-center gap-3"
+                style={{ ["--d" as string]: `${i * 80}ms` }}
+              >
+                <span
+                  className="text-[11px] w-[124px] shrink-0 font-medium"
+                  style={{ color: row.on ? "#22d3ee" : isDark ? "rgba(226,232,240,0.8)" : "rgba(15,23,42,0.78)" }}
+                >
+                  {row.k}
+                </span>
+                <span
+                  className="flex-1 h-[7px] rounded-full overflow-hidden"
+                  style={{ background: isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.07)" }}
+                >
+                  <span
+                    className="block h-full rounded-full"
+                    style={{
+                      width: `${(row.t1 / 60) * 100}%`,
+                      background: row.on ? "#22d3ee" : isDark ? "rgba(226,232,240,0.4)" : "rgba(15,23,42,0.3)",
+                    }}
+                  />
+                </span>
+                <span
+                  className="font-mono text-[10.5px] w-[38px] text-right tabular-nums"
+                  style={{ color: row.on ? "#22d3ee" : isDark ? "rgba(148,163,184,0.85)" : "rgba(71,85,105,0.85)" }}
+                >
+                  {row.t1}%
+                </span>
+                <span
+                  className="font-mono text-[9.5px] w-[42px] text-right tabular-nums"
+                  style={{ color: isDark ? "rgba(148,163,184,0.5)" : "rgba(71,85,105,0.5)" }}
+                >
+                  {row.sec}s
+                </span>
+              </div>
+            ))}
+            <p
+              className="text-[10px] mt-1"
+              style={{ color: isDark ? "rgba(148,163,184,0.6)" : "rgba(71,85,105,0.6)" }}
+            >
+              {es ? "Top-1 y tiempo de pipeline, medidos." : "Measured Top-1 and pipeline time."}
+            </p>
+          </div>
+        </StoryStage>
+        <StoryProse>
+          <StoryBeat title={es ? "Cuatro backbones, medidos" : "Four backbones, measured"}>
+            {es
+              ? "ResNet50 fue la línea base. Cambiar a DINOv2 sumó dos puntos y medio. Pero el hallazgo interesante está en las dos últimas filas."
+              : "ResNet50 was the baseline. Switching to DINOv2 added two and a half points. But the interesting finding is in the last two rows."}
+          </StoryBeat>
+          <StoryBeat title={es ? "El modelo grande no valió la pena" : "The big model wasn't worth it"}>
+            {es
+              ? "DINOv2 Base — cuatro veces más parámetros — ganó 0,2 puntos sobre Small y costó casi tres veces más tiempo de pipeline (1.051s contra 372s). Un empate estadístico a triple precio."
+              : "DINOv2 Base — four times the parameters — gained 0.2 points over Small and cost nearly three times the pipeline time (1,051s vs 372s). A statistical tie at triple the price."}
+          </StoryBeat>
+          <StoryBeat title={es ? "Más píxeles ganaron a más parámetros" : "More pixels beat more parameters"}>
+            {es
+              ? "Lo que sí movió la aguja fue subir la resolución del Small a 518×518: 52,8% de Top-1, el mejor de los cuatro. En un edificio donde la pista está en detalles pequeños, ver mejor importa más que pensar más."
+              : "What actually moved the needle was pushing the Small model to 518×518: 52.8% Top-1, the best of the four. In a building where the clue is in small details, seeing better matters more than thinking harder."}
+          </StoryBeat>
+        </StoryProse>
+      </StoryChapter>
+
+      {/* 08 — What's broken */}
+      <StoryChapter index="08" eyebrow={es ? "Lo que falla" : "What's broken"}>
+        <StoryStage>
+          <TowerDiagram isDark={isDark} lang={lang} active="floor10" />
         </StoryStage>
         <StoryProse>
           <StoryBeat title={es ? "Confusión vertical" : "Vertical confusion"}>

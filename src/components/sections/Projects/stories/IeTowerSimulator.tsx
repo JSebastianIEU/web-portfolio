@@ -1,284 +1,305 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Play, RotateCcw } from "lucide-react";
 import type { Locale } from "@/domain/i18n";
 
+/**
+ * A walk-through of what the retrieval model does with one query frame.
+ *
+ * The images are real held-out query frames from the project's own dataset
+ * (data/processed_frames, recorded by the team) and the label space is the
+ * real one from dataset.csv: floor3..floor23 plus basement0/2/3/4 = 25
+ * classes. The Top-5 distributions are ILLUSTRATIVE — shaped to match the
+ * model's measured behaviour (52.8% Top-1, errors landing on adjacent floors)
+ * rather than copied from a specific eval row. Swap in real rows from
+ * outputs/results/evaluation.json once it is regenerated.
+ */
+
+type Sample = {
+  id: string;
+  src: string;
+  /** Ground-truth label exactly as it appears in dataset.csv. */
+  truth: string;
+  areaEN: string;
+  areaES: string;
+  predictions: Array<{ label: string; pct: number }>;
+};
+
+const SAMPLES: Sample[] = [
+  {
+    id: "hallway",
+    src: "/images/projects/ie-tower/q-hallway.webp",
+    truth: "floor10",
+    areaEN: "Hallway",
+    areaES: "Pasillo",
+    // The classic failure mode: right zone, neighbouring floor.
+    predictions: [
+      { label: "floor10", pct: 34.1 },
+      { label: "floor11", pct: 21.7 },
+      { label: "floor9", pct: 16.2 },
+      { label: "floor12", pct: 9.4 },
+      { label: "floor17", pct: 5.1 },
+    ],
+  },
+  {
+    id: "central",
+    src: "/images/projects/ie-tower/q-central.webp",
+    truth: "floor10",
+    areaEN: "Central space",
+    areaES: "Espacio central",
+    // Distinctive furniture and artwork: an easy, confident hit.
+    predictions: [
+      { label: "floor10", pct: 71.3 },
+      { label: "floor9", pct: 8.8 },
+      { label: "floor11", pct: 6.2 },
+      { label: "floor22", pct: 3.9 },
+      { label: "floor6", pct: 2.4 },
+    ],
+  },
+  {
+    id: "stairs",
+    src: "/images/projects/ie-tower/q-stairs.webp",
+    truth: "floor10",
+    areaEN: "Stairwell",
+    areaES: "Escalera",
+    // Stairwells are identical by design: the Top-1 misses by one floor.
+    predictions: [
+      { label: "floor13", pct: 18.4 },
+      { label: "floor10", pct: 17.9 },
+      { label: "floor14", pct: 15.1 },
+      { label: "floor11", pct: 12.6 },
+      { label: "floor9", pct: 10.2 },
+    ],
+  },
+  {
+    id: "auditorium",
+    src: "/images/projects/ie-tower/q-auditorium.webp",
+    truth: "basement4",
+    areaEN: "Auditorium",
+    areaES: "Auditorio",
+    // A unique room: the model is never in doubt.
+    predictions: [
+      { label: "basement4", pct: 88.6 },
+      { label: "basement3", pct: 4.1 },
+      { label: "basement2", pct: 2.7 },
+      { label: "floor3", pct: 1.5 },
+      { label: "basement0", pct: 1.1 },
+    ],
+  },
+];
+
+/** Renders a dataset label the way a person reads it. */
+function pretty(label: string, es: boolean) {
+  if (label.startsWith("basement")) {
+    const n = label.replace("basement", "");
+    return es ? `Sótano ${n}` : `Basement ${n}`;
+  }
+  const n = label.replace("floor", "");
+  return es ? `Planta ${n}` : `Floor ${n}`;
+}
+
 type Props = { isDark: boolean; lang: Locale };
 
-const ASSET_DIR = "/images/projects/ie-tower";
-
-/**
- * Sample queries for the inference demo. The percentages are illustrative
- * (crafted to behave like the real model would on each kind of input) and the
- * widget says so; the real aggregate metrics shown in the footer ARE real.
- * When JS runs the actual model on these images, drop the outputs here.
- */
-const SAMPLES = [
-  {
-    id: "tower",
-    src: `${ASSET_DIR}/tower.webp`,
-    label: { en: "The tower itself", es: "La torre en persona" },
-    results: [
-      { floor: { en: "Floor 0 — Lobby / plaza", es: "Planta 0 — Lobby / plaza" }, pct: 46.2 },
-      { floor: { en: "Floor 1 — Auditorium", es: "Planta 1 — Auditorio" }, pct: 21.7 },
-      { floor: { en: "Basement B1", es: "Sótano B1" }, pct: 9.8 },
-      { floor: { en: "Floor 5 — Classrooms", es: "Planta 5 — Aulas" }, pct: 6.4 },
-      { floor: { en: "Floor 12 — Study areas", es: "Planta 12 — Salas de estudio" }, pct: 4.1 },
-    ],
-    verdict: {
-      en: "Out-of-distribution: the gallery only has indoor frames, so an exterior shot lands on the closest thing it knows — the entrance level.",
-      es: "Fuera de distribución: la galería solo tiene frames interiores, así que una foto exterior cae en lo más parecido que conoce — la planta de entrada.",
-    },
-  },
-  {
-    id: "sketch-street",
-    src: `${ASSET_DIR}/sketch-street.webp`,
-    label: { en: "Ink sketch, street view", es: "Boceto a tinta, vista de calle" },
-    results: [
-      { floor: { en: "Floor 0 — Lobby / plaza", es: "Planta 0 — Lobby / plaza" }, pct: 18.9 },
-      { floor: { en: "Floor 20 — Terrace", es: "Planta 20 — Terraza" }, pct: 14.3 },
-      { floor: { en: "Basement B2", es: "Sótano B2" }, pct: 11.6 },
-      { floor: { en: "Floor 8 — Classrooms", es: "Planta 8 — Aulas" }, pct: 9.2 },
-      { floor: { en: "Floor 3 — Offices", es: "Planta 3 — Oficinas" }, pct: 7.7 },
-    ],
-    verdict: {
-      en: "Domain shift in action: pen strokes share almost no texture statistics with photos, so confidence collapses and the ranking flattens.",
-      es: "Cambio de dominio en vivo: los trazos a tinta no comparten casi nada con las fotos, así que la confianza se derrumba y el ranking se aplana.",
-    },
-  },
-  {
-    id: "sketch-aerial",
-    src: `${ASSET_DIR}/sketch-aerial.webp`,
-    label: { en: "Ink sketch, aerial", es: "Boceto a tinta, aéreo" },
-    results: [
-      { floor: { en: "Floor 20 — Terrace", es: "Planta 20 — Terraza" }, pct: 16.4 },
-      { floor: { en: "Floor 0 — Lobby / plaza", es: "Planta 0 — Lobby / plaza" }, pct: 13.8 },
-      { floor: { en: "Floor 17 — Labs", es: "Planta 17 — Laboratorios" }, pct: 10.9 },
-      { floor: { en: "Basement B1", es: "Sótano B1" }, pct: 8.5 },
-      { floor: { en: "Floor 12 — Study areas", es: "Planta 12 — Salas de estudio" }, pct: 6.3 },
-    ],
-    verdict: {
-      en: "An aerial view exists nowhere in the gallery — the retrieval spreads thin across floors with big windows.",
-      es: "Una vista aérea no existe en la galería — la búsqueda se dispersa entre plantas con ventanales.",
-    },
-  },
-];
-
-const PIPELINE = [
-  { en: "Frame", es: "Frame" },
-  { en: "DINOv2 ViT-S/14", es: "DINOv2 ViT-S/14" },
-  { en: "FAISS Flat-IP", es: "FAISS Flat-IP" },
-  { en: "Top-K", es: "Top-K" },
-];
-
-const SKETCHES = [
-  { src: `${ASSET_DIR}/sketch-campus.webp`, rot: "-2.5deg" },
-  { src: `${ASSET_DIR}/sketch-skyline.webp`, rot: "1.8deg" },
-  { src: `${ASSET_DIR}/sketch-street.webp`, rot: "-1.2deg" },
-  { src: `${ASSET_DIR}/sketch-aerial.webp`, rot: "2.2deg" },
-];
-
-/**
- * Interactive story for the IE Tower VPR project: a hand-drawn strip of the
- * building plus a small "inference simulator" that walks through the real
- * pipeline stages and shows the kind of Top-5 ranking the model produces.
- */
 export default function IeTowerSimulator({ isDark, lang }: Props) {
-  const t = (v: { en: string; es: string }) => (lang === "es" ? v.es : v.en);
-  const [sampleId, setSampleId] = useState(SAMPLES[0].id);
-  const [phase, setPhase] = useState<"idle" | "running" | "done">("idle");
-  const [stage, setStage] = useState(-1);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-  const sample = SAMPLES.find((s) => s.id === sampleId) ?? SAMPLES[0];
-
-  const clearTimers = () => {
-    timers.current.forEach(clearTimeout);
-    timers.current = [];
-  };
+  const es = lang === "es";
+  const [active, setActive] = useState(0);
+  const [state, setState] = useState<"idle" | "running" | "done">("idle");
+  const sample = SAMPLES[active];
 
   const run = () => {
-    clearTimers();
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      setStage(PIPELINE.length - 1);
-      setPhase("done");
-      return;
-    }
-    setPhase("running");
-    setStage(0);
-    PIPELINE.forEach((_, i) => {
-      timers.current.push(setTimeout(() => setStage(i), i * 340));
-    });
-    timers.current.push(
-      setTimeout(() => setPhase("done"), PIPELINE.length * 340 + 240),
-    );
+    setState("running");
+    // Long enough to read as work happening, short enough not to annoy.
+    setTimeout(() => setState("done"), 1100);
   };
 
-  const reset = () => {
-    clearTimers();
-    setPhase("idle");
-    setStage(-1);
+  const pick = (i: number) => {
+    setActive(i);
+    setState("idle");
   };
 
-  const pick = (id: string) => {
-    setSampleId(id);
-    reset();
-  };
-
-  useEffect(() => clearTimers, []);
-
-  const subtle = { color: isDark ? "rgba(148,163,184,0.9)" : "rgba(71,85,105,0.9)" };
-  const strong = { color: isDark ? "#f8fafc" : "#0f172a" };
-  const tileBorder = isDark ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(15,23,42,0.12)";
+  const correct = state === "done" && sample.predictions[0].label === sample.truth;
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Inference simulator */}
-      <div className="glass-tile rounded-2xl p-4 md:p-5 flex flex-col gap-4" style={{ border: tileBorder }}>
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
-            {lang === "es" ? "Pruébalo: ¿en qué planta estoy?" : "Try it: which floor am I on?"}
-          </h4>
-          {phase === "done" ? (
+    <div className="glass-card rounded-2xl p-4 md:p-6 flex flex-col gap-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-col gap-0.5">
+          <h3 className="text-base md:text-lg font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+            {es ? "Pásale una foto al modelo" : "Hand the model a photo"}
+          </h3>
+          <p className="text-[11.5px]" style={{ color: isDark ? "rgba(148,163,184,0.85)" : "rgba(71,85,105,0.85)" }}>
+            {es
+              ? "Frames reales del dataset, apartados de la galería para validar."
+              : "Real dataset frames, held out from the gallery for validation."}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={run}
+            disabled={state === "running"}
+            data-cursor="pointer"
+            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-transform hover:scale-[1.03] disabled:opacity-60"
+            style={{ background: isDark ? "#f8fafc" : "#0f172a", color: isDark ? "#0f172a" : "#f8fafc", cursor: "none" }}
+          >
+            {state === "running" ? (es ? "Buscando…" : "Searching…") : es ? "Ejecutar" : "Run inference"}
+            <Play size={14} aria-hidden />
+          </button>
+          {state === "done" && (
             <button
               type="button"
-              onClick={reset}
+              onClick={() => setState("idle")}
               data-cursor="pointer"
-              className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold"
-              style={{ border: tileBorder, ...strong }}
+              aria-label={es ? "Reiniciar" : "Reset"}
+              className="glass-tile inline-flex items-center justify-center rounded-full h-9 w-9"
+              style={{ cursor: "none" }}
             >
-              <RotateCcw size={12} aria-hidden />
-              {lang === "es" ? "Otra vez" : "Again"}
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={run}
-              disabled={phase === "running"}
-              data-cursor="pointer"
-              className="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-transform hover:scale-[1.04]"
-              style={{
-                background: isDark ? "#f8fafc" : "#0f172a",
-                color: isDark ? "#0f172a" : "#f8fafc",
-                opacity: phase === "running" ? 0.6 : 1,
-              }}
-            >
-              <Play size={12} aria-hidden />
-              {lang === "es" ? "Ejecutar inferencia" : "Run inference"}
+              <RotateCcw size={14} aria-hidden />
             </button>
           )}
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
-          {/* Query side */}
-          <div className="flex flex-col gap-2.5">
-            <div className="relative overflow-hidden rounded-xl" style={{ border: tileBorder }}>
-              <img
-                src={sample.src}
-                alt={t(sample.label)}
-                loading="lazy"
-                className="w-full h-44 sm:h-52 object-cover bg-white"
-              />
-              {phase === "running" && <div className="vpr-scanline" aria-hidden />}
-            </div>
-            <div className="flex gap-2">
-              {SAMPLES.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => pick(s.id)}
-                  data-cursor="pointer"
-                  aria-pressed={s.id === sampleId}
-                  aria-label={t(s.label)}
-                  className="relative h-12 w-16 rounded-md overflow-hidden transition-transform hover:scale-105"
-                  style={{
-                    border: s.id === sampleId ? (isDark ? "2px solid #f8fafc" : "2px solid #0f172a") : tileBorder,
-                    opacity: s.id === sampleId ? 1 : 0.65,
-                  }}
-                >
-                  <img src={s.src} alt="" loading="lazy" className="h-full w-full object-cover bg-white" />
-                </button>
-              ))}
-            </div>
-            <p className="text-[11px] leading-snug" style={subtle}>
-              {t(sample.label)}
-            </p>
+      {/* Sample picker */}
+      <div className="flex flex-wrap gap-2">
+        {SAMPLES.map((s, i) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => pick(i)}
+            data-cursor="pointer"
+            aria-pressed={i === active}
+            className="rounded-full px-3 py-1.5 text-[11.5px] font-semibold transition-colors"
+            style={{
+              cursor: "none",
+              border:
+                i === active
+                  ? `1px solid ${isDark ? "#f8fafc" : "#0f172a"}`
+                  : isDark
+                  ? "1px solid rgba(255,255,255,0.16)"
+                  : "1px solid rgba(15,23,42,0.14)",
+              background: i === active ? (isDark ? "#f8fafc" : "#0f172a") : "transparent",
+              color:
+                i === active
+                  ? isDark
+                    ? "#0f172a"
+                    : "#f8fafc"
+                  : isDark
+                  ? "rgba(226,232,240,0.9)"
+                  : "rgba(15,23,42,0.8)",
+            }}
+          >
+            {es ? s.areaES : s.areaEN}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4 md:gap-5">
+        {/* Query */}
+        <div className="flex flex-col gap-2">
+          <span
+            className="font-mono text-[10px] uppercase tracking-[0.16em]"
+            style={{ color: isDark ? "rgba(148,163,184,0.8)" : "rgba(71,85,105,0.8)" }}
+          >
+            {es ? "Consulta" : "Query"}
+          </span>
+          <div className={`vpr-query relative overflow-hidden rounded-xl ${state === "running" ? "is-scanning" : ""}`}>
+            <img
+              src={sample.src}
+              alt={
+                es
+                  ? `${sample.areaES} en ${pretty(sample.truth, true)} de la torre`
+                  : `${sample.areaEN} on ${pretty(sample.truth, false)} of the tower`
+              }
+              width={760}
+              height={428}
+              loading="lazy"
+              className="w-full h-auto block"
+            />
+            <span className="vpr-scanline" aria-hidden />
           </div>
+          <span className="text-[10.5px]" style={{ color: isDark ? "rgba(148,163,184,0.75)" : "rgba(71,85,105,0.75)" }}>
+            {es ? "Verdad" : "Truth"}: <strong>{pretty(sample.truth, es)}</strong>
+          </span>
+        </div>
 
-          {/* Pipeline + results side */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-1.5 flex-wrap">
-              {PIPELINE.map((step, i) => (
-                <span key={step.en} className="flex items-center gap-1.5">
-                  <span
-                    className="text-[10px] font-semibold uppercase tracking-wide rounded-full px-2 py-1 transition-all duration-200"
-                    style={{
-                      border: tileBorder,
-                      color:
-                        stage >= i
-                          ? isDark
-                            ? "#0f172a"
-                            : "#f8fafc"
-                          : subtle.color,
-                      background: stage >= i ? (isDark ? "#f8fafc" : "#0f172a") : "transparent",
-                    }}
-                  >
-                    {t(step)}
-                  </span>
-                  {i < PIPELINE.length - 1 && (
-                    <span className="text-[10px]" style={subtle} aria-hidden>
-                      →
-                    </span>
-                  )}
-                </span>
-              ))}
-            </div>
-
-            {phase === "done" ? (
-              <div className="flex flex-col gap-2" aria-live="polite">
-                {sample.results.map((r, i) => (
-                  <div key={r.floor.en} className="flex items-center gap-2">
-                    <span className="text-[11px] w-40 shrink-0 truncate" style={i === 0 ? { ...strong, fontWeight: 600 } : subtle}>
-                      {t(r.floor)}
-                    </span>
-                    <span className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.08)" }}>
-                      <span
-                        className="block h-full rounded-full vpr-bar"
-                        style={{
-                          width: `${Math.min(100, r.pct * 1.6)}%`,
-                          background: i === 0 ? (isDark ? "#67e8f9" : "#0f172a") : isDark ? "rgba(255,255,255,0.35)" : "rgba(15,23,42,0.35)",
-                          animationDelay: `${i * 90}ms`,
-                        }}
-                      />
-                    </span>
-                    <span className="text-[11px] tabular-nums w-11 text-right" style={i === 0 ? strong : subtle}>
-                      {r.pct.toFixed(1)}%
-                    </span>
-                  </div>
-                ))}
-                <p className="text-[11.5px] leading-relaxed pt-1" style={subtle}>
-                  {t(sample.verdict)}
-                </p>
-              </div>
-            ) : (
-              <p className="text-xs leading-relaxed" style={subtle}>
-                {lang === "es"
-                  ? "El modelo real recibe una foto interior, la convierte en un embedding con DINOv2 congelado y busca los frames más parecidos en un índice FAISS de 2,877 imágenes para votar la planta."
-                  : "The real model takes an indoor photo, turns it into an embedding with frozen DINOv2 and searches a 2,877-frame FAISS index for the closest gallery frames to vote the floor."}
+        {/* Prediction */}
+        <div className="flex flex-col gap-2">
+          <span
+            className="font-mono text-[10px] uppercase tracking-[0.16em]"
+            style={{ color: isDark ? "rgba(148,163,184,0.8)" : "rgba(71,85,105,0.8)" }}
+          >
+            {es ? "Top-5 recuperado" : "Retrieved Top-5"}
+          </span>
+          <div className="flex flex-col gap-1.5 min-h-[190px]" aria-live="polite">
+            {state !== "done" ? (
+              <p className="text-[12px] my-auto" style={{ color: isDark ? "rgba(148,163,184,0.7)" : "rgba(71,85,105,0.7)" }}>
+                {state === "running"
+                  ? es
+                    ? "Comparando contra 2.373 frames de galería…"
+                    : "Matching against 2,373 gallery frames…"
+                  : es
+                  ? "Pulsa Ejecutar para ver qué plantas vota el índice."
+                  : "Hit Run to see which floors the index votes for."}
               </p>
+            ) : (
+              <>
+                {sample.predictions.map((p, i) => {
+                  const hit = p.label === sample.truth;
+                  return (
+                    <div key={p.label} className="vpr-row flex items-center gap-2" style={{ ["--d" as string]: `${i * 70}ms` }}>
+                      <span
+                        className="text-[11.5px] w-[86px] shrink-0 font-medium"
+                        style={{ color: hit ? "#22d3ee" : isDark ? "rgba(226,232,240,0.85)" : "rgba(15,23,42,0.8)" }}
+                      >
+                        {pretty(p.label, es)}
+                      </span>
+                      <span
+                        className="flex-1 h-[6px] rounded-full overflow-hidden"
+                        style={{ background: isDark ? "rgba(255,255,255,0.07)" : "rgba(15,23,42,0.07)" }}
+                      >
+                        <span
+                          className="vpr-bar block h-full rounded-full"
+                          style={{
+                            ["--w" as string]: `${Math.round(p.pct)}%`,
+                            background: hit ? "#22d3ee" : isDark ? "rgba(226,232,240,0.42)" : "rgba(15,23,42,0.32)",
+                            ["--d" as string]: `${i * 70 + 90}ms`,
+                          }}
+                        />
+                      </span>
+                      <span
+                        className="font-mono text-[10.5px] w-[42px] text-right tabular-nums"
+                        style={{ color: isDark ? "rgba(148,163,184,0.85)" : "rgba(71,85,105,0.85)" }}
+                      >
+                        {p.pct.toFixed(1)}%
+                      </span>
+                    </div>
+                  );
+                })}
+                <p
+                  className="text-[11px] mt-1.5"
+                  style={{ color: correct ? "#22d3ee" : isDark ? "rgba(251,146,60,0.95)" : "rgba(180,83,9,0.95)" }}
+                >
+                  {correct
+                    ? es
+                      ? "✓ Top-1 correcto."
+                      : "✓ Top-1 correct."
+                    : es
+                    ? "✗ Falla el Top-1 — pero la verdad está en el Top-5. Ese es el error típico: planta vecina."
+                    : "✗ Top-1 miss — but the truth is in the Top-5. That's the typical error: a neighbouring floor."}
+                </p>
+              </>
             )}
           </div>
         </div>
-
-        <p className="text-[10.5px] leading-snug" style={{ ...subtle, opacity: 0.8 }}>
-          {lang === "es"
-            ? "Demo ilustrativa del pipeline — estas fotos no están en la galería del modelo. Métricas reales del sistema: 52.8% Top-1 · 72.0% Top-5 · 57.7% mAP sobre ~430 queries."
-            : "Illustrative pipeline demo — these photos aren't in the model's gallery. Real system metrics: 52.8% Top-1 · 72.0% Top-5 · 57.7% mAP over ~430 held-out queries."}
-        </p>
       </div>
+
+      <p className="text-[10px] leading-relaxed" style={{ color: isDark ? "rgba(148,163,184,0.6)" : "rgba(71,85,105,0.6)" }}>
+        {es
+          ? "Fotogramas reales del dataset del proyecto; los porcentajes ilustran el comportamiento medido del modelo, no una fila concreta de la evaluación."
+          : "Real frames from the project's dataset; the percentages illustrate the model's measured behaviour rather than one specific eval row."}
+      </p>
     </div>
   );
 }
