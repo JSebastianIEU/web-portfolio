@@ -307,7 +307,8 @@ body {
   opacity: 0;
 }
 
-/* Entrance stagger, keyed off the section's existing reveal state. */
+/* Entrance stagger, keyed off the section's existing reveal state. This is
+   the fallback for browsers without scroll-driven animations. */
 @keyframes stickerIn {
   from {
     opacity: 0;
@@ -324,6 +325,35 @@ body {
   animation-delay: var(--stagger, 0ms);
 }
 
+/* Scrapbook entrance: each cutout starts off-page (its own direction and a
+   crooked angle, per-sticker --enter-* vars) and glides into place driven by
+   the scroll position itself - scrub back up and they retreat. Composited
+   transform/opacity only. */
+@keyframes stickerScrap {
+  from {
+    opacity: 0;
+    transform: translate(var(--enter-x, 0px), var(--enter-y, 24px)) rotate(var(--enter-rot, 8deg))
+      scale(0.9);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .sticker-wrap,
+  .reveal[data-reveal-state="visible"] .sticker-wrap {
+    animation: stickerScrap ease-out both;
+    animation-delay: 0s;
+    animation-timeline: view();
+    animation-range: entry 0% cover 42%;
+  }
+}
+
 @media (max-width: 767px) {
   /* Tighter quarters: calm the hand-placed look so faces keep breathing room. */
   .sticker-body {
@@ -332,6 +362,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .sticker-wrap,
   .reveal[data-reveal-state="visible"] .sticker-wrap {
     animation: none;
   }
@@ -379,6 +410,44 @@ body {
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* Fullscreen mobile menu: the sheet fades in and the links rise in a quick
+   stagger (per-link --i index). */
+@keyframes menuSheetIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes menuLinkIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-menu {
+  animation: menuSheetIn 200ms ease-out both;
+}
+
+.mobile-menu-link {
+  animation: menuLinkIn 340ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(60ms + var(--i, 0) * 50ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu,
+  .mobile-menu-link {
     animation: none;
   }
 }

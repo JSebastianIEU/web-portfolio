@@ -31,6 +31,7 @@ const STICKERS = [
     altES: "Sebastián sentado con sombrero, sosteniendo una bandera de Colombia",
     neon: "#facc15",
     layout: { left: "30%", top: "0%", width: "70%", rot: "5deg", z: 10, tilt: 4, stagger: "0ms" },
+    enter: { x: "70vw", y: "-6vh", rot: "20deg" },
   },
   {
     id: "meditando",
@@ -42,6 +43,7 @@ const STICKERS = [
     altES: "Sebastián meditando con las piernas cruzadas en pose de loto, sonriendo",
     neon: "#22d3ee",
     layout: { left: "34%", top: "36%", width: "74%", rot: "4deg", z: 20, tilt: 5.5, stagger: "60ms" },
+    enter: { x: "58vw", y: "14vh", rot: "-14deg" },
   },
   {
     id: "vangogh",
@@ -53,6 +55,7 @@ const STICKERS = [
     altES: "Sebastián con una camiseta de Van Gogh señalando hacia arriba con ambas manos",
     neon: "#f472b6",
     layout: { left: "-2%", top: "-2%", width: "50%", rot: "-7deg", z: 30, tilt: 7, stagger: "120ms" },
+    enter: { x: "-70vw", y: "-8vh", rot: "-22deg" },
   },
   {
     id: "linkedin",
@@ -64,6 +67,7 @@ const STICKERS = [
     altES: "Retrato de estudio de Sebastián sonriendo",
     neon: "#a78bfa",
     layout: { left: "14%", top: "38%", width: "46%", rot: "-6deg", z: 40, tilt: 9, stagger: "180ms" },
+    enter: { x: "-56vw", y: "12vh", rot: "14deg" },
   },
 ];
 
@@ -111,17 +115,22 @@ export default function StickerCluster() {
             "--z": s.layout.z,
             "--stagger": s.layout.stagger,
             "--neon": s.neon,
+            "--enter-x": s.enter.x,
+            "--enter-y": s.enter.y,
+            "--enter-rot": s.enter.rot,
           } as React.CSSProperties}
         >
           <TiltCard max={s.layout.tilt}>
             <div className="sticker-body" style={{ "--rot": s.layout.rot } as React.CSSProperties}>
+              {/* Active skin loads eagerly with the page (plus the preload
+                  links above); only the inactive theme's skin stays lazy. */}
               <img
                 className="sticker-neon"
                 src={encodeURI(s.neonSrc)}
                 alt={lang === "es" ? s.altES : s.alt}
                 width={s.neonSize.w}
                 height={s.neonSize.h}
-                loading="lazy"
+                loading={isDark ? "eager" : "lazy"}
               />
               <img
                 className="sticker-paper"
@@ -130,7 +139,7 @@ export default function StickerCluster() {
                 aria-hidden="true"
                 width={s.paperSize.w}
                 height={s.paperSize.h}
-                loading="lazy"
+                loading={isDark ? "lazy" : "eager"}
               />
               {SPARKS.map((sp, i) => (
                 <span

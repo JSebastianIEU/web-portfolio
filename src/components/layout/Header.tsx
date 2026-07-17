@@ -37,6 +37,15 @@ export default function Header({ enterLink, leaveLink }: HeaderProps) {
     : null;
 
   useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const prev = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.documentElement.style.overflow = prev;
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
     if (routeSection) {
       setActiveSection(routeSection);
       return;
@@ -207,27 +216,6 @@ export default function Header({ enterLink, leaveLink }: HeaderProps) {
         )}
 
         <div className="pointer-events-auto flex items-center justify-center gap-2">
-          {isMobile && (
-            <button
-              type="button"
-              aria-label="Toggle menu"
-              onClick={() => setMobileMenuOpen((prev) => !prev)}
-              className="flex h-11 w-11 items-center justify-center rounded-full shadow-lg transition"
-              style={{
-                background: isDark ? "rgba(16, 20, 30, 0.08)" : "rgba(255, 255, 255, 0.08)",
-                border: isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(255, 255, 255, 0.16)",
-                backdropFilter: "blur(10px) saturate(145%) contrast(110%)",
-                WebkitBackdropFilter: "blur(10px) saturate(145%) contrast(110%)",
-                boxShadow: "0 10px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.22)",
-                color: isDark ? "rgba(255,255,255,0.9)" : "#0f172a",
-                cursor: "none",
-              }}
-              onMouseEnter={enterLink}
-              onMouseLeave={leaveLink}
-            >
-              <span className="text-lg leading-none">☰</span>
-            </button>
-          )}
           <button
             type="button"
             aria-label="Cambiar tema"
@@ -253,42 +241,80 @@ export default function Header({ enterLink, leaveLink }: HeaderProps) {
               <Moon className="h-5 w-5 text-slate-600 fill-slate-600" />
             )}
           </button>
+          {isMobile && (
+            <button
+              type="button"
+              aria-label="Toggle menu"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="flex h-11 w-11 items-center justify-center rounded-full shadow-lg transition"
+              style={{
+                background: isDark ? "rgba(16, 20, 30, 0.08)" : "rgba(255, 255, 255, 0.08)",
+                border: isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(255, 255, 255, 0.16)",
+                backdropFilter: "blur(10px) saturate(145%) contrast(110%)",
+                WebkitBackdropFilter: "blur(10px) saturate(145%) contrast(110%)",
+                boxShadow: "0 10px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.22)",
+                color: isDark ? "rgba(255,255,255,0.9)" : "#0f172a",
+                cursor: "none",
+              }}
+              onMouseEnter={enterLink}
+              onMouseLeave={leaveLink}
+            >
+              <span className="text-lg leading-none">☰</span>
+            </button>
+          )}
         </div>
       </div>
 
       {isMobile && mobileMenuOpen && (
-        <div className="pointer-events-auto mt-3 px-1">
-          <div
-            className="rounded-2xl border backdrop-blur-xl shadow-2xl p-3 flex flex-wrap gap-2"
-            style={{
-              borderColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.12)",
-              background: isDark ? "rgba(12,16,26,0.65)" : "rgba(255,255,255,0.8)",
-            }}
-          >
-            {navLinks.map((item) => (
+        <div
+          className="mobile-menu pointer-events-auto fixed inset-0 z-[30000] flex flex-col"
+          style={{
+            background: isDark ? "rgba(5, 6, 13, 0.92)" : "rgba(248, 250, 252, 0.94)",
+            backdropFilter: "blur(20px) saturate(140%)",
+            WebkitBackdropFilter: "blur(20px) saturate(140%)",
+          }}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="flex justify-end px-4 pt-4">
+            <button
+              type="button"
+              aria-label="Cerrar menú"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex h-12 w-12 items-center justify-center rounded-full"
+              style={{
+                border: isDark ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(15,23,42,0.14)",
+                color: isDark ? "rgba(255,255,255,0.9)" : "#0f172a",
+                background: isDark ? "rgba(255,255,255,0.05)" : "rgba(15,23,42,0.05)",
+              }}
+            >
+              <span className="text-xl leading-none">✕</span>
+            </button>
+          </div>
+
+          <nav className="flex-1 flex flex-col items-center justify-center gap-6 pb-16">
+            {navLinks.map((item, i) => (
               <TransitionLink
                 key={item.href}
                 href={item.href}
-                className="flex-1 min-w-[120px] text-sm font-semibold uppercase tracking-[0.08em] px-3 py-2 rounded-xl text-center transition-colors"
+                className="mobile-menu-link text-4xl font-semibold uppercase tracking-[0.06em]"
                 style={{
-                  cursor: "none",
                   color: activeSection === item.id ? navHoverColor : colors.navMuted,
-                  background:
-                    activeSection === item.id
-                      ? isDark
-                        ? "rgba(255,255,255,0.08)"
-                        : "rgba(15,23,42,0.08)"
-                      : "transparent",
-                  border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(15,23,42,0.08)",
-                }}
-                onMouseEnter={handleNavEnter}
-                onMouseLeave={handleNavLeave}
+                  "--i": i,
+                } as CSSProperties}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t(item.labelKey)}
+                {activeSection === item.id && (
+                  <span
+                    aria-hidden
+                    className="block h-[3px] mt-1 rounded-full"
+                    style={{ background: navHoverColor }}
+                  />
+                )}
               </TransitionLink>
             ))}
-          </div>
+          </nav>
         </div>
       )}
     </div>
