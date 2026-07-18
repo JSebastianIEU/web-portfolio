@@ -179,6 +179,7 @@ export const projectsData: Project[] = [
   {
     id: "tiktok-recommender",
     slug: "tiktok-recommender",
+    thumbnail: "/images/projects/tiktok-recommender/thumb.webp",
     title: "TikTok Recommender",
     titleES: "Recomendador de TikTok",
     subtitle: "A 7-person recommendation platform: predicts how content will perform before you publish.",
@@ -217,7 +218,10 @@ export const projectsData: Project[] = [
     links: {
       github: "https://github.com/PredictiveSocialMedia/Tik-Tok-Recommendation-System",
       caseStudy: "",
-      video: "",
+      video: "/videos/tiktok-recommender-demo.mp4",
+      // Deliberately no live link: the warm Cloud Run instance the analyzer
+      // needs annualised to ~EUR 4,800, so the service was taken down. The
+      // story page carries the recorded demo instead.
       live: "",
     },
   },

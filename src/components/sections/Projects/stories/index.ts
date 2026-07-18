@@ -3,6 +3,7 @@ import type { Locale } from "@/domain/i18n";
 import IeTowerSimulator from "./IeTowerSimulator";
 import IeTowerScrollytelling from "./IeTowerScrollytelling";
 import TikTokRecommender from "./TikTokRecommender";
+import TikTokRecommenderStory from "./TikTokRecommenderStory";
 import TikTokScrollytelling from "./TikTokScrollytelling";
 
 export type ProjectStoryProps = {
@@ -25,4 +26,5 @@ export const projectStories: Record<string, ComponentType<ProjectStoryProps>> = 
 export const projectScrollytelling: Record<string, ComponentType<ProjectStoryProps>> = {
   "ie-tower-vpr": IeTowerScrollytelling,
   "tiktok-semantic-engagement": TikTokScrollytelling,
+  "tiktok-recommender": TikTokRecommenderStory,
 };
