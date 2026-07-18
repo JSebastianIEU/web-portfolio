@@ -234,7 +234,7 @@ export const projectsData: Project[] = [
       "Un pipeline modular de reconocimiento visual de lugares para IE Tower: dada una foto de un lugar interior, devuelve el piso más probable entre 25 etiquetas (21 pisos sobre tierra más 4 sótanos) junto con los frames más cercanos de la galería. Cada etapa es un script independiente e idempotente y cada artefacto es reproducible; el backbone, la métrica de recuperación y la estrategia de splits son parámetros intercambiables.",
     category: "open-source",
     type: "personal",
-    status: "in-progress",
+    status: "published",
     role: "Computer Vision Engineer",
     stack: ["Python", "DINOv2", "FAISS", "PyTorch", "ffmpeg", "Marimo"],
     highlights: [
