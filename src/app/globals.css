@@ -1795,3 +1795,43 @@ body {
     }
   }
 }
+
+/* Projects carousel depth: open-source cards shrink with their distance from
+   the centre of the rail, so the row reads as a carousel instead of a strip.
+
+   Scroll-driven CSS on each card's own view() timeline along the inline axis -
+   no scroll listener, no per-frame React render, and nothing to fight the
+   momentum of a trackpad fling.
+
+   The transform sits on this inner wrapper and never on [data-project-card]
+   itself. A scroll snap area is measured from the *transformed* box, so
+   scaling the snap target moves its own snap point by 160*(1-scale)px - up to
+   56px here. The scale is a function of scroll position, so the snap points
+   would slide around while you scroll and the scroller would chase a target
+   that keeps running away. Keeping the snap target unscaled breaks that loop. */
+@media (min-width: 641px) {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      [data-project-carousel] .project-depth {
+        animation: projectDepth linear both;
+        animation-timeline: view(x);
+      }
+    }
+  }
+}
+
+/* Stops at 25%/75% keep the old quadratic falloff (scale = 0.65 + 0.35*(1-r^2),
+   r = distance from centre) rather than a straight linear ramp. */
+@keyframes projectDepth {
+  0%,
+  100% {
+    transform: scale(0.65);
+  }
+  25%,
+  75% {
+    transform: scale(0.913);
+  }
+  50% {
+    transform: scale(1);
+  }
+}
