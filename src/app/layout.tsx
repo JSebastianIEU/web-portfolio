@@ -6,7 +6,9 @@ import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const metadataBase = new URL(SITE_URL);
-const SOCIAL_IMAGE = "/images/me.png";
+// Purpose-built 1200x630 share card. The old value pointed at a 1600x1600
+// portrait while declaring 1200x630, so WhatsApp and Twitter cropped it badly.
+const SOCIAL_IMAGE = "/images/og-cover.png";
 const TITLE = "Juan Sebastian Peña | Software Engineering & AI";
 const DESCRIPTION =
   "Portfolio of Juan Sebastian Peña, focused on software engineering, artificial intelligence, and data-driven projects.";
