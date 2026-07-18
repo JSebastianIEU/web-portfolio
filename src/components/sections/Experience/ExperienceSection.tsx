@@ -134,6 +134,22 @@ export default function ExperienceSection() {
                     ))}
                   </ul>
 
+                  {/* A public repo so a reader can check the entry instead of
+                      taking it on trust -- the hackathon has no project page. */}
+                  {item.repoHref && (
+                    <a
+                      href={item.repoHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      data-cursor="pointer"
+                      className="inline-flex items-center gap-1 text-[12.5px] font-semibold mt-1 self-start transition-transform hover:translate-x-0.5"
+                      style={{ color: "#22d3ee", cursor: "none" }}
+                    >
+                      {es ? "Ver el repo" : "See the repo"}
+                      <ArrowUpRight size={14} aria-hidden />
+                    </a>
+                  )}
+
                   {item.href && (
                     <TransitionLink
                       href={item.href}

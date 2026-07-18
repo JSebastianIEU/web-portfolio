@@ -23,6 +23,7 @@ export type TranslationCopy = {
     enterprise: string;
     hackathon: string;
     startup: string;
+    team: string;
   };
   projects: {
     label: string;

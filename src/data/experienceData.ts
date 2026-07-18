@@ -29,6 +29,8 @@ export type ExperienceEntry = {
   bulletsES?: string[];
   /** Optional internal link to the project page that backs this entry. */
   href?: string;
+  /** Optional public repo that lets a reader verify the entry themselves. */
+  repoHref?: string;
   /** Full-colour mark, used on light. */
   logo?: string;
   /** Pure-white silhouette of the same mark, used on dark. */
@@ -110,6 +112,7 @@ export const experience: ExperienceEntry[] = [
     location: "Madrid",
     locationES: "Madrid",
     kind: "hackathon",
+    repoHref: "https://github.com/rh45-one/GenAI-Mavericks-2025",
     logo: "/logos/accenture.webp",
     logoWhite: "/logos/accenture-white.webp",
     sticker: { height: 94, right: "9%", top: -16, tilt: "-3deg", drift: 34, tiltDelta: "1.8deg", scaleFrom: 0.94, scaleTo: 1.05 },

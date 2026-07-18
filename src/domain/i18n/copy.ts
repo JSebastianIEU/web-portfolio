@@ -22,6 +22,7 @@ export const translations: Translations = {
       enterprise: "Enterprise",
       hackathon: "Hackathon",
       startup: "Startup",
+      team: "Team project",
     },
     projects: {
       label: "Projects",
@@ -251,6 +252,7 @@ export const translations: Translations = {
       enterprise: "Enterprise",
       hackathon: "Hackathon",
       startup: "Startup",
+      team: "Proyecto en equipo",
     },
     projects: {
       label: "Proyectos",

@@ -177,6 +177,51 @@ export const projectsData: Project[] = [
     },
   },
   {
+    id: "tiktok-recommender",
+    slug: "tiktok-recommender",
+    title: "TikTok Recommender",
+    titleES: "Recomendador de TikTok",
+    subtitle: "A 7-person recommendation platform: predicts how content will perform before you publish.",
+    subtitleES: "Plataforma de recomendacion entre 7 personas: predice como rendira el contenido antes de publicarlo.",
+    description:
+      "A multimodal recommendation platform built by a team of seven: it turns raw TikTok data into a validated training datamart, trains and packages recommender artifacts, and serves ranked candidates over FastAPI, with control-plane jobs watching for drift and gating retraining. My own work centred on the evaluation side — the temporal splits, the ranking metrics and the test coverage that decide whether a model is actually better or just newer.",
+    descriptionES:
+      "Una plataforma de recomendacion multimodal construida entre siete personas: convierte datos crudos de TikTok en un datamart de entrenamiento validado, entrena y empaqueta los artefactos del recomendador, y sirve candidatos rankeados sobre FastAPI, con trabajos de control-plane vigilando el drift y decidiendo cuando reentrenar. Mi trabajo se concentro en la evaluacion — los splits temporales, las metricas de ranking y la cobertura de tests que deciden si un modelo es de verdad mejor o solo mas nuevo.",
+    category: "open-source",
+    type: "team",
+    status: "published",
+    role: "Team of 7 — evaluation, temporal splits & test coverage",
+    roleES: "Equipo de 7 — evaluacion, splits temporales y cobertura de tests",
+    timeframe: "Jan — Apr 2026",
+    stack: ["Python", "FastAPI", "React", "pytest", "marimo", "Node"],
+    highlights: [
+      "Built in a team of seven, and the collaboration is in the git history rather than asserted: 98 of 282 commits, 22 pull requests opened, and 9 of my teammates' PRs reviewed by me",
+      "My focus was evaluation: NDCG@K ranking metrics, temporal train/test splits that respect point-in-time boundaries, a video-pipeline benchmark, and 19 regression tests over the scoring helpers that run in ~16s with no model artifacts required",
+      "The datamart enforces point-in-time and label-horizon safeguards, so a model is never trained on information that did not exist yet — the failure mode that makes offline recommender metrics look better than reality",
+    ],
+    highlightsES: [
+      "Construido entre siete personas, y la colaboracion esta en el historial de git en vez de afirmada: 98 de 282 commits, 22 pull requests abiertos y 9 PRs de mis companeros revisados por mi",
+      "Mi foco fue la evaluacion: metricas de ranking NDCG@K, splits temporales de train/test que respetan las fronteras point-in-time, un benchmark del pipeline de video y 19 tests de regresion sobre los helpers de scoring que corren en ~16s sin necesidad de artefactos de modelo",
+      "El datamart impone salvaguardas point-in-time y de horizonte de etiqueta, para que un modelo nunca se entrene con informacion que aun no existia — el fallo que hace que las metricas offline de un recomendador se vean mejor que la realidad",
+    ],
+    architecture: [
+      "Raw JSONL is normalized into a canonical contract bundle, then transformed into a training datamart with temporal validation before any model sees it",
+      "Recommender artifacts are trained and packaged, then served by a FastAPI service that loads the latest compatible bundle; a React frontend reaches it through a Node gateway",
+      "Control-plane jobs attribute outcomes, analyse experiments, monitor drift and gate retrain decisions",
+    ],
+    architectureES: [
+      "El JSONL crudo se normaliza a un bundle canonico de contratos y despues se transforma en un datamart de entrenamiento con validacion temporal antes de que ningun modelo lo vea",
+      "Los artefactos del recomendador se entrenan y empaquetan, y los sirve un servicio FastAPI que carga el ultimo bundle compatible; un frontend en React llega a el via un gateway en Node",
+      "Los trabajos de control-plane atribuyen resultados, analizan experimentos, monitorizan drift y deciden cuando reentrenar",
+    ],
+    links: {
+      github: "https://github.com/PredictiveSocialMedia/Tik-Tok-Recommendation-System",
+      caseStudy: "",
+      video: "",
+      live: "",
+    },
+  },
+  {
     id: "tiktok-semantic-engagement",
     slug: "tiktok-semantic-engagement",
     thumbnail: "/images/projects/tiktok/thumb.webp",

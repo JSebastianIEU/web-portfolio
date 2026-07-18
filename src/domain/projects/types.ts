@@ -1,6 +1,6 @@
 export type ProjectStatus = "live" | "prototype" | "in-progress" | "paused" | "published";
 
-export type ProjectType = "personal" | "enterprise" | "hackathon" | "startup";
+export type ProjectType = "personal" | "enterprise" | "hackathon" | "startup" | "team";
 
 /**
  * professional: real-world/client or venture work, usually testable live but with private code.
