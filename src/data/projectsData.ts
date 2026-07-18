@@ -134,6 +134,7 @@ export const projectsData: Project[] = [
     id: "qr-forge",
     slug: "qr-forge",
     thumbnail: "/images/projects/qr-forge/thumb.webp",
+    preview: "/images/projects/qr-forge/generator.webp",
     title: "QR Forge",
     titleES: "QR Forge",
     subtitle: "Production-ready QR generator with a full DevOps pipeline.",
@@ -148,14 +149,14 @@ export const projectsData: Project[] = [
     role: "Full-stack & DevOps",
     stack: ["FastAPI", "Python", "React", "TypeScript", "Docker", "Azure", "GitHub Actions", "Prometheus"],
     highlights: [
-      "Branded QR generation (PNG/SVG) with color, padding, radius and size controls, plus authenticated history, profiles and CRUD",
-      "CI/CD to Azure: lint/test gates, Trivy scan, multi-stage non-root Docker image, DB migrations run from the image, staging smoke tests, then production swap",
-      "Enforced ~92% test coverage (unit + integration) and observability via a Prometheus /metrics endpoint with an optional Grafana stack",
+      "One storage interface with two implementations — local filesystem and Azure Blob — chosen by config, so the whole thing runs and is tested with zero cloud credentials",
+      "CI/CD to Azure: ruff and black gates, Bandit and Safety scans, Trivy on the image, then deploy to Container Instances — plus a second proxy container on App Service, because ACI does not terminate TLS",
+      "136 tests (unit + integration) holding 80% line coverage, with the CI gate set at 60% — the gate is the promise, the 80% is where it happens to sit",
     ],
     highlightsES: [
-      "Generación de QR con marca (PNG/SVG) con control de color, padding, radio y tamaño, más historial autenticado, perfiles y CRUD",
-      "CI/CD a Azure: gates de lint/test, escaneo Trivy, imagen Docker multi-stage sin root, migraciones desde la imagen, smoke tests en staging y swap a producción",
-      "Cobertura de tests ~92% (unit + integración) y observabilidad vía endpoint Prometheus /metrics con stack Grafana opcional",
+      "Una interfaz de almacenamiento con dos implementaciones — disco local y Azure Blob — elegidas por configuración, así que todo corre y se testea sin una sola credencial de cloud",
+      "CI/CD a Azure: gates de ruff y black, escaneos Bandit y Safety, Trivy sobre la imagen y despliegue a Container Instances — más un segundo contenedor proxy en App Service, porque ACI no termina TLS",
+      "136 tests (unit + integración) que sostienen un 80% de cobertura de líneas, con el gate de CI en 60% — el gate es la promesa, el 80% es donde queda",
     ],
     architecture: [
       "FastAPI backend (SQLModel + Alembic) serving a React 18 + TypeScript + Tailwind SPA built with Vite",
