@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type MouseEvent } from "react";
+import { ArrowDown, Download } from "lucide-react";
 import SiteChrome from "@/components/layout/SiteChrome";
 import BetweenSectionsCta from "@/components/sections/Common/BetweenSectionsCta";
 import { AboutSection } from "@/components/sections/About";
@@ -9,6 +10,8 @@ import ContactInvite from "@/components/sections/Contact/ContactInvite";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
 import { CustomCursorDot, useCustomCursor } from "@/components/ui/CustomCursor";
+import TransitionLink from "@/components/ui/TransitionLink";
+import { cvFiles } from "@/data/contactCopy";
 import { useParallax } from "@/hooks/useParallax";
 
 const SkillsSection = dynamic(() => import("@/components/sections/Skills").then((mod) => mod.SkillsSection), {
@@ -40,6 +43,17 @@ function lcpLength(a: string, b: string) {
   return i;
 }
 
+// Reactive "prefers-reduced-motion" read via an external store (lint-clean; no
+// setState-in-effect). SSR reports false, the client resolves the real value.
+const REDUCED_MQ = "(prefers-reduced-motion: reduce)";
+function subscribeReduced(cb: () => void) {
+  const mq = window.matchMedia(REDUCED_MQ);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+}
+const getReducedSnapshot = () => window.matchMedia(REDUCED_MQ).matches;
+const getReducedServerSnapshot = () => false;
+
 export default function Home() {
   const { theme } = useTheme();
   const { dictionary, lang } = useI18n();
@@ -48,6 +62,9 @@ export default function Home() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(150);
+  // Under reduced motion the typewriter freezes on the first phrase (no loop,
+  // no blinking caret) — the static eyebrow + tagline carry the message.
+  const reduced = useSyncExternalStore(subscribeReduced, getReducedSnapshot, getReducedServerSnapshot);
   const showSpotlight = true;
   const { enableCustomCursor, cursorVariant, enterLink, leaveLink } = useCustomCursor();
 
@@ -57,6 +74,7 @@ export default function Home() {
   const currentFullText = useMemo(() => getFullText(currentPhrase), [currentPhrase]);
 
   useEffect(() => {
+    if (reduced) return; // no typing loop under reduced motion
     const fullText = getFullText(currentPhrase);
     const nextIndex = (loopNum + 1) % phrases.length;
     const nextPhrase = phrases[nextIndex];
@@ -83,16 +101,18 @@ export default function Home() {
 
     const timer = setTimeout(handleTyping, typingSpeed);
     return () => clearTimeout(timer);
-  }, [currentPhrase, isDeleting, loopNum, phrases, text, typingSpeed]);
+  }, [currentPhrase, isDeleting, loopNum, phrases, reduced, text, typingSpeed]);
 
+  // Reduced motion shows the first phrase in full; otherwise the live typed text.
+  const shown = reduced ? currentFullText : text;
   const prefixLength = currentPhrase.prefix.length;
   const highlightLength = currentPhrase.highlight.length;
-  const displayPrefix = text.substring(0, Math.min(prefixLength, text.length));
-  const displayHighlight = text.substring(prefixLength, Math.min(prefixLength + highlightLength, text.length));
-  const displaySuffix = text.substring(Math.min(prefixLength + highlightLength, text.length), text.length);
-  const typedLen = text.length;
+  const displayPrefix = shown.substring(0, Math.min(prefixLength, shown.length));
+  const displayHighlight = shown.substring(prefixLength, Math.min(prefixLength + highlightLength, shown.length));
+  const displaySuffix = shown.substring(Math.min(prefixLength + highlightLength, shown.length), shown.length);
+  const typedLen = shown.length;
   const cursorInHighlight = typedLen > prefixLength && typedLen <= prefixLength + highlightLength;
-  const isEndLine = !isDeleting && text === currentFullText;
+  const isEndLine = !reduced && !isDeleting && shown === currentFullText;
 
   const colors = useMemo(
     () => ({
@@ -106,6 +126,24 @@ export default function Home() {
     [colors.word, currentIndex, isDark],
   );
 
+  const muted = isDark ? "rgba(226,232,240,0.72)" : "rgba(15,23,42,0.62)";
+  const cvHref = `/documents/${encodeURIComponent(cvFiles[lang] ?? cvFiles.en)}`;
+  const pillOutline = {
+    border: isDark ? "1px solid rgba(255,255,255,0.22)" : "1px solid rgba(15,23,42,0.2)",
+    background: isDark ? "rgba(255,255,255,0.05)" : "rgba(15,23,42,0.04)",
+    color: colors.word,
+    cursor: "none",
+  } as const;
+
+  const goToProjects = (e: MouseEvent<HTMLAnchorElement>) => {
+    const el = document.getElementById("projects");
+    if (!el) return; // no target → let the browser handle the #projects anchor
+    e.preventDefault();
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "start" });
+    history.replaceState(null, "", "#projects");
+  };
+
   useParallax(16);
 
   return (
@@ -118,43 +156,94 @@ export default function Home() {
       >
         <section
           id="hero"
-          className="relative min-h-[100svh] flex items-center justify-center overflow-hidden px-4 md:px-6 lg:px-8"
+          className="relative min-h-[100svh] flex items-center justify-center overflow-hidden px-4 md:px-6 lg:px-8 py-24 md:py-20"
         >
           <div
-            className="relative z-10 text-2xl sm:text-3xl md:text-4xl lg:text-5xl 2xl:text-6xl font-mono transition-opacity duration-200 text-center leading-tight md:leading-snug"
+            className="relative z-10 flex flex-col items-center text-center gap-5 md:gap-7 max-w-3xl"
             key={`hero-${lang}`}
           >
-            <span style={{ color: colors.word, opacity: 0.75 }}>{displayPrefix}</span>
-            <span
-              style={{
-                color: currentIndex === phrases.length - 1 ? colors.word : highlightColor,
-                opacity: 1,
-                filter: currentIndex === phrases.length - 1 ? "none" : "brightness(1.06)",
-                textShadow:
-                  currentIndex === phrases.length - 1
-                    ? "none"
-                    : isDark
-                    ? "0 0 16px rgba(255,255,255,0.28)"
-                    : "0 0 12px rgba(15,23,42,0.22)",
-                transition: "opacity 200ms ease, text-shadow 200ms ease",
-              }}
-            >
-              {displayHighlight}
-            </span>
-            <span style={{ color: colors.word, opacity: 0.75 }}>{displaySuffix}</span>
-            <span
-              className={isEndLine ? "cursor-blink" : ""}
-              style={{
-                color:
-                  currentIndex === phrases.length - 1
-                    ? colors.word
-                    : cursorInHighlight
-                    ? highlightColor
-                    : colors.word,
-              }}
-            >
-              |
-            </span>
+            {/* Eyebrow: instant identity — name + role, so a 30s scan gets it
+                without waiting for the typewriter to cycle to the name. */}
+            <div className="flex flex-col items-center gap-1.5">
+              <span className="text-base md:text-lg font-semibold tracking-tight" style={{ color: colors.word }}>
+                {dictionary.hero.name}
+              </span>
+              <span className="font-mono text-[11px] md:text-xs uppercase tracking-[0.18em]" style={{ color: muted }}>
+                {dictionary.hero.role}
+              </span>
+            </div>
+
+            {/* Animated headline — the typewriter, kept as the flourish. */}
+            <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono transition-opacity duration-200 leading-tight md:leading-snug">
+              <span style={{ color: colors.word, opacity: 0.75 }}>{displayPrefix}</span>
+              <span
+                style={{
+                  color: currentIndex === phrases.length - 1 ? colors.word : highlightColor,
+                  opacity: 1,
+                  filter: currentIndex === phrases.length - 1 ? "none" : "brightness(1.06)",
+                  textShadow:
+                    currentIndex === phrases.length - 1
+                      ? "none"
+                      : isDark
+                      ? "0 0 16px rgba(255,255,255,0.28)"
+                      : "0 0 12px rgba(15,23,42,0.22)",
+                  transition: "opacity 200ms ease, text-shadow 200ms ease",
+                }}
+              >
+                {displayHighlight}
+              </span>
+              <span style={{ color: colors.word, opacity: 0.75 }}>{displaySuffix}</span>
+              <span
+                className={isEndLine ? "cursor-blink" : ""}
+                style={{
+                  color:
+                    currentIndex === phrases.length - 1
+                      ? colors.word
+                      : cursorInHighlight
+                      ? highlightColor
+                      : colors.word,
+                }}
+              >
+                |
+              </span>
+            </div>
+
+            {/* Positioning subline with proof — lands the substance instantly. */}
+            <p className="text-sm md:text-base max-w-[46ch] leading-relaxed" style={{ color: muted }}>
+              {dictionary.hero.tagline}
+            </p>
+
+            {/* CTAs: primary drives to the proof (#projects); then contact + CV. */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+              <a
+                href="#projects"
+                onClick={goToProjects}
+                data-cursor="pointer"
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm md:text-base font-semibold transition-transform hover:scale-[1.04]"
+                style={{ background: isDark ? "#f8fafc" : "#0f172a", color: isDark ? "#0f172a" : "#f8fafc", cursor: "none" }}
+              >
+                {dictionary.hero.ctaProjects}
+                <ArrowDown size={17} aria-hidden />
+              </a>
+              <TransitionLink
+                href="/contact"
+                data-cursor="pointer"
+                className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm md:text-base font-semibold transition-transform hover:scale-[1.04]"
+                style={pillOutline}
+              >
+                {dictionary.hero.ctaContact}
+              </TransitionLink>
+              <a
+                href={cvHref}
+                download
+                data-cursor="pointer"
+                className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm md:text-base font-semibold transition-transform hover:scale-[1.04]"
+                style={pillOutline}
+              >
+                {dictionary.cta.downloadCv}
+                <Download size={16} aria-hidden />
+              </a>
+            </div>
           </div>
         </section>
 

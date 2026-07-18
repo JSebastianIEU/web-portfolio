@@ -185,6 +185,11 @@ export const translations: Translations = {
         { prefix: "I care about ", highlight: "design and impact", suffix: "" },
         { prefix: "I'm ", highlight: "Sebastian Peña", suffix: "" },
       ],
+      name: "Juan Sebastian Peña",
+      role: "AI & Data Engineer · Madrid",
+      tagline: "Applied AI & data — real pipelines, live demos, and published research.",
+      ctaProjects: "View projects",
+      ctaContact: "Let's talk",
     },
     about: {
       label: "About",
@@ -399,6 +404,11 @@ export const translations: Translations = {
         { prefix: "Me importan el ", highlight: "diseño y el impacto", suffix: "" },
         { prefix: "Soy ", highlight: "Sebastian Peña", suffix: "" },
       ],
+      name: "Juan Sebastian Peña",
+      role: "Ingeniero de IA y Datos · Madrid",
+      tagline: "IA y datos aplicados: pipelines reales, demos en vivo y research publicado.",
+      ctaProjects: "Ver proyectos",
+      ctaContact: "Hablemos",
     },
     about: {
       label: "Sobre mí",

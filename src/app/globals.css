@@ -1062,6 +1062,18 @@ body {
   will-change: opacity;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .cursor-blink {
+    animation: none;
+  }
+}
+
+/* Anchor targets clear the floating header capsule when a CTA/nav link jumps
+   to them (e.g. the hero "View projects" → #projects). */
+:is(#hero, #about, #skills, #projects, #contact) {
+  scroll-margin-top: 6rem;
+}
+
 /* Global grid system.
    The solid base color lives on <body>. The spotlight grid is painted only
    inside a cursor-following disc moved with a composited transform — a

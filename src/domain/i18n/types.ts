@@ -131,6 +131,11 @@ export type TranslationCopy = {
   };
   hero: {
     phrases: Phrase[];
+    name: string;
+    role: string;
+    tagline: string;
+    ctaProjects: string;
+    ctaContact: string;
   };
   about: {
     label: string;
