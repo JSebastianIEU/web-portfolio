@@ -1,5 +1,6 @@
 "use client";
 
+import SectionHeading from "@/components/layout/SectionHeading";
 import SectionShell from "@/components/layout/SectionShell";
 import StickerCluster from "@/components/sections/About/StickerCluster";
 import { useI18n } from "@/components/providers/language-provider";
@@ -22,39 +23,11 @@ export default function AboutSection() {
       id="about"
       ref={revealRef}
       className="reveal relative min-h-[78svh] md:min-h-[86vh] flex items-center justify-center py-14 md:py-20"
-      contentClassName="relative w-full"
+      contentClassName="section-exit relative w-full"
     >
       <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-14 items-center">
         <div className="order-2 md:order-1 md:col-span-7 flex flex-col gap-5 md:gap-6">
-          <div className="flex items-center gap-3">
-            <div
-              className="text-xs uppercase tracking-[0.32em]"
-              data-parallax="title"
-              data-speed="0.16"
-              style={{ color: isDark ? "rgba(226,232,240,0.75)" : "rgba(15,23,42,0.6)" }}
-            >
-              <span className="transition-opacity duration-200" key={`label-${lang}`}>
-                {dictionary.about.label}
-              </span>
-            </div>
-            <div
-              className="h-px w-16"
-              data-parallax="title"
-              data-speed="0.12"
-              style={{ background: isDark ? "rgba(255,255,255,0.16)" : "rgba(15,23,42,0.12)" }}
-            />
-          </div>
-
-          <h2
-            className="text-2xl md:text-[2rem] lg:text-4xl 2xl:text-[2.75rem] font-semibold leading-tight md:leading-[1.15] max-w-[24ch]"
-            data-parallax="title"
-            data-speed="0.28"
-            style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
-          >
-            <span className="transition-opacity duration-200" key={`headline-${lang}`}>
-              {dictionary.about.headline}
-            </span>
-          </h2>
+          <SectionHeading eyebrow={dictionary.about.label} title={dictionary.about.headline} size="lg" />
 
           <p
             className="text-sm md:text-[15px] 2xl:text-base leading-[1.85] max-w-prose"

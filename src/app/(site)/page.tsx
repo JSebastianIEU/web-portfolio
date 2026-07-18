@@ -167,7 +167,7 @@ export default function Home() {
           className="relative min-h-[100svh] flex items-center justify-center overflow-hidden px-4 md:px-6 lg:px-8 py-24 md:py-20"
         >
           <div
-            className="relative z-10 flex flex-col items-center text-center gap-5 md:gap-7 max-w-3xl"
+            className="section-exit relative z-10 flex flex-col items-center text-center gap-5 md:gap-7 max-w-3xl"
             key={`hero-${lang}`}
           >
             {/* Eyebrow: instant identity — name + role, so a 30s scan gets it

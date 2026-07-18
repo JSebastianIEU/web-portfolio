@@ -34,7 +34,7 @@ export default function BetweenSectionsCta({ onEnterLink, onLeaveLink }: Props) 
   return (
     <section
       aria-label="About to Skills transition"
-      className="relative w-full py-5 md:py-6 flex justify-center"
+      className="relative w-full py-8 md:py-12 flex justify-center"
       style={{ cursor: "none" }}
     >
       <div className="flex items-center gap-3 sm:gap-4 flex-col sm:flex-row text-center sm:text-left">

@@ -24,8 +24,9 @@ export const translations: Translations = {
       startup: "Startup",
     },
     projects: {
-      title: "Projects",
-      subcopy: "Selected work across real products, startups, and open-source builds.",
+      label: "Projects",
+      title: "Things people can actually use",
+      subcopy: "Two products running in production, plus open-source builds and write-ups with the code in the open.",
       groups: {
         professional: {
           title: "Real-world work",
@@ -217,6 +218,8 @@ export const translations: Translations = {
     },
     skills: {
       label: "Skills",
+      title: "What I build with",
+      subcopy: "The stack behind Craig, Boletapp and the open-source work — from the data and the models to the interface people actually touch.",
     },
     footer: {
       tagline: "AI, Data & Intelligent Systems",
@@ -250,8 +253,9 @@ export const translations: Translations = {
       startup: "Startup",
     },
     projects: {
-      title: "Proyectos",
-      subcopy: "Trabajo seleccionado entre productos reales, startups y builds open source.",
+      label: "Proyectos",
+      title: "Cosas que la gente puede usar",
+      subcopy: "Dos productos corriendo en producción, más builds open source y publicaciones con el código a la vista.",
       groups: {
         professional: {
           title: "Trabajo real",
@@ -439,10 +443,12 @@ export const translations: Translations = {
     experience: {
       label: "Experiencia",
       title: "Dónde he construido",
-      subcopy: "Trabajo de cliente en producción, mi propia venture y competiciones seleccionadas.",
+      subcopy: "Trabajo de cliente en producción, mi propia empresa y competiciones seleccionadas.",
     },
     skills: {
       label: "Habilidades",
+      title: "Con lo que construyo",
+      subcopy: "El stack detrás de Craig, Boletapp y el trabajo open source — desde los datos y los modelos hasta la interfaz que la gente realmente toca.",
     },
     footer: {
       tagline: "IA, Datos y Sistemas Inteligentes",

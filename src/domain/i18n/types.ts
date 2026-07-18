@@ -25,6 +25,7 @@ export type TranslationCopy = {
     startup: string;
   };
   projects: {
+    label: string;
     title: string;
     subcopy: string;
     groups: {
@@ -161,6 +162,8 @@ export type TranslationCopy = {
   };
   skills: {
     label: string;
+    title: string;
+    subcopy: string;
   };
   footer: {
     tagline: string;

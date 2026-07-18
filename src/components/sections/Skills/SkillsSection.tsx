@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import SectionHeading from "@/components/layout/SectionHeading";
 import SectionShell from "@/components/layout/SectionShell";
 import SkillsDesktopExperience from "@/components/sections/Skills/SkillsDesktopExperience";
 import { skillCategories, skillCrossLinks, skillNodes } from "@/data/skillsData";
@@ -38,8 +39,9 @@ export default function SkillsSection() {
   const srList = useMemo(
     () => (
       <div className="sr-only" aria-hidden="false">
-        <p>{t("skills.label")}</p>
-        <ul>
+        {/* No heading here: the visible h2 now serves that role, and repeating
+            the label made a screen reader announce "Skills" twice. */}
+        <ul aria-label={t("skills.label")}>
           {skillNodes.map((node) => (
             <li key={node.id}>{lang === "es" ? node.nameES : node.nameEN}</li>
           ))}
@@ -53,18 +55,20 @@ export default function SkillsSection() {
     <SectionShell
       id="skills"
       ref={revealRef}
-      className="reveal relative min-h-[55svh] md:min-h-[60vh] flex items-center justify-center py-12 md:py-14 overflow-hidden"
-      contentClassName="relative w-full"
+      className="reveal relative min-h-[55svh] md:min-h-[60vh] flex flex-col justify-start py-16 md:py-20 overflow-hidden"
+      contentClassName="section-exit relative w-full"
     >
-      <SkillsDesktopExperience
-        theme={theme}
-        lang={lang}
-        t={t}
-        categories={categories}
-        nodes={skillNodes}
-        links={skillCrossLinks}
-        srList={srList}
-      />
+      <div className="flex flex-col gap-8 md:gap-10">
+        <SectionHeading eyebrow={t("skills.label")} title={t("skills.title")} subcopy={t("skills.subcopy")} />
+        <SkillsDesktopExperience
+          theme={theme}
+          lang={lang}
+          categories={categories}
+          nodes={skillNodes}
+          links={skillCrossLinks}
+          srList={srList}
+        />
+      </div>
     </SectionShell>
   );
 }

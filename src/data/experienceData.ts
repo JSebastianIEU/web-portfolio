@@ -32,7 +32,19 @@ export type ExperienceEntry = {
    * how far in from the right edge (%) and its tilt. Hand-picked per logo so
    * the cluster reads scattered but each mark still belongs to its own entry.
    */
-  sticker?: { height: number; right: string; top: number; tilt: string };
+  sticker?: {
+    height: number;
+    right: string;
+    top: number;
+    tilt: string;
+    /** Vertical travel of the scroll drift, px. Varied per mark so the three don't move in lockstep. */
+    drift: number;
+    /** Rotation swung either side of `tilt` across the scrub. Smaller on wider marks: corner displacement scales with width. */
+    tiltDelta: string;
+    /** Scale at the start and end of the scrub; it passes through 1 at the midpoint. */
+    scaleFrom: number;
+    scaleTo: number;
+  };
 };
 
 export const experience: ExperienceEntry[] = [
@@ -49,7 +61,7 @@ export const experience: ExperienceEntry[] = [
     href: "/projects/craig-ai",
     logo: "/logos/strategos.webp",
     logoWhite: "/logos/strategos-white.webp",
-    sticker: { height: 82, right: "7%", top: -14, tilt: "-6deg" },
+    sticker: { height: 104, right: "6%", top: -25, tilt: "-6deg", drift: 44, tiltDelta: "2.5deg", scaleFrom: 0.93, scaleTo: 1.06 },
     bullets: [
       "Sole engineer on Craig, an AI ordering agent live for a Dublin print shop.",
       "LLMs and multi-agent systems in real business workflows. Direct report to the CEO.",
@@ -72,7 +84,7 @@ export const experience: ExperienceEntry[] = [
     href: "/projects/boletapp",
     logo: "/logos/boletapp.svg",
     logoWhite: "/logos/boletapp-dark.svg",
-    sticker: { height: 34, right: "16%", top: 10, tilt: "4.5deg" },
+    sticker: { height: 44, right: "15%", top: 5, tilt: "4.5deg", drift: 22, tiltDelta: "1.2deg", scaleFrom: 0.96, scaleTo: 1.03 },
     bullets: [
       "Live anti-fraud ticketing platform: rotating HMAC QR and an offline-first door scanner.",
       "One crypto engine in TypeScript and Python, kept bit-for-bit identical by shared tests.",
@@ -94,7 +106,7 @@ export const experience: ExperienceEntry[] = [
     kind: "hackathon",
     logo: "/logos/accenture.webp",
     logoWhite: "/logos/accenture-white.webp",
-    sticker: { height: 74, right: "10%", top: -6, tilt: "-3deg" },
+    sticker: { height: 94, right: "9%", top: -16, tilt: "-3deg", drift: 34, tiltDelta: "1.8deg", scaleFrom: 0.94, scaleTo: 1.05 },
     bullets: [
       "First edition: 100+ students from 20 universities.",
       "RAG solution turning legal documents into plain language (Justice 2030 Spain).",

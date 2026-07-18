@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import SectionHeading from "@/components/layout/SectionHeading";
 import SectionShell from "@/components/layout/SectionShell";
 import FeaturedProjectCard from "@/components/sections/Projects/FeaturedProjectCard";
 import ProjectCarousel from "@/components/sections/Projects/ProjectCarousel";
@@ -47,32 +48,33 @@ export default function ProjectsSection() {
       id="projects"
       ref={revealRef}
       className="reveal relative w-full py-20 md:py-28"
+      contentClassName="section-exit"
     >
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <h2
-            className="text-2xl md:text-3xl font-semibold"
-            data-parallax="title"
-            data-speed="0.26"
-            style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
-          >
-            {copy.title}
-          </h2>
-          <p className="text-sm md:text-base" style={{ color: isDark ? "rgba(226,232,240,0.75)" : "rgba(15,23,42,0.7)" }}>
-            {copy.subcopy}
-          </p>
-        </div>
+      <div className="flex flex-col gap-12 md:gap-16">
+        <SectionHeading eyebrow={copy.label} title={copy.title} subcopy={copy.subcopy} />
 
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <h3 className="text-lg md:text-xl font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
-              {copy.groups.professional.title}
-            </h3>
-            <p className="text-xs md:text-sm" style={{ color: isDark ? "rgba(226,232,240,0.65)" : "rgba(15,23,42,0.6)" }}>
+        <div className="flex flex-col gap-5 md:gap-6">
+          <div className="flex flex-col gap-2">
+            {/* Labelled divider: the group name sits on the rule instead of
+                above it, so the boundary reads without costing vertical space. */}
+            <div className="flex items-center gap-3">
+              <h3
+                className="text-xs md:text-sm font-semibold uppercase tracking-[0.18em]"
+                style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
+              >
+                {copy.groups.professional.title}
+              </h3>
+              <div
+                aria-hidden
+                className="h-px flex-1"
+                style={{ background: isDark ? "rgba(255,255,255,0.14)" : "rgba(15,23,42,0.12)" }}
+              />
+            </div>
+            <p className="text-xs md:text-sm max-w-[56ch]" style={{ color: isDark ? "rgba(226,232,240,0.65)" : "rgba(15,23,42,0.6)" }}>
               {copy.groups.professional.subcopy}
             </p>
           </div>
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-5 md:gap-6">
             {professionalProjects.map((project) => (
               <FeaturedProjectCard
                 key={project.id}
@@ -88,12 +90,24 @@ export default function ProjectsSection() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <h3 className="text-lg md:text-xl font-semibold" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
-              {copy.groups.openSource.title}
-            </h3>
-            <p className="text-xs md:text-sm" style={{ color: isDark ? "rgba(226,232,240,0.65)" : "rgba(15,23,42,0.6)" }}>
+        <div className="flex flex-col gap-5 md:gap-6">
+          <div className="flex flex-col gap-2">
+            {/* Labelled divider: the group name sits on the rule instead of
+                above it, so the boundary reads without costing vertical space. */}
+            <div className="flex items-center gap-3">
+              <h3
+                className="text-xs md:text-sm font-semibold uppercase tracking-[0.18em]"
+                style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
+              >
+                {copy.groups.openSource.title}
+              </h3>
+              <div
+                aria-hidden
+                className="h-px flex-1"
+                style={{ background: isDark ? "rgba(255,255,255,0.14)" : "rgba(15,23,42,0.12)" }}
+              />
+            </div>
+            <p className="text-xs md:text-sm max-w-[56ch]" style={{ color: isDark ? "rgba(226,232,240,0.65)" : "rgba(15,23,42,0.6)" }}>
               {copy.groups.openSource.subcopy}
             </p>
           </div>

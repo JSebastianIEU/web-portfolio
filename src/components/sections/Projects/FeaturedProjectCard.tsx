@@ -37,9 +37,9 @@ export default function FeaturedProjectCard({
   return (
     <TiltCard
       max={4}
-      className="glass-panel group relative flex flex-col md:flex-row md:items-stretch gap-5 md:gap-6 rounded-2xl p-5 md:p-6"
+      className="glass-panel group relative flex flex-col md:flex-row md:items-stretch gap-4 md:gap-5 rounded-2xl p-4 md:p-5"
     >
-      <div className="flex flex-col gap-4 md:flex-1 md:min-w-0">
+      <div className="flex flex-col gap-3 md:flex-1 md:min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <ProjectBadge label={displayType} tone="neutral" isDark={isDark} />
           <ProjectBadge label={displayStatus} tone={badgeTone as "accent" | "neutral" | "warning"} isDark={isDark} />
@@ -56,19 +56,6 @@ export default function FeaturedProjectCard({
             >
               <BadgeCheck size={11} aria-hidden />
               {copy.cards.ownedEndToEnd}
-            </span>
-          )}
-          {project.codePrivate && (
-            <span
-              className="inline-flex items-center gap-1 text-[11px] font-semibold rounded-full px-2.5 py-1"
-              style={{
-                border: isDark ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(15,23,42,0.12)",
-                color: isDark ? "rgba(226,232,240,0.75)" : "rgba(15,23,42,0.65)",
-                background: isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,42,0.05)",
-              }}
-            >
-              <Lock size={11} aria-hidden />
-              {copy.cards.privateCode}
             </span>
           )}
         </div>
@@ -90,19 +77,19 @@ export default function FeaturedProjectCard({
           )}
           {logo ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logo} alt={title} className="h-6 md:h-7 w-auto self-start" />
+            <img src={logo} alt={title} className="h-5 md:h-6 w-auto self-start" />
           ) : (
-            <span className="text-xl md:text-2xl font-semibold leading-snug" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+            <span className="text-lg md:text-xl font-semibold leading-snug" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
               {title}
             </span>
           )}
-          <p className="text-sm md:text-base leading-relaxed" style={{ color: isDark ? "rgba(226,232,240,0.78)" : "rgba(15,23,42,0.72)" }}>
+          <p className="text-sm leading-relaxed line-clamp-2" style={{ color: isDark ? "rgba(226,232,240,0.78)" : "rgba(15,23,42,0.72)" }}>
             {lang === "es" ? project.subtitleES || project.subtitle : project.subtitle}
           </p>
           {/* What I actually did on it — the specific ownership proof. */}
           {role && (
             <span
-              className="text-[12px] font-medium mt-0.5"
+              className="text-[11px] font-medium mt-0.5"
               style={{ color: isDark ? "rgba(226,232,240,0.7)" : "rgba(15,23,42,0.65)" }}
             >
               {role}
@@ -111,14 +98,13 @@ export default function FeaturedProjectCard({
         </button>
 
         <div className="flex flex-wrap gap-1.5">
-          {project.stack.slice(0, 4).map((stackItem) => (
+          {project.stack.slice(0, 3).map((stackItem) => (
             <span
               key={stackItem}
-              className="text-[11px] font-semibold rounded-full px-2.5 py-1"
+              className="text-[11px] font-medium rounded-full px-2 py-0.5"
               style={{
-                border: isDark ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(15,23,42,0.12)",
+                border: isDark ? "1px solid rgba(255,255,255,0.20)" : "1px solid rgba(15,23,42,0.16)",
                 color: isDark ? "rgba(226,232,240,0.9)" : "rgba(15,23,42,0.8)",
-                background: isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,42,0.05)",
               }}
             >
               {stackItem}
@@ -126,7 +112,7 @@ export default function FeaturedProjectCard({
           ))}
         </div>
 
-        <div className="mt-auto flex items-center gap-3 text-sm font-semibold">
+        <div className="mt-auto flex items-center gap-3 flex-wrap text-sm font-semibold">
           {liveHref ? (
             <a
               href={liveHref}
@@ -134,7 +120,7 @@ export default function FeaturedProjectCard({
               rel="noreferrer"
               data-cursor="pointer"
               aria-label={`${copy.cards.tryIt} — ${title} (${copy.cards.newTab})`}
-              className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 transition-transform duration-150 hover:scale-[1.04]"
+              className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 transition-transform duration-150 hover:scale-[1.04]"
               style={{
                 background: isDark ? "#f8fafc" : "#0f172a",
                 color: isDark ? "#0f172a" : "#f8fafc",
@@ -145,7 +131,7 @@ export default function FeaturedProjectCard({
             </a>
           ) : (
             <span
-              className="inline-flex items-center gap-1.5 rounded-full px-4 py-2"
+              className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5"
               style={{
                 border: isDark ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(15,23,42,0.16)",
                 color: isDark ? "rgba(226,232,240,0.6)" : "rgba(15,23,42,0.55)",
@@ -154,13 +140,22 @@ export default function FeaturedProjectCard({
               {copy.cards.liveDemo} {copy.cards.soon}
             </span>
           )}
+          {project.codePrivate && (
+            <span
+              className="inline-flex items-center gap-1 text-[11px] font-medium"
+              style={{ color: isDark ? "rgba(226,232,240,0.72)" : "rgba(15,23,42,0.65)" }}
+            >
+              <Lock size={11} aria-hidden />
+              {copy.cards.privateCode}
+            </span>
+          )}
         </div>
       </div>
 
       {showPreview && (
         // Nudged up-and-out with a stronger shadow so it reads as a separate
         // glass sheet floating above the card rather than a box inside a box.
-        <div className="md:w-[44%] md:shrink-0 md:self-center md:-translate-y-3 md:translate-x-1 transition-transform duration-300 group-hover:md:-translate-y-4">
+        <div className="md:w-[42%] md:shrink-0 md:self-center md:-translate-y-2 md:translate-x-1 transition-transform duration-300 group-hover:md:-translate-y-3">
           <div className="float-layer rounded-xl">
             <ProjectPreview
               src={project.preview as string}

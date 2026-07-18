@@ -30,7 +30,7 @@ export default function ProjectPreview({ src, href, label, isDark }: ProjectPrev
       data-cursor="pointer"
       aria-hidden="true"
       tabIndex={-1}
-      className="group/preview relative block overflow-hidden rounded-xl aspect-[16/10] w-full"
+      className="group/preview relative block overflow-hidden rounded-xl aspect-[16/9] w-full"
       style={{
         border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(15,23,42,0.10)",
         background: isDark ? "rgba(255,255,255,0.03)" : "rgba(15,23,42,0.03)",
@@ -44,7 +44,7 @@ export default function ProjectPreview({ src, href, label, isDark }: ProjectPrev
           src={src}
           alt=""
           fill
-          sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1087px) calc((100vw - 96px) * 0.42), 442px"
+          sizes="(max-width: 767px) calc(100vw - 64px), (max-width: 1023px) calc((100vw - 88px) * 0.42), (max-width: 1279px) 413px, (max-width: 1535px) 467px, 521px"
           className="preview-img object-cover object-top transition-[filter,transform] duration-300 ease-out group-hover/preview:blur-[6px] group-hover/preview:scale-105"
         />
       </div>

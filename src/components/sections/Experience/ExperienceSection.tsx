@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
+import SectionHeading from "@/components/layout/SectionHeading";
 import SectionShell from "@/components/layout/SectionShell";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
@@ -29,21 +30,14 @@ export default function ExperienceSection() {
   const rail = isDark ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.12)";
 
   return (
-    <SectionShell id="experience" ref={revealRef} className="reveal relative w-full py-20 md:py-28">
+    <SectionShell
+      id="experience"
+      ref={revealRef}
+      className="reveal relative w-full py-20 md:py-28"
+      contentClassName="section-exit"
+    >
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <h2
-            className="text-2xl md:text-3xl font-semibold"
-            data-parallax="title"
-            data-speed="0.26"
-            style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
-          >
-            {copy.title}
-          </h2>
-          <p className="text-sm md:text-base" style={{ color: muted }}>
-            {copy.subcopy}
-          </p>
-        </div>
+        <SectionHeading eyebrow={copy.label} title={copy.title} subcopy={copy.subcopy} />
 
         <ol className="flex flex-col gap-6 md:gap-7 pl-5 md:pl-6" style={{ borderLeft: `1px solid ${rail}` }}>
           {experience.map((item) => {
@@ -71,6 +65,10 @@ export default function ExperienceSection() {
                     style={{
                       ["--tilt" as string]: item.sticker.tilt,
                       ["--sticker-opacity" as string]: isDark ? 0.92 : 0.8,
+                      ["--drift" as string]: `${item.sticker.drift}px`,
+                      ["--tilt-delta" as string]: item.sticker.tiltDelta,
+                      ["--scale-from" as string]: item.sticker.scaleFrom,
+                      ["--scale-to" as string]: item.sticker.scaleTo,
                       right: item.sticker.right,
                       top: item.sticker.top,
                       height: item.sticker.height,
@@ -109,13 +107,25 @@ export default function ExperienceSection() {
                     </span>
                   </div>
 
-                  <span className="font-mono text-[11px] uppercase tracking-[0.12em]" style={{ color: faint }}>
+                  {/* exp-bullet carries motion only; colour stays inline per the
+                      theming idiom. --i is the stagger index (see globals.css).
+                      This span is a flex item of the wrapper above, so it is
+                      blockified and the translateY actually applies — a plain
+                      inline span would silently ignore it. */}
+                  <span
+                    className="exp-bullet font-mono text-[11px] uppercase tracking-[0.12em]"
+                    style={{ color: faint, ["--i" as string]: 0 }}
+                  >
                     {period} · {location}
                   </span>
 
                   <ul className="flex flex-col gap-1.5 mt-1 max-w-[62ch]">
-                    {bullets.map((b) => (
-                      <li key={b} className="text-[13px] md:text-sm leading-relaxed flex gap-2" style={{ color: muted }}>
+                    {bullets.map((b, i) => (
+                      <li
+                        key={b}
+                        className="exp-bullet text-[13px] md:text-sm leading-relaxed flex gap-2"
+                        style={{ color: muted, ["--i" as string]: i + 1 }}
+                      >
                         <span aria-hidden style={{ color: faint }}>
                           —
                         </span>

@@ -1078,27 +1078,125 @@ body {
   scroll-margin-top: 2rem;
 }
 
-/* Experience org stickers: a slow drift as the entry crosses the viewport, so
-   the marks feel pinned-on rather than laid out. Scroll-driven (no listener),
-   and the tilt lives in --tilt so the static fallback keeps it. */
+/* Experience org stickers: each mark scrubs on its own view() timeline. Drift,
+   rotation swing and scale are varied per logo so the three do not move in
+   lockstep; the marks sit far enough apart vertically that this reads as
+   per-mark character, not as a race. At 50% the transform is the neutral
+   resting state, which for an `entry 0% exit 100%` range is exactly when the
+   entry is centred in the viewport, so each mark composes cleanly right when
+   you are looking at it. --drift/--tilt-delta/--scale-* come from
+   experienceData; --tilt is re-applied inside every keyframe so the static
+   fallback rotation survives the transform override. No will-change: these
+   nodes carry a 3-layer drop-shadow and would hold a composited layer of the
+   filtered result for the whole page lifetime, off-screen included. */
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     .exp-sticker {
-      animation: expStickerDrift linear both;
+      animation: expStickerFloat linear both;
       animation-timeline: view();
       animation-range: entry 0% exit 100%;
     }
 
-    @keyframes expStickerDrift {
+    @keyframes expStickerFloat {
       from {
-        transform: translateY(18px) rotate(var(--tilt, 0deg));
+        transform: translateY(var(--drift, 24px))
+          rotate(calc(var(--tilt, 0deg) - var(--tilt-delta, 1.5deg)))
+          scale(var(--scale-from, 0.95));
         opacity: 0;
       }
-      22% {
+      18% {
+        opacity: var(--sticker-opacity, 0.9);
+      }
+      50% {
+        transform: translateY(0) rotate(var(--tilt, 0deg)) scale(1);
+      }
+      82% {
         opacity: var(--sticker-opacity, 0.9);
       }
       to {
-        transform: translateY(-22px) rotate(var(--tilt, 0deg));
+        transform: translateY(calc(var(--drift, 24px) * -1.15))
+          rotate(calc(var(--tilt, 0deg) + var(--tilt-delta, 1.5deg)))
+          scale(var(--scale-to, 1.04));
+        opacity: calc(var(--sticker-opacity, 0.9) * 0.85);
+      }
+    }
+  }
+}
+
+/* Experience entry lines: the meta line and each bullet arrive as the entry
+   crosses the viewport. Per-element view() timeline, same idiom as the
+   .exp-sticker block above. The extra stagger comes from shifting each
+   sibling's range by its index (--i), not from animation-delay, which does
+   not belong on a scrubbed timeline. The lines sit only ~24px apart, so the
+   natural geometric stagger alone is too small to perceive.
+   min() clamps the drift: today every entry has 2 bullets (max --i is 2, so
+   the widest band is entry 12% cover 34%), and a future extra bullet shares
+   the last band rather than pushing the start past the entrance band used
+   everywhere else in this file (entry 0-14%, cover 24-42%).
+   cover 26-34% means the line completes its reveal roughly two thirds of the
+   way down the screen -- fully opaque well before it reaches the reading
+   zone at the vertical center, so nothing is ever mid-fade while being read. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .exp-bullet {
+      /* Order matters: the animation shorthand resets timeline and range. */
+      animation: expBulletIn linear both;
+      animation-timeline: view();
+      animation-range: entry calc(4% + min(var(--i, 0), 2) * 4%)
+        cover calc(26% + min(var(--i, 0), 2) * 4%);
+    }
+
+    @keyframes expBulletIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+/* Section exit fade. A section dissolves only during the last sliver of its
+   own travel, so you are never reading one section while the next is already
+   at full opacity. Scroll-driven, no listener.
+   The timeline lives on the INNER content column, not on the .reveal section,
+   so the IntersectionObserver entry fade and this exit scrub never fight over
+   the same opacity or over the composed parallax transform. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .section-exit {
+      animation: sectionExit linear both;
+      animation-timeline: view();
+      /* The exit range runs from the end of `contain` to `cover 100%`, so its
+         length is min(subject height, viewport height) -- for every section
+         taller than the viewport it is exactly one viewport of scroll. That
+         makes a percentage already height-independent: 78% is the last ~22%
+         of a viewport, not 22% of a 1400px column. */
+      animation-range: exit 78% exit 100%;
+    }
+
+    /* Upgrade to a viewport-anchored shoulder so the sub-viewport hero column
+       gets the same 25vh fade as the tall sections. Guarded rather than
+       declared twice in one rule: Lightning CSS (Tailwind v4) strips shadowed
+       duplicate declarations, which would silently delete this. max(0px, ...)
+       keeps a hypothetical sub-25vh subject from getting a negative offset. */
+    @supports (animation-range: exit calc(100% - 25vh)) {
+      .section-exit {
+        animation-range: exit max(0px, calc(100% - 25vh)) exit 100%;
+      }
+    }
+
+    @keyframes sectionExit {
+      from {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+      to {
+        opacity: 0;
+        transform: translate3d(0, -20px, 0);
       }
     }
   }

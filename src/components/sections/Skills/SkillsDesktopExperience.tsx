@@ -12,7 +12,6 @@ import { buildCategoryBackbone, buildMeshEdges, buildSkillEdges, segmentIntersec
 type SkillsDesktopExperienceProps = {
   theme: string;
   lang: Locale;
-  t: (key: string) => string;
   categories: SkillCategory[];
   nodes: SkillNode[];
   links: SkillLink[];
@@ -21,7 +20,7 @@ type SkillsDesktopExperienceProps = {
 
 const HERO_PALETTE = ["#a855f7", "#22c55e", "#38bdf8", "#fb923c", "#67e8f9", "#f472b6"];
 
-export default function SkillsDesktopExperience({ theme, lang, t, categories, nodes, links, srList }: SkillsDesktopExperienceProps) {
+export default function SkillsDesktopExperience({ theme, lang, categories, nodes, links, srList }: SkillsDesktopExperienceProps) {
   const isDark = theme === "dark";
   const isMobile = useMediaQuery("(max-width: 640px)");
   const isTablet = useMediaQuery("(max-width: 1024px)") && !isMobile;
@@ -494,17 +493,6 @@ export default function SkillsDesktopExperience({ theme, lang, t, categories, no
   return (
     <>
       <div className="relative w-full">
-        <div className="flex items-start justify-between mb-6 md:mb-8 px-1">
-          <h2
-            className="text-2xl md:text-3xl font-semibold"
-            data-parallax="title"
-            data-speed="0.26"
-            style={{ color: isDark ? "#f8fafc" : "#0f172a" }}
-          >
-            {t("skills.label")}
-          </h2>
-        </div>
-
         <div
           ref={containerRef}
           className="relative overflow-hidden rounded-[18px]"

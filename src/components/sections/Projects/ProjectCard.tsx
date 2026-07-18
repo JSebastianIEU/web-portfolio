@@ -19,7 +19,7 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
   const badgeTone = project.status === "live" || project.status === "published" ? "accent" : project.status === "paused" ? "warning" : "neutral";
 
   return (
-    <div className="glass-card group relative flex flex-col gap-3 rounded-2xl overflow-hidden transition-all duration-150 h-full">
+    <div className="glass-card group relative flex flex-col gap-2.5 rounded-2xl overflow-hidden transition-all duration-150 h-full">
       <button
         type="button"
         onClick={onOpen}
@@ -50,30 +50,29 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
         />
       </button>
 
-      <div className="px-3 pb-3 flex flex-col gap-2.5">
+      <div className="px-3 pb-3 flex flex-col gap-2">
         <div className="flex items-center gap-2 flex-wrap">
           <ProjectBadge label={displayType} tone="neutral" isDark={isDark} />
           <ProjectBadge label={displayStatus} tone={badgeTone as "accent" | "neutral" | "warning"} isDark={isDark} />
         </div>
 
         <div className="flex flex-col gap-1">
-          <div className="text-base md:text-lg font-semibold leading-snug" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+          <div className="text-sm md:text-base font-semibold leading-snug" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
             {lang === "es" ? project.titleES || project.title : project.title}
           </div>
-          <p className="text-xs md:text-sm leading-relaxed" style={{ color: isDark ? "rgba(226,232,240,0.78)" : "rgba(15,23,42,0.72)" }}>
+          <p className="text-xs md:text-sm leading-relaxed line-clamp-2" style={{ color: isDark ? "rgba(226,232,240,0.78)" : "rgba(15,23,42,0.72)" }}>
             {lang === "es" ? project.subtitleES || project.subtitle : project.subtitle}
           </p>
         </div>
 
         <div className="flex flex-wrap gap-1.5">
-          {project.stack.slice(0, 4).map((stackItem) => (
+          {project.stack.slice(0, 3).map((stackItem) => (
             <span
               key={stackItem}
-              className="text-[11px] font-semibold rounded-full px-2.5 py-1"
+              className="text-[11px] font-medium rounded-full px-2 py-0.5"
               style={{
-                border: isDark ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(15,23,42,0.12)",
+                border: isDark ? "1px solid rgba(255,255,255,0.20)" : "1px solid rgba(15,23,42,0.16)",
                 color: isDark ? "rgba(226,232,240,0.9)" : "rgba(15,23,42,0.8)",
-                background: isDark ? "rgba(255,255,255,0.04)" : "rgba(15,23,42,0.05)",
               }}
             >
               {stackItem}
@@ -97,7 +96,7 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
                   target="_blank"
                   rel="noreferrer"
                   data-cursor="pointer"
-                  className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200"
+                  className="w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200"
                   style={{
                     border: isDark ? "1px solid rgba(255,255,255,0.3)" : "1px solid rgba(120,120,120,0.4)",
                     background: isDark ? "rgba(100,100,100,0.3)" : "rgba(140,140,140,0.5)",
@@ -119,7 +118,7 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
                     alt={link.label}
                     width={20}
                     height={20}
-                    className="w-5 h-5"
+                    className="w-4 h-4"
                     style={{ filter: "grayscale(100%) brightness(0.2) invert(1)" }}
                   />
                 </a>
