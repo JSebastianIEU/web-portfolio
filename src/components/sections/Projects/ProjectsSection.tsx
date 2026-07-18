@@ -46,7 +46,7 @@ export default function ProjectsSection() {
     <SectionShell
       id="projects"
       ref={revealRef}
-      className="reveal relative w-full py-12 md:py-16"
+      className="reveal relative w-full py-20 md:py-28"
     >
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">

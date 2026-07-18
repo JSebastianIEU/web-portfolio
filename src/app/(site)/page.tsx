@@ -73,6 +73,13 @@ export default function Home() {
   const currentPhrase = useMemo(() => phrases[loopNum % phrases.length], [phrases, loopNum]);
   const currentIndex = useMemo(() => loopNum % phrases.length, [phrases, loopNum]);
   const currentFullText = useMemo(() => getFullText(currentPhrase), [currentPhrase]);
+  // The widest line the typewriter can ever render. Used as an invisible
+  // spacer so a phrase wrapping to a second line never shoves the tagline and
+  // CTAs down. The hero is monospaced, so longest-by-characters is also widest.
+  const longestPhrase = useMemo(
+    () => phrases.reduce((longest, p) => (getFullText(p).length > longest.length ? getFullText(p) : longest), ""),
+    [phrases],
+  );
 
   useEffect(() => {
     if (reduced) return; // no typing loop under reduced motion
@@ -174,38 +181,45 @@ export default function Home() {
               </span>
             </div>
 
-            {/* Animated headline — the typewriter, kept as the flourish. */}
-            <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono transition-opacity duration-200 leading-tight md:leading-snug">
-              <span style={{ color: colors.word, opacity: 0.75 }}>{displayPrefix}</span>
-              <span
-                style={{
-                  color: currentIndex === phrases.length - 1 ? colors.word : highlightColor,
-                  opacity: 1,
-                  filter: currentIndex === phrases.length - 1 ? "none" : "brightness(1.06)",
-                  textShadow:
-                    currentIndex === phrases.length - 1
-                      ? "none"
-                      : isDark
-                      ? "0 0 16px rgba(255,255,255,0.28)"
-                      : "0 0 12px rgba(15,23,42,0.22)",
-                  transition: "opacity 200ms ease, text-shadow 200ms ease",
-                }}
-              >
-                {displayHighlight}
-              </span>
-              <span style={{ color: colors.word, opacity: 0.75 }}>{displaySuffix}</span>
-              <span
-                className={isEndLine ? "cursor-blink" : ""}
-                style={{
-                  color:
-                    currentIndex === phrases.length - 1
-                      ? colors.word
-                      : cursorInHighlight
-                      ? highlightColor
-                      : colors.word,
-                }}
-              >
-                |
+            {/* Animated headline — the typewriter, kept as the flourish.
+                The box is sized by an invisible copy of the longest phrase, so
+                the line count (and everything below it) never moves as it types. */}
+            <div className="relative w-full text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono leading-tight md:leading-snug">
+              <span aria-hidden className="invisible select-none block">{longestPhrase}|</span>
+              <span className="absolute inset-0 flex items-center justify-center">
+                <span className="block transition-opacity duration-200">
+                  <span style={{ color: colors.word, opacity: 0.75 }}>{displayPrefix}</span>
+                  <span
+                    style={{
+                      color: currentIndex === phrases.length - 1 ? colors.word : highlightColor,
+                      opacity: 1,
+                      filter: currentIndex === phrases.length - 1 ? "none" : "brightness(1.06)",
+                      textShadow:
+                        currentIndex === phrases.length - 1
+                          ? "none"
+                          : isDark
+                          ? "0 0 16px rgba(255,255,255,0.28)"
+                          : "0 0 12px rgba(15,23,42,0.22)",
+                      transition: "opacity 200ms ease, text-shadow 200ms ease",
+                    }}
+                  >
+                    {displayHighlight}
+                  </span>
+                  <span style={{ color: colors.word, opacity: 0.75 }}>{displaySuffix}</span>
+                  <span
+                    className={isEndLine ? "cursor-blink" : ""}
+                    style={{
+                      color:
+                        currentIndex === phrases.length - 1
+                          ? colors.word
+                          : cursorInHighlight
+                          ? highlightColor
+                          : colors.word,
+                    }}
+                  >
+                    |
+                  </span>
+                </span>
               </span>
             </div>
 

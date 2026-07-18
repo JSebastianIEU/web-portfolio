@@ -29,7 +29,7 @@ export default function ExperienceSection() {
   const rail = isDark ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.12)";
 
   return (
-    <SectionShell id="experience" ref={revealRef} className="reveal relative w-full py-12 md:py-16">
+    <SectionShell id="experience" ref={revealRef} className="reveal relative w-full py-20 md:py-28">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h2
@@ -82,7 +82,7 @@ export default function ExperienceSection() {
                     {period} · {location}
                   </span>
 
-                  <ul className="flex flex-col gap-1.5 mt-1">
+                  <ul className="flex flex-col gap-1.5 mt-1 max-w-[62ch]">
                     {bullets.map((b) => (
                       <li key={b} className="text-[13px] md:text-sm leading-relaxed flex gap-2" style={{ color: muted }}>
                         <span aria-hidden style={{ color: faint }}>

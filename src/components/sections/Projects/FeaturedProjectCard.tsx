@@ -111,7 +111,7 @@ export default function FeaturedProjectCard({
         </button>
 
         <div className="flex flex-wrap gap-1.5">
-          {project.stack.slice(0, 6).map((stackItem) => (
+          {project.stack.slice(0, 4).map((stackItem) => (
             <span
               key={stackItem}
               className="text-[11px] font-semibold rounded-full px-2.5 py-1"

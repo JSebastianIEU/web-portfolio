@@ -38,14 +38,12 @@ export const experience: ExperienceEntry[] = [
     kind: "role",
     href: "/projects/craig-ai",
     bullets: [
-      "Sole engineer on Craig, an AI ordering agent running in production for a Dublin print shop — architecture, implementation, testing and deployment.",
-      "LLMs and multi-agent systems integrated into real business workflows, plus automations connecting enterprise tools over APIs.",
-      "Working directly with the CEO on what ships and when.",
+      "Sole engineer on Craig, an AI ordering agent live for a Dublin print shop.",
+      "LLMs and multi-agent systems in real business workflows. Direct report to the CEO.",
     ],
     bulletsES: [
-      "Único ingeniero de Craig, un agente de IA en producción para una imprenta de Dublín — arquitectura, implementación, testing y despliegue.",
-      "LLMs y sistemas multi-agente integrados en flujos de negocio reales, más automatizaciones que conectan herramientas vía API.",
-      "Trabajo directo con el CEO sobre qué se lanza y cuándo.",
+      "Único ingeniero de Craig, un agente de IA en producción para una imprenta de Dublín.",
+      "LLMs y sistemas multi-agente en flujos de negocio reales. Reporte directo al CEO.",
     ],
   },
   {
@@ -60,12 +58,12 @@ export const experience: ExperienceEntry[] = [
     kind: "venture",
     href: "/projects/boletapp",
     bullets: [
-      "Anti-fraud ticketing platform live for nightlife and events: rotating HMAC QR codes, an offline-first door scanner and a live operations dashboard.",
-      "Same crypto engine in TypeScript and Python, with shared test vectors enforcing bit-for-bit parity.",
+      "Live anti-fraud ticketing platform: rotating HMAC QR and an offline-first door scanner.",
+      "One crypto engine in TypeScript and Python, kept bit-for-bit identical by shared tests.",
     ],
     bulletsES: [
-      "Plataforma de boletería antifraude en vivo para vida nocturna y eventos: QR rotativo con HMAC, scanner de puerta offline-first y panel de operación en tiempo real.",
-      "El mismo motor criptográfico en TypeScript y Python, con test-vectors compartidos que garantizan paridad bit a bit.",
+      "Plataforma de boletería antifraude en vivo: QR rotativo con HMAC y scanner offline-first.",
+      "Un solo motor criptográfico en TypeScript y Python, idéntico bit a bit vía tests compartidos.",
     ],
   },
   {
@@ -79,12 +77,12 @@ export const experience: ExperienceEntry[] = [
     locationES: "Madrid",
     kind: "hackathon",
     bullets: [
-      "First edition of the programme: 100+ students from 20 universities and business schools.",
-      "Built a RAG-based GenAI solution turning complex legal documents into language any citizen can read — part of the Justice 2030 Spain initiative.",
+      "First edition: 100+ students from 20 universities.",
+      "RAG solution turning legal documents into plain language (Justice 2030 Spain).",
     ],
     bulletsES: [
-      "Primera edición del programa: más de 100 estudiantes de 20 universidades y escuelas de negocio.",
-      "Solución GenAI con RAG para convertir documentos legales complejos en lenguaje que cualquier ciudadano entiende — dentro de la iniciativa Justice 2030 España.",
+      "Primera edición: más de 100 estudiantes de 20 universidades.",
+      "Solución RAG que convierte documentos legales en lenguaje claro (Justice 2030 España).",
     ],
   },
 ];
