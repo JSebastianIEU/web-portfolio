@@ -61,11 +61,15 @@ export const metadata: Metadata = {
     images: [`${SITE_URL}${SOCIAL_IMAGE}`],
   },
   icons: {
+    // Order matters: browsers that understand SVG take the animated one, the
+    // rest fall through to the PNG. Safari ignores SVG favicons entirely, so
+    // the PNG is not optional decoration -- it is what Safari actually shows.
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/favicon.png", type: "image/png", sizes: "32x32" },
     ],
     shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
 };
 
