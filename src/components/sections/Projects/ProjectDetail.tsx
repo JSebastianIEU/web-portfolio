@@ -43,7 +43,7 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
   };
 
   return (
-    <SectionShell id={project.slug} className="relative w-full py-12 md:py-16">
+    <SectionShell id={project.slug} className="relative w-full pt-24 pb-12 md:pt-32 md:pb-16">
       <div className="flex flex-col gap-6">
         <BackToProjects slug={project.slug} label={copy.cards.back} isDark={isDark} />
         <div className="flex flex-col gap-2">

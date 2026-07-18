@@ -47,7 +47,7 @@ export default function BackToProjects({ slug, label, isDark }: Props) {
       type="button"
       onClick={goBack}
       data-cursor="pointer"
-      className="back-to-projects glass-tile inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[12.5px] font-semibold transition-transform hover:-translate-x-0.5 self-start"
+      className="back-to-projects inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[12.5px] font-semibold transition-transform hover:-translate-x-0.5 self-start"
       style={{ cursor: "none", color: isDark ? "rgba(226,232,240,0.92)" : "rgba(15,23,42,0.85)" }}
     >
       <ArrowLeft size={14} aria-hidden />
