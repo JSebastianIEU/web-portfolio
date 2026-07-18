@@ -44,6 +44,7 @@ export type TranslationCopy = {
       soon: string;
       offline: string;
       privateCode: string;
+      ownedEndToEnd: string;
       tryIt: string;
       visit: string;
       viewDetails: string;

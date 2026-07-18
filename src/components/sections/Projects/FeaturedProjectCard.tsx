@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Lock } from "lucide-react";
+import { ArrowUpRight, BadgeCheck, Lock } from "lucide-react";
 import type { Locale, TranslationCopy } from "@/domain/i18n";
 import type { Project } from "@/domain/projects";
 import TiltCard from "@/components/ui/TiltCard";
@@ -28,6 +28,7 @@ export default function FeaturedProjectCard({
 }: FeaturedProjectCardProps) {
   const badgeTone = project.status === "live" || project.status === "published" ? "accent" : project.status === "paused" ? "warning" : "neutral";
   const org = lang === "es" ? project.orgES || project.org : project.org;
+  const role = lang === "es" ? project.roleES || project.role : project.role;
   const title = lang === "es" ? project.titleES || project.title : project.title;
   const liveHref = project.links.live;
   const logo = isDark ? project.logoDark || project.logo : project.logo;
@@ -42,6 +43,21 @@ export default function FeaturedProjectCard({
         <div className="flex items-center gap-2 flex-wrap">
           <ProjectBadge label={displayType} tone="neutral" isDark={isDark} />
           <ProjectBadge label={displayStatus} tone={badgeTone as "accent" | "neutral" | "warning"} isDark={isDark} />
+          {/* Ownership is the level signal — emerald so it reads apart from the
+              cyan "live" status badge and lands in a 30s scan. */}
+          {project.ownedEndToEnd && (
+            <span
+              className="inline-flex items-center gap-1 text-[11px] font-semibold rounded-full px-2.5 py-1"
+              style={{
+                border: isDark ? "1px solid rgba(52,211,153,0.3)" : "1px solid rgba(5,150,105,0.2)",
+                color: isDark ? "rgba(110,231,183,0.95)" : "rgba(4,120,87,0.9)",
+                background: isDark ? "rgba(52,211,153,0.14)" : "rgba(5,150,105,0.08)",
+              }}
+            >
+              <BadgeCheck size={11} aria-hidden />
+              {copy.cards.ownedEndToEnd}
+            </span>
+          )}
           {project.codePrivate && (
             <span
               className="inline-flex items-center gap-1 text-[11px] font-semibold rounded-full px-2.5 py-1"
@@ -83,6 +99,15 @@ export default function FeaturedProjectCard({
           <p className="text-sm md:text-base leading-relaxed" style={{ color: isDark ? "rgba(226,232,240,0.78)" : "rgba(15,23,42,0.72)" }}>
             {lang === "es" ? project.subtitleES || project.subtitle : project.subtitle}
           </p>
+          {/* What I actually did on it — the specific ownership proof. */}
+          {role && (
+            <span
+              className="text-[12px] font-medium mt-0.5"
+              style={{ color: isDark ? "rgba(226,232,240,0.7)" : "rgba(15,23,42,0.65)" }}
+            >
+              {role}
+            </span>
+          )}
         </button>
 
         <div className="flex flex-wrap gap-1.5">

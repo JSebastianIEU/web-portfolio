@@ -39,6 +39,9 @@ export type Project = {
   type: ProjectType;
   status: ProjectStatus;
   role?: string;
+  roleES?: string;
+  /** Client/venture work the visitor built and shipped solo, end-to-end. */
+  ownedEndToEnd?: boolean;
   timeframe?: string;
   stack: string[];
   highlights: string[];

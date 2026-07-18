@@ -43,6 +43,7 @@ export const translations: Translations = {
         soon: "— soon",
         offline: "Offline (infra paused)",
         privateCode: "Private code",
+        ownedEndToEnd: "Owned end-to-end",
         tryIt: "Try it live",
         visit: "Visit",
         viewDetails: "View details for {project}",
@@ -187,7 +188,7 @@ export const translations: Translations = {
       ],
       name: "Juan Sebastian Peña",
       role: "AI & Data Engineer · Madrid",
-      tagline: "Applied AI & data — real pipelines, live demos, and published research.",
+      tagline: "I build and operate client products end-to-end — in production, with live demos.",
       ctaProjects: "View projects",
       ctaContact: "Let's talk",
     },
@@ -195,7 +196,7 @@ export const translations: Translations = {
       label: "About",
       headline: "Building clear AI and data-driven systems with strong product judgment.",
       body:
-        "I'm Juan Sebastian Peña, a Colombian builder based in Madrid, pursuing a degree in Computer Science and Artificial Intelligence. I design and build AI- and data-driven systems with a strong focus on clarity, explainability, and product intent—because technical excellence only matters when people can understand, trust, and act on it in real contexts.",
+        "I'm Juan Sebastian Peña — I build and ship AI- and data-driven products end-to-end, from zero to production. I'm the sole engineer behind Craig, a live AI ordering agent for a Dublin print shop, and the technical founder of Boletapp, an anti-fraud ticketing platform. I obsess over clarity, explainability, and product intent—because technical excellence only matters when people can understand, trust, and act on it in real contexts. Alongside this, I'm completing a degree in Computer Science and Artificial Intelligence in Madrid.",
       bullets: [],
       humanLine:
         "Outside of work, salsa and bachata shape how I think about adaptability, collaboration, and connection.",
@@ -262,6 +263,7 @@ export const translations: Translations = {
         soon: "— próximamente",
         offline: "Offline (infra pausada)",
         privateCode: "Código privado",
+        ownedEndToEnd: "De 0 a producción",
         tryIt: "Probar en vivo",
         visit: "Visitar",
         viewDetails: "Ver detalles de {project}",
@@ -406,7 +408,7 @@ export const translations: Translations = {
       ],
       name: "Juan Sebastian Peña",
       role: "Ingeniero de IA y Datos · Madrid",
-      tagline: "IA y datos aplicados: pipelines reales, demos en vivo y research publicado.",
+      tagline: "Construyo y opero productos de cliente de punta a punta — en producción, con demos en vivo.",
       ctaProjects: "Ver proyectos",
       ctaContact: "Hablemos",
     },
@@ -414,7 +416,7 @@ export const translations: Translations = {
       label: "Sobre mí",
       headline: "Construyo sistemas de IA y datos claros con sólido criterio de producto.",
       body:
-        "Soy Juan Sebastian Peña, un creador colombiano basado en Madrid, y estoy cursando un grado en Ciencias de la Computación e Inteligencia Artificial. Diseño y construyo sistemas impulsados por IA y datos con un fuerte enfoque en claridad, explicabilidad e intención de producto—porque la excelencia técnica solo importa cuando las personas pueden comprenderla, confiar en ella y actuar sobre ella en contextos reales.",
+        "Soy Juan Sebastian Peña — construyo y llevo a producción productos de IA y datos de punta a punta, de cero a en vivo. Soy el único ingeniero detrás de Craig, un agente de IA que gestiona pedidos para una imprenta de Dublín, y el fundador técnico de Boletapp, una plataforma de boletería antifraude. Me obsesiona la claridad, la explicabilidad y la intención de producto—porque la excelencia técnica solo importa cuando las personas pueden comprenderla, confiar en ella y actuar sobre ella en contextos reales. En paralelo, termino un grado en Ciencias de la Computación e Inteligencia Artificial en Madrid.",
       bullets: [],
       humanLine:
         "Fuera del trabajo, la salsa y la bachata moldean cómo pienso sobre adaptabilidad, colaboración y conexión.",
