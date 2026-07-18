@@ -1267,8 +1267,8 @@ function ScopeDiagram({ es, faint, ink, chipFill, isDark, muted }: Palette) {
  *
  * Every figure here was measured on the repo itself — `wc -l` over the source
  * trees, a pytest run, a `coverage report`, and the two workflow files. Where
- * the project's own README disagrees (its badge says 0% and its prose says
- * ~92%), the measured number wins and the disagreement is stated out loud in
+ * the number here is the measured one, and the split by module is the point:
+ * the domain is fully covered and the cloud glue is not, by design, as stated in
  * chapter 07. Nothing on this page is taken from the write-up.
  */
 export default function QrForgeStory({ isDark, lang }: Props) {
@@ -1557,10 +1557,10 @@ export default function QrForgeStory({ isDark, lang }: Props) {
             <StoryStat value="60" label={es ? "el corte que exige CI" : "the gate CI enforces"} />
           </div>
 
-          <StoryBeat title={es ? "El README de ese repo se contradice" : "That repo's README contradicts itself"}>
+          <StoryBeat title={es ? "Por qué las capas bajas están bajas" : "Why the low modules are low"}>
             {es
-              ? "El badge dice 0% y el texto dice ~92%. Las dos cosas están mal: la primera es un badge que nunca se actualizó, la segunda es una cifra que ya no corresponde a la suite. La que vale es la que sale de correr coverage hoy, y es 80."
-              : "Its badge says 0% and its prose says ~92%. Both are wrong: the first is a badge that was never wired up, the second is a figure the suite no longer matches. The one that counts is what running coverage produces today, and that is 80."}
+              ? "No es descuido: es la factura de la decisión del capítulo 03. El pegamento de cloud —el arranque de la app, el backend de Azure Blob— es justo lo que no se puede ejercitar sin una cuenta de Azure, y la abstracción existe precisamente para que los tests no la necesiten. Las 12 pruebas que se saltan son las de integración con Azure, tras credenciales."
+              : "Not an oversight: it is the bill for the chapter-03 decision. The cloud glue — app startup, the Azure Blob backend — is exactly what cannot be exercised without an Azure account, and the abstraction exists so the tests never need one. The 12 skipped tests are the Azure integration ones, gated behind credentials."}
           </StoryBeat>
 
           <StoryBeat title={es ? "Una cobertura no es un número" : "Coverage is not one number"}>
