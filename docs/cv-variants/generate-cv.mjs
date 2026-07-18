@@ -34,7 +34,7 @@ const experience = [
       ? [
           "Único ingeniero de Craig, un agente de IA en producción para una imprenta de Dublín que cotiza, cobra y gestiona pedidos de punta a punta.",
           "Diseño y opero flujos multi-agente con LLMs sobre procesos de negocio reales. Reporte directo al CEO; los fundadores no son técnicos.",
-          "Responsable de todo el stack: diseño del agente, API, modelo de datos, despliegue y operación. En producción de forma continua desde febrero de 2026.",
+          "Responsable de todo el stack: agente, API, modelo de datos, despliegue y operación. En producción de forma continua desde febrero de 2026.",
         ]
       : [
           "Sole engineer on Craig, a production AI agent for a Dublin print shop that quotes, charges and manages customer orders end-to-end.",
@@ -82,8 +82,8 @@ const projects = [
     bullets: T
       ? [
           "98 de 282 commits, 22 pull requests abiertos y 9 PRs de compañeros revisados por mí.",
-          "Responsable de la evaluación: métricas de ranking NDCG@k, splits temporales que respetan fronteras point-in-time y 25 tests de regresión que validan las métricas contra resultados analíticos conocidos.",
-          "Construí el pipeline de análisis de vídeo (8 ramas en paralelo: Whisper, OCR, captioning, keywords); bajó de más de 5 minutos por vídeo a menos de 60 segundos.",
+          "Responsable de la evaluación: métricas NDCG@k, splits temporales con fronteras point-in-time y 25 tests que validan las métricas contra resultados analíticos conocidos.",
+          "Construí el pipeline de análisis de vídeo (8 ramas en paralelo: Whisper, OCR, captioning, keywords): de más de 5 minutos por vídeo a menos de 60 segundos.",
         ]
       : [
           "98 of 282 commits, 22 pull requests opened and 9 of my teammates' PRs reviewed.",
@@ -108,7 +108,7 @@ const projects = [
     name: T ? "Reconocimiento visual de lugares — IE Tower" : "Visual Place Recognition — IE Tower",
     meta: T ? "2026 · Python, DINOv2, FAISS, PyTorch" : "2026 · Python, DINOv2, FAISS, PyTorch",
     bullets: T
-      ? ["Dada la foto de cualquier punto interior del edificio, predice en qué planta está, usando embeddings de imagen y recuperación por vecinos cercanos sobre un índice FAISS."]
+      ? ["Dada la foto de cualquier punto interior, predice en qué planta está, con embeddings de imagen y recuperación por vecinos cercanos sobre un índice FAISS."]
       : ["Given a photo of any indoor spot in the building, predicts which floor it is on, using image embeddings and nearest-neighbour retrieval over a FAISS index."],
   },
   {
@@ -178,12 +178,13 @@ const html = `<!doctype html><html lang="${CFG.lang}"><head><meta charset="utf-8
 @font-face{font-family:Carlito;font-weight:400;font-style:italic;src:url(data:font/woff2;base64,${F.i}) format("woff2");}
 @page { size: A4; margin: 11mm 12mm; }
 * { box-sizing: border-box; }
-body { font-family: Carlito, Calibri, Arial, sans-serif; font-size: 10.2pt; line-height: 1.38; color: #000; margin: 0; }
+body { font-family: Carlito, Calibri, Arial, sans-serif; font-size: 10.2pt; line-height: 1.30; color: #000; margin: 0; }
 h1 { font-size: 18pt; text-align: center; margin: 0 0 2pt; letter-spacing: .4pt; font-weight: 700; }
 .contact { text-align: center; font-size: 8.8pt; margin-bottom: 1pt; white-space: nowrap; }
+.contact.city { font-size: 9.6pt; margin-bottom: 2pt; }
 .contact a { color: #0645ad; text-decoration: none; }
-h2 { font-size: 10.4pt; font-weight: 700; letter-spacing: .5pt; margin: 8pt 0 2pt; padding-bottom: 1.5pt; border-bottom: .8pt solid #000; }
-.entry { margin-bottom: 5.5pt; }
+h2 { font-size: 10.4pt; font-weight: 700; letter-spacing: .5pt; margin: 6.2pt 0 1.5pt; padding-bottom: 1.5pt; border-bottom: .8pt solid #000; }
+.entry { margin-bottom: 4.2pt; }
 .entry:last-child { margin-bottom: 0; }
 .row { display: flex; justify-content: space-between; align-items: baseline; gap: 8pt; }
 .role { font-weight: 700; }
@@ -193,13 +194,14 @@ h2 { font-size: 10.4pt; font-weight: 700; letter-spacing: .5pt; margin: 8pt 0 2p
 .plink { font-size: 8.6pt; white-space: nowrap; }
 .plink a { color: #0645ad; text-decoration: none; }
 ul { margin: 1.5pt 0 0; padding-left: 12pt; }
-li { margin-bottom: 1.4pt; }
+li { margin-bottom: 1.1pt; }
 p.sum { margin: 2pt 0 0; text-align: justify; }
 .sk { margin: 1.5pt 0 0; }
 .sk b { font-weight: 700; }
 </style></head><body>
 <h1>${D.name}</h1>
-<div class="contact">${D.city} &nbsp;·&nbsp; ${D.phone} &nbsp;·&nbsp; <a href="mailto:${D.email}">${D.email}</a> &nbsp;·&nbsp; <a href="https://${D.site}">${D.site}</a> &nbsp;·&nbsp; <a href="https://${D.li}">${D.li}</a> &nbsp;·&nbsp; <a href="https://${D.gh}">${D.gh}</a></div>
+<div class="contact city">${D.city}</div>
+<div class="contact">${D.phone} &nbsp;·&nbsp; <a href="mailto:${D.email}">${D.email}</a> &nbsp;·&nbsp; <a href="https://${D.site}">${D.site}</a> &nbsp;·&nbsp; <a href="https://${D.li}">${D.li}</a> &nbsp;·&nbsp; <a href="https://${D.gh}">${D.gh}</a></div>
 
 <h2>${L.summary}</h2>
 <p class="sum">${esc(summary)}</p>
@@ -229,6 +231,13 @@ const b = await puppeteer.launch({ headless: true, executablePath: process.env.C
 const p = await b.newPage();
 await p.setContent(html, { waitUntil: "load" });
 await p.pdf({ path: out, format: "A4", printBackground: true, preferCSSPageSize: true });
-const pages = await p.evaluate(() => Math.ceil(document.body.scrollHeight / (297 * 3.7795 - 2 * 11 * 3.7795)));
+const m = await p.evaluate(() => {
+  // Altura util de un A4 con margenes de 11mm: (297 - 22) mm a 96dpi.
+  const printable = (297 - 22) * (96 / 25.4);
+  const h = document.documentElement.getBoundingClientRect().height;
+  return { h: Math.round(h), printable: Math.round(printable), over: Math.round(h - printable) };
+});
+const pages = m.over > 0 ? 2 : 1;
+console.log("   alto:", m.h, "px · util:", m.printable, "px · sobra:", m.over, "px");
 await b.close();
 console.log(out.split("/").pop(), "· alto aprox:", pages, "pagina(s)");
