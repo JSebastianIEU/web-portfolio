@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import type { Locale } from "@/domain/i18n";
 import IeTowerSimulator from "./IeTowerSimulator";
 import IeTowerScrollytelling from "./IeTowerScrollytelling";
+import QrForgeStory from "./QrForgeStory";
 import TikTokRecommender from "./TikTokRecommender";
 import TikTokRecommenderStory from "./TikTokRecommenderStory";
 import TikTokScrollytelling from "./TikTokScrollytelling";
@@ -27,6 +28,7 @@ export const projectScrollytelling: Record<string, ComponentType<ProjectStoryPro
   "ie-tower-vpr": IeTowerScrollytelling,
   "tiktok-semantic-engagement": TikTokScrollytelling,
   "tiktok-recommender": TikTokRecommenderStory,
+  "qr-forge": QrForgeStory,
 };
 
 /**

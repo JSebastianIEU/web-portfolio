@@ -1710,3 +1710,88 @@ body {
     }
   }
 }
+
+/* === QR Forge story ===================================================
+   Three reveal idioms, all scroll-driven, all inside the entrance band the
+   rest of this file uses (entry 0-14%, cover 24-42%). That ceiling is not
+   stylistic: these diagrams live in .story-stage, which pins at top:14vh on
+   desktop, and a pinned subject stops advancing its own view() timeline —
+   anything scheduled past the pin would freeze half-played.
+
+   Stagger comes from shifting each element's animation-range by its index
+   (--i), never from animation-delay, which is a no-op on a progress-based
+   timeline. min() clamps the drift so adding a row shares the last band
+   instead of pushing a reveal past the pin.
+
+   The classes go on concrete shapes (rect, path, text, circle), never on a
+   <g>: a group generates no principal CSS box, so view() can resolve to an
+   inactive timeline there and leave the group stuck at the opacity:0
+   from-keyframe. A node made of a rect plus its label therefore carries the
+   class twice, with the same --i.
+
+   No hidden state anywhere: opacity 0, the zero scale and the full
+   dash-offset exist only inside from-keyframes, so browsers without
+   scroll-driven animations and reduced-motion readers get the finished
+   diagram. */
+@keyframes qrfNodeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes qrfDraw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes qrfBarGrow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* Boxes, chips and their labels: rise into place in reading order. */
+    .qrf-node {
+      transform-box: fill-box;
+      /* Order matters: the animation shorthand resets timeline and range. */
+      animation: qrfNodeIn linear both;
+      animation-timeline: view();
+      animation-range: entry calc(3% + min(var(--i, 0), 12) * 0.9%)
+        cover calc(25% + min(var(--i, 0), 12) * 0.9%);
+    }
+    /* Connectors: normalised with pathLength="1" and stroke-dasharray:1, so
+       one dash pattern draws every path whatever its real length. */
+    .qrf-line {
+      animation: qrfDraw linear both;
+      animation-timeline: view();
+      animation-range: entry calc(4% + min(var(--i, 0), 12) * 0.9%)
+        cover calc(26% + min(var(--i, 0), 12) * 0.9%);
+    }
+    /* Coverage bars: extend from their own left edge, module by module.
+       fill-box makes scaleX resolve against the rect rather than the SVG
+       user-space origin, so a bar grows instead of sliding. Seventeen rows,
+       clamped at 16: the widest band is entry 14.2% cover 37.2%. */
+    .qrf-bar {
+      transform-box: fill-box;
+      transform-origin: left center;
+      animation: qrfBarGrow linear both;
+      animation-timeline: view();
+      animation-range: entry calc(3% + min(var(--i, 0), 16) * 0.7%)
+        cover calc(26% + min(var(--i, 0), 16) * 0.7%);
+    }
+  }
+}

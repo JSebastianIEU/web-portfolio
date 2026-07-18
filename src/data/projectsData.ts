@@ -140,9 +140,9 @@ export const projectsData: Project[] = [
     subtitle: "Production-ready QR generator with a full DevOps pipeline.",
     subtitleES: "Generador de QR listo para producción, con pipeline DevOps completo.",
     description:
-      "A free, unlimited QR generator (UI + API) built on FastAPI with a React SPA. Beyond the product — branded PNG/SVG codes with color, padding, radius and size controls, plus authenticated history and profiles — the focus is DevOps hardening: tested to ~92% coverage, containerized, and shipped to Azure through CI/CD.",
+      "A free, unlimited QR generator (UI + API) built on FastAPI with a React SPA. Beyond the product — branded PNG/SVG codes with color, padding, radius and size controls, plus authenticated history and profiles — the focus is DevOps hardening: 136 tests holding 80% coverage behind a CI gate, containerized, and shipped to Azure through CI/CD.",
     descriptionES:
-      "Un generador de QR gratuito y sin límites (UI + API) construido con FastAPI y una SPA en React. Más allá del producto — códigos PNG/SVG con control de color, padding, radio y tamaño, más historial y perfiles autenticados — el foco es el endurecimiento DevOps: ~92% de cobertura de tests, contenerizado y desplegado en Azure vía CI/CD.",
+      "Un generador de QR gratuito y sin límites (UI + API) construido con FastAPI y una SPA en React. Más allá del producto — códigos PNG/SVG con control de color, padding, radio y tamaño, más historial y perfiles autenticados — el foco es el endurecimiento DevOps: 136 tests que sostienen un 80% de cobertura tras un gate de CI, contenerizado y desplegado en Azure vía CI/CD.",
     category: "open-source",
     type: "personal",
     status: "published",
