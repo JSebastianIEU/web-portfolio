@@ -74,15 +74,17 @@ export const projectsData: Project[] = [
     subtitle: "Anti-fraud ticketing for nightlife and concerts in Colombia.",
     subtitleES: "Boletería antifraude para vida nocturna y conciertos en Colombia.",
     description:
-      "Boletapp is an end-to-end ticketing and access-control platform for nightlife and large events: white-label sales pages, checkout with local payment methods, door scanning, and a live operations dashboard. It closes the industry's revenue leak — tickets forwarded over WhatsApp that get scanned twice, untraceable promoter commissions, and unpaid table reservations — with cryptographically verifiable tickets and automated payouts.",
+      "Boletapp is an end-to-end ticketing and access-control platform for nightlife and large events: white-label sales pages, checkout with local payment methods, door scanning, and an operations dashboard. It targets the industry's revenue leak — tickets forwarded over WhatsApp that get scanned twice, untraceable promoter commissions, and unpaid table reservations — with cryptographically verifiable tickets and automated payouts. Built and in testing; not launched yet.",
     descriptionES:
-      "Boletapp es una plataforma end-to-end de venta y control de acceso para vida nocturna y eventos masivos: página de venta con marca del organizador, checkout con métodos de pago locales, scanner de puerta y panel de operación en vivo. Resuelve el hueco de ingresos del sector — boletas reenviadas por WhatsApp que entran varias veces, comisiones de promotores sin trazabilidad y reservados que nadie paga — con boletas criptográficamente verificables y liquidación automática.",
+      "Boletapp es una plataforma end-to-end de venta y control de acceso para vida nocturna y eventos masivos: página de venta con marca del organizador, checkout con métodos de pago locales, scanner de puerta y panel de operación. Ataca el hueco de ingresos del sector — boletas reenviadas por WhatsApp que entran varias veces, comisiones de promotores sin trazabilidad y reservados que nadie paga — con boletas criptográficamente verificables y liquidación automática. Construido y en pruebas; todavía sin lanzar.",
     category: "professional",
     org: "Founder — Colombia",
     orgES: "Fundador — Colombia",
     codePrivate: true,
     type: "startup",
-    status: "live",
+    // Pre-launch: built, but the company is not registered yet and it has
+    // no users. "live" would be a factual overstatement on a payments product.
+    status: "in-progress",
     role: "Technical founder & sole developer",
     roleES: "Fundador técnico y único desarrollador",
     ownedEndToEnd: true,
@@ -103,13 +105,13 @@ export const projectsData: Project[] = [
       "Rotating anti-fraud QR: HMAC-derived codes that rotate constantly, so a forwarded screenshot is worthless — the same crypto engine runs in TypeScript and Python with shared test vectors enforcing bit-for-bit parity",
       "Offline-first door scanner: validates from any phone's browser with no connectivity and across multiple doors at once, reconciling later with single-use guarantees",
       "AI-powered bookkeeping: a receipt photo or PDF becomes a ledger entry via local Spanish OCR plus LLM structuring; cloud and SMS costs import themselves via BigQuery",
-      "Live organizer dashboard: real-time sales, capacity and promoter commissions, an interactive table/floor-plan editor, plus calendar and map views of events",
+      "Organizer dashboard: sales, capacity and promoter commissions in real time, an interactive table/floor-plan editor, plus calendar and map views of events",
     ],
     highlightsES: [
       "QR rotativo antifraude: códigos derivados por HMAC que rotan constantemente; un pantallazo reenviado no sirve — el mismo motor criptográfico corre en TypeScript y Python con test-vectors compartidos que garantizan paridad bit a bit",
       "Scanner offline-first: valida en la puerta desde el navegador de cualquier celular, sin señal y con varias puertas en simultáneo, reconciliando después con garantía de un solo uso",
       "Contabilidad con IA: una foto o PDF del recibo se convierte en asiento contable vía OCR local en español + estructuración con LLM; los costos de cloud/SMS se importan solos vía BigQuery",
-      "Panel del organizador en vivo: ventas, aforo y comisiones de promotores en tiempo real, editor interactivo de mesas y vistas de calendario y mapa de eventos",
+      "Panel del organizador: ventas, aforo y comisiones de promotores en tiempo real, editor interactivo de mesas y vistas de calendario y mapa de eventos",
     ],
     architecture: [
       "Server-rendered web app with a BFF layer, per-organizer white-labeling and a PWA scanner; cross-platform mobile app sharing the crypto engine and domain types through a monorepo",
@@ -125,7 +127,9 @@ export const projectsData: Project[] = [
       github: "",
       caseStudy: "https://boletapp.co/pitch",
       video: "",
-      live: "https://boletapp.co",
+      // No live link on purpose: boletapp.co is the pitch page, not a running
+      // product, and a "Try it" CTA pointing there would mislead.
+      live: "",
     },
   },
   {

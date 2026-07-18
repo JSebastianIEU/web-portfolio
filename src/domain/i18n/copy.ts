@@ -26,7 +26,7 @@ export const translations: Translations = {
     projects: {
       label: "Projects",
       title: "Things people can actually use",
-      subcopy: "Two products running in production, plus open-source builds and write-ups with the code in the open.",
+      subcopy: "One product live with a paying client, one pre-launch, plus open-source builds and write-ups with the code in the open.",
       groups: {
         professional: {
           title: "Real-world work",
@@ -190,7 +190,7 @@ export const translations: Translations = {
       ],
       name: "Juan Sebastian Peña",
       role: "AI & Data Engineer · Madrid",
-      tagline: "I build and operate client products end-to-end — in production, with live demos.",
+      tagline: "I build client products end-to-end — one is in production today, taking real orders.",
       ctaProjects: "View projects",
       ctaContact: "Let's talk",
     },
@@ -255,7 +255,7 @@ export const translations: Translations = {
     projects: {
       label: "Proyectos",
       title: "Cosas que la gente puede usar",
-      subcopy: "Dos productos corriendo en producción, más builds open source y publicaciones con el código a la vista.",
+      subcopy: "Un producto en producción con cliente pagando, otro pre-lanzamiento, más builds open source y publicaciones con el código a la vista.",
       groups: {
         professional: {
           title: "Trabajo real",
@@ -419,7 +419,7 @@ export const translations: Translations = {
       ],
       name: "Juan Sebastian Peña",
       role: "Ingeniero de IA y Datos · Madrid",
-      tagline: "Construyo y opero productos de cliente de punta a punta — en producción, con demos en vivo.",
+      tagline: "Construyo productos de cliente de punta a punta — uno está en producción hoy, tomando pedidos reales.",
       ctaProjects: "Ver proyectos",
       ctaContact: "Hablemos",
     },
