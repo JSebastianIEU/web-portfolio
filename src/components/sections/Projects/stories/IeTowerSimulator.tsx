@@ -15,8 +15,14 @@ import evalData from "@/data/ieTowerEval.json";
  * pipeline (DINOv2 ViT-S/14 @ 518px, frozen) over the 2,373-frame gallery and
  * letting the 30 nearest neighbours vote by cosine similarity — the same
  * retrieval the FAISS Flat-IP index performs. That run reproduced the
- * project's published metrics exactly (52.78 / 72.02 / 57.72), so these
+ * project's published metrics exactly (51.39 / 70.44 / 56.08), so these
  * distributions are the model's own output, not an illustration.
+ *
+ * Re-measured on the face-blurred frames the repository now publishes. The
+ * previous figures (52.78 / 72.02 / 57.72) came from the same pipeline over
+ * the unblurred originals; blurring cost about 1.5 pp across every metric.
+ * The hallway sample flipped from a hit to a near miss in the process — it is
+ * left as it came out.
  */
 
 type Sample = {

@@ -215,9 +215,9 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
       <StoryChapter index="06" eyebrow={es ? "Resultados" : "Results"}>
         <StoryStage>
           <div className="flex flex-col gap-7">
-            <StoryStat value="52.8%" label="Top-1" accent />
-            <StoryStat value="72.0%" label="Top-5" />
-            <StoryStat value="57.7%" label="mAP" />
+            <StoryStat value="51.4%" label="Top-1" accent />
+            <StoryStat value="70.4%" label="Top-5" />
+            <StoryStat value="56.1%" label="mAP" />
             <p className="text-[11px] max-w-[22ch] leading-relaxed" style={{ color: isDark ? "rgba(148,163,184,0.75)" : "rgba(71,85,105,0.75)" }}>
               {es ? "Azar: 4%. Reproducido sobre 504 queries." : "Chance: 4%. Reproduced over 504 queries."}
             </p>
@@ -249,10 +249,10 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
         <StoryStage>
           <div className="flex flex-col gap-2 w-full max-w-sm">
             {[
-              { k: "ResNet50", t1: 46.8, sec: "338", on: false },
-              { k: "DINOv2 S/14", t1: 49.2, sec: "372", on: false },
-              { k: "DINOv2 B/14", t1: 49.4, sec: "1051", on: false },
-              { k: "DINOv2 S/14 · hi-res", t1: 52.8, sec: "—", on: true },
+              { k: "ResNet50", t1: 46.6, sec: "338", on: false },
+              { k: "DINOv2 S/14", t1: 47.2, sec: "372", on: false },
+              { k: "DINOv2 B/14", t1: 48.6, sec: "1051", on: false },
+              { k: "DINOv2 S/14 · hi-res", t1: 51.4, sec: "—", on: true },
             ].map((row, i) => (
               <div
                 key={row.k}
@@ -302,18 +302,18 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
         <StoryProse>
           <StoryBeat title={es ? "Cuatro backbones, medidos" : "Four backbones, measured"}>
             {es
-              ? "ResNet50 fue la línea base. Cambiar a DINOv2 sumó dos puntos y medio. Pero el hallazgo interesante está en las dos últimas filas."
-              : "ResNet50 was the baseline. Switching to DINOv2 added two and a half points. But the interesting finding is in the last two rows."}
+              ? "ResNet50 fue la línea base. Cambiar a DINOv2 sumó algo más de medio punto. Pero el hallazgo interesante está en las dos últimas filas."
+              : "ResNet50 was the baseline. Switching to DINOv2 added a little over half a point. But the interesting finding is in the last two rows."}
           </StoryBeat>
           <StoryBeat title={es ? "El modelo grande no valió la pena" : "The big model wasn't worth it"}>
             {es
-              ? "DINOv2 Base — cuatro veces más parámetros — ganó 0,2 puntos sobre Small y costó casi tres veces más tiempo de pipeline (1.051s contra 372s). Un empate estadístico a triple precio."
-              : "DINOv2 Base — four times the parameters — gained 0.2 points over Small and cost nearly three times the pipeline time (1,051s vs 372s). A statistical tie at triple the price."}
+              ? "DINOv2 Base — cuatro veces más parámetros — ganó 1,4 puntos sobre Small y costó casi tres veces más tiempo de pipeline (1.051s contra 372s). Y aun así se queda casi tres puntos por debajo de lo que consigue el Small mirando más de cerca."
+              : "DINOv2 Base — four times the parameters — gained 1.4 points over Small and cost nearly three times the pipeline time (1,051s vs 372s). And it still lands almost three points below what Small reaches just by looking closer."}
           </StoryBeat>
           <StoryBeat title={es ? "Más píxeles ganaron a más parámetros" : "More pixels beat more parameters"}>
             {es
-              ? "Lo que sí movió la aguja fue subir la resolución del Small a 518×518: 52,8% de Top-1, el mejor de los cuatro. En un edificio donde la pista está en detalles pequeños, ver mejor importa más que pensar más."
-              : "What actually moved the needle was pushing the Small model to 518×518: 52.8% Top-1, the best of the four. In a building where the clue is in small details, seeing better matters more than thinking harder."}
+              ? "Lo que sí movió la aguja fue subir la resolución del Small a 518×518: 51,4% de Top-1, el mejor de los cuatro. En un edificio donde la pista está en detalles pequeños, ver mejor importa más que pensar más."
+              : "What actually moved the needle was pushing the Small model to 518×518: 51.4% Top-1, the best of the four. In a building where the clue is in small details, seeing better matters more than thinking harder."}
           </StoryBeat>
         </StoryProse>
       </StoryChapter>
@@ -324,11 +324,11 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
           <div className="flex flex-col gap-2.5 w-full max-w-xs">
             {[
               { k: es ? "Sótano 3" : "Basement 3", v: 86.7, on: true },
-              { k: es ? "Sótano 2" : "Basement 2", v: 81.0, on: true },
+              { k: es ? "Sótano 2" : "Basement 2", v: 85.7, on: true },
               { k: es ? "Sótano 4" : "Basement 4", v: 78.6, on: true },
-              { k: es ? "Planta 10" : "Floor 10", v: 48.4, on: false },
-              { k: es ? "Planta 15" : "Floor 15", v: 26.3, on: false },
-              { k: es ? "Planta 18" : "Floor 18", v: 22.2, on: false },
+              { k: es ? "Planta 10" : "Floor 10", v: 38.7, on: false },
+              { k: es ? "Planta 15" : "Floor 15", v: 21.1, on: false },
+              { k: es ? "Planta 18" : "Floor 18", v: 16.7, on: false },
             ].map((row, i) => (
               <div key={row.k} className="tower-band flex items-center gap-2.5" style={{ ["--d" as string]: `${i * 70}ms` }}>
                 <span
@@ -365,13 +365,13 @@ export default function IeTowerScrollytelling({ isDark, lang }: Props) {
         <StoryProse>
           <StoryBeat title={es ? "Los sótanos son lo fácil" : "The basements are the easy part"}>
             {es
-              ? "Contra la intuición, lo que el modelo clava son los sótanos: 87%, 81%, 79%. Tienen auditorio, parking, salas con forma propia. Cada uno es visualmente único, así que su vecindario en el espacio de embeddings no se parece a nada más."
-              : "Against intuition, what the model nails are the basements: 87%, 81%, 79%. They have the auditorium, the parking, rooms with a shape of their own. Each is visually unique, so its neighbourhood in embedding space looks like nothing else."}
+              ? "Contra la intuición, lo que el modelo clava son los sótanos: 87%, 86%, 79%. Tienen auditorio, parking, salas con forma propia. Cada uno es visualmente único, así que su vecindario en el espacio de embeddings no se parece a nada más."
+              : "Against intuition, what the model nails are the basements: 87%, 86%, 79%. They have the auditorium, the parking, rooms with a shape of their own. Each is visually unique, so its neighbourhood in embedding space looks like nothing else."}
           </StoryBeat>
           <StoryBeat title={es ? "Las plantas de aulas son el infierno" : "The classroom floors are the hell"}>
             {es
-              ? "La planta 18 acierta un 22%; la 15, un 26%. Son las plantas repetidas — mismo pasillo, mismo suelo, mismos muebles, distinta altura. El modelo no falla por malo: falla porque la información no está en la imagen."
-              : "Floor 18 lands 22%; floor 15, 26%. These are the repeated floors — same corridor, same flooring, same furniture, different height. The model isn't failing because it's bad: it's failing because the information isn't in the image."}
+              ? "La planta 18 acierta un 17%; la 15, un 21%. Son las plantas repetidas — mismo pasillo, mismo suelo, mismos muebles, distinta altura. El modelo no falla por malo: falla porque la información no está en la imagen."
+              : "Floor 18 lands 17%; floor 15, 21%. These are the repeated floors — same corridor, same flooring, same furniture, different height. The model isn't failing because it's bad: it's failing because the information isn't in the image."}
           </StoryBeat>
           <StoryBeat title={es ? "Dónde miraría después" : "Where I'd look next"}>
             {es

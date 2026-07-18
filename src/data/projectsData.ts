@@ -287,12 +287,12 @@ export const projectsData: Project[] = [
     stack: ["Python", "DINOv2", "FAISS", "PyTorch", "ffmpeg", "Marimo"],
     highlights: [
       "Predicts the floor from an indoor photo across 25 labels using a frozen DINOv2 ViT-S/14 backbone and a FAISS Flat-IP index over L2-normalized embeddings",
-      "52.8% Top-1 / 72.0% Top-5 accuracy and 57.7% mAP on ~430 held-out queries over a 2,877-frame gallery, on CPU",
+      "51.4% Top-1 / 70.4% Top-5 accuracy and 56.1% mAP on 504 held-out queries over a 2,877-frame gallery, on CPU — measured on the face-blurred frames the repo actually publishes",
       "Fully reproducible 6-stage pipeline (sync → frame extraction → hierarchy annotation → splits → embeddings/index → evaluation) that auto-skips work already on disk",
     ],
     highlightsES: [
       "Predice el piso desde una foto interior entre 25 etiquetas usando un backbone DINOv2 ViT-S/14 congelado y un índice FAISS Flat-IP sobre embeddings normalizados L2",
-      "52.8% Top-1 / 72.0% Top-5 de precisión y 57.7% mAP sobre ~430 queries de validación en una galería de 2,877 frames, en CPU",
+      "51.4% Top-1 / 70.4% Top-5 de precisión y 56.1% mAP sobre 504 queries de validación en una galería de 2,877 frames, en CPU — medido sobre los frames con caras difuminadas que publica el repo",
       "Pipeline reproducible de 6 etapas (sync → extracción de frames → anotación jerárquica → splits → embeddings/índice → evaluación) que auto-omite el trabajo ya hecho",
     ],
     architecture: [

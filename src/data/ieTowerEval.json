@@ -1,8 +1,8 @@
 {
  "metrics": {
-  "top1": 0.527778,
-  "top5": 0.720238,
-  "mAP": 0.577202,
+  "top1": 0.513889,
+  "top5": 0.704365,
+  "mAP": 0.560802,
   "queries": 504,
   "gallery": 2373,
   "frames": 2877
@@ -12,102 +12,102 @@
    "truth": "floor10",
    "top5": [
     {
-     "label": "floor10",
-     "pct": 16.9
+     "label": "floor11",
+     "pct": 20.1
     },
     {
-     "label": "floor11",
-     "pct": 13.4
+     "label": "floor10",
+     "pct": 16.8
     },
     {
      "label": "floor4",
-     "pct": 13.2
-    },
-    {
-     "label": "floor15",
-     "pct": 13.2
+     "pct": 16.5
     },
     {
      "label": "floor3",
-     "pct": 10.1
+     "pct": 16.5
+    },
+    {
+     "label": "floor16",
+     "pct": 6.8
     }
    ],
-   "nnSim": 0.908
+   "nnSim": 0.899
   },
   "central": {
    "truth": "floor10",
    "top5": [
     {
      "label": "floor10",
-     "pct": 22.5
-    },
-    {
-     "label": "floor15",
-     "pct": 19.1
+     "pct": 25.6
     },
     {
      "label": "floor4",
      "pct": 16.9
     },
     {
+     "label": "floor15",
+     "pct": 16.3
+    },
+    {
      "label": "floor16",
      "pct": 12.5
     },
     {
-     "label": "floor21",
-     "pct": 6.7
+     "label": "floor9",
+     "pct": 6.5
     }
    ],
-   "nnSim": 0.866
+   "nnSim": 0.865
   },
   "classroom": {
    "truth": "floor10",
    "top5": [
     {
      "label": "floor10",
-     "pct": 32.7
+     "pct": 32.8
     },
     {
      "label": "basement2",
-     "pct": 28.8
+     "pct": 29.0
     },
     {
      "label": "floor4",
-     "pct": 18.7
+     "pct": 18.3
     },
     {
      "label": "floor11",
-     "pct": 5.7
+     "pct": 5.8
     },
     {
      "label": "floor12",
      "pct": 5.7
     }
    ],
-   "nnSim": 0.885
+   "nnSim": 0.884
   },
   "cafeteria": {
    "truth": "basement3",
    "top5": [
     {
      "label": "basement3",
-     "pct": 63.3
+     "pct": 59.8
     },
     {
      "label": "floor10",
-     "pct": 12.2
+     "pct": 12.3
     },
     {
      "label": "floor22",
      "pct": 10.1
     },
     {
-     "label": "floor4",
-     "pct": 3.4
+     "label": "basement4",
+     "pct": 5.9
     },
     {
-     "label": "floor15",
-     "pct": 2.8
+     "label": "floor4",
+     "pct": 3.5
     }
    ],
    "nnSim": 0.906
@@ -117,7 +117,7 @@
    "top5": [
     {
      "label": "basement4",
-     "pct": 24.3
+     "pct": 24.2
     },
     {
      "label": "floor10",
@@ -125,15 +125,15 @@
     },
     {
      "label": "floor4",
-     "pct": 19.9
+     "pct": 19.8
     },
     {
      "label": "floor16",
-     "pct": 13.2
+     "pct": 16.3
     },
     {
      "label": "floor22",
-     "pct": 9.9
+     "pct": 10.0
     }
    ],
    "nnSim": 0.775
@@ -143,23 +143,23 @@
    "top5": [
     {
      "label": "floor4",
-     "pct": 13.6
-    },
-    {
-     "label": "floor12",
-     "pct": 10.5
+     "pct": 16.8
     },
     {
      "label": "floor7",
-     "pct": 9.7
+     "pct": 12.8
+    },
+    {
+     "label": "floor12",
+     "pct": 10.6
     },
     {
      "label": "floor19",
      "pct": 9.6
     },
     {
-     "label": "floor5",
-     "pct": 9.4
+     "label": "floor14",
+     "pct": 7.3
     }
    ],
    "nnSim": 0.808
@@ -167,11 +167,11 @@
  },
  "perClass": {
   "basement0": {
-   "top1": 0.7692,
+   "top1": 0.6923,
    "queries": 13
   },
   "basement2": {
-   "top1": 0.8095,
+   "top1": 0.8571,
    "queries": 21
   },
   "basement3": {
@@ -183,7 +183,7 @@
    "queries": 28
   },
   "floor10": {
-   "top1": 0.4839,
+   "top1": 0.3871,
    "queries": 31
   },
   "floor11": {
@@ -195,35 +195,35 @@
    "queries": 20
   },
   "floor13": {
-   "top1": 0.5455,
+   "top1": 0.5,
    "queries": 22
   },
   "floor14": {
-   "top1": 0.4444,
+   "top1": 0.5,
    "queries": 18
   },
   "floor15": {
-   "top1": 0.2632,
+   "top1": 0.2105,
    "queries": 19
   },
   "floor16": {
-   "top1": 0.4583,
+   "top1": 0.375,
    "queries": 24
   },
   "floor17": {
-   "top1": 0.4762,
+   "top1": 0.4286,
    "queries": 21
   },
   "floor18": {
-   "top1": 0.2222,
+   "top1": 0.1667,
    "queries": 18
   },
   "floor19": {
-   "top1": 0.6,
+   "top1": 0.5,
    "queries": 10
   },
   "floor20": {
-   "top1": 0.4231,
+   "top1": 0.5385,
    "queries": 26
   },
   "floor21": {
@@ -231,7 +231,7 @@
    "queries": 14
   },
   "floor22": {
-   "top1": 0.5294,
+   "top1": 0.5,
    "queries": 34
   },
   "floor23": {
@@ -247,7 +247,7 @@
    "queries": 27
   },
   "floor5": {
-   "top1": 0.4,
+   "top1": 0.2667,
    "queries": 15
   },
   "floor6": {
@@ -259,11 +259,11 @@
    "queries": 13
   },
   "floor8": {
-   "top1": 0.3846,
+   "top1": 0.4615,
    "queries": 13
   },
   "floor9": {
-   "top1": 0.5185,
+   "top1": 0.5556,
    "queries": 27
   }
  },
