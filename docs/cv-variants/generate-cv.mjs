@@ -1,5 +1,6 @@
 import puppeteer from "puppeteer";
 import fs from "fs";
+const F = JSON.parse(fs.readFileSync(new URL("./fonts.json", import.meta.url), "utf8"));
 
 /* Two variables the CV pivots on. `intern` swaps the Strategos title only. */
 const CFG = { intern: process.env.INTERN === "1", lang: process.env.LANG_CV || "en" };
@@ -11,7 +12,7 @@ const D = {
   phone: "(+34) 697 643 097",
   email: "juansebastianpenadonneys@gmail.com",
   site: "juansebastianpena.dev",
-  li: "linkedin.com/in/juan-sebatian-pena-donneys",
+  li: "linkedin.com/in/juan-sebastian-pena-donneys",
   gh: "github.com/JSebastianIEU",
 };
 
@@ -20,8 +21,8 @@ const strategosTitle = CFG.intern
   : "AI Software Engineer";
 
 const summary = T
-  ? "Ingeniero de software que construye y opera productos de IA de punta a punta. Único ingeniero de un agente LLM en producción que cotiza y cobra a clientes reales, y fundador técnico de una plataforma de boletería antifraude."
-  : "Software engineer who builds and operates AI products end-to-end. Sole engineer on a production LLM agent that quotes and charges real customers, and technical founder of an anti-fraud ticketing platform.";
+  ? "Ingeniero de software que construye y opera productos de IA de punta a punta. Único ingeniero de un agente LLM en producción que cotiza y cobra a clientes reales, y fundador técnico de una plataforma de boletería antifraude. Trabajo con evaluación medible: métricas, splits temporales y tests, no solo demos."
+  : "Software engineer who builds and operates AI products end-to-end. Sole engineer on a production LLM agent that quotes and charges real customers, and technical founder of an anti-fraud ticketing platform. I work with measurable evaluation \u2014 metrics, temporal splits and tests, not just demos.";
 
 const experience = [
   {
@@ -33,10 +34,12 @@ const experience = [
       ? [
           "Único ingeniero de Craig, un agente de IA en producción para una imprenta de Dublín que cotiza, cobra y gestiona pedidos de punta a punta.",
           "Diseño y opero flujos multi-agente con LLMs sobre procesos de negocio reales. Reporte directo al CEO; los fundadores no son técnicos.",
+          "Responsable de todo el stack: diseño del agente, API, modelo de datos, despliegue y operación. En producción de forma continua desde febrero de 2026.",
         ]
       : [
           "Sole engineer on Craig, a production AI agent for a Dublin print shop that quotes, charges and manages customer orders end-to-end.",
           "Design and operate LLM multi-agent workflows against real business processes. Direct report to the CEO; the founders are non-technical.",
+          "Own the whole stack: agent design, API, data model, deployment and operation. Continuously in production since February 2026.",
         ],
   },
   {
@@ -48,10 +51,12 @@ const experience = [
       ? [
           "Plataforma de boletería antifraude (construida, en pruebas, sin lanzar): QR derivados por HMAC que rotan constantemente y scanner de puerta offline-first que valida sin conexión.",
           "Un mismo motor criptográfico implementado dos veces, en TypeScript y Python, mantenido idéntico bit a bit mediante test-vectors compartidos.",
+          "El problema que ataca: una boleta reenviada por WhatsApp deja de servir, porque el código cambia solo y solo abre la puerta una vez.",
         ]
       : [
           "Anti-fraud ticketing platform (built, in testing, pre-launch): constantly rotating HMAC-derived QR codes and an offline-first door scanner that validates without connectivity.",
           "One cryptographic engine implemented twice, in TypeScript and Python, held bit-for-bit identical by shared test vectors.",
+          "The problem it attacks: a ticket forwarded over WhatsApp stops working, because the code rotates on its own and opens the door exactly once.",
         ],
   },
   {
@@ -71,6 +76,7 @@ const experience = [
 
 const projects = [
   {
+    link: "github.com/PredictiveSocialMedia/Tik-Tok-Recommendation-System",
     name: T ? "Plataforma de recomendación de TikTok" : "TikTok Recommendation Platform",
     meta: T ? "Equipo de 7 · Ene–Abr 2026 · Python, FastAPI, React" : "Team of 7 · Jan–Apr 2026 · Python, FastAPI, React",
     bullets: T
@@ -86,6 +92,7 @@ const projects = [
         ],
   },
   {
+    link: "github.com/JSebastianIEU/tiktok-semantic-engagement",
     name: T ? "Engagement semántico en TikTok — publicado en Towards AI" : "Semantic Engagement on TikTok — published in Towards AI",
     meta: T ? "2026 · Python, transformers, FAISS" : "2026 · Python, transformers, FAISS",
     bullets: T
@@ -97,6 +104,15 @@ const projects = [
         ],
   },
   {
+    link: "github.com/JSebastianIEU/ie-tower-visual-place-recognition",
+    name: T ? "Reconocimiento visual de lugares — IE Tower" : "Visual Place Recognition — IE Tower",
+    meta: T ? "2026 · Python, DINOv2, FAISS, PyTorch" : "2026 · Python, DINOv2, FAISS, PyTorch",
+    bullets: T
+      ? ["Dada la foto de cualquier punto interior del edificio, predice en qué planta está, usando embeddings de imagen y recuperación por vecinos cercanos sobre un índice FAISS."]
+      : ["Given a photo of any indoor spot in the building, predicts which floor it is on, using image embeddings and nearest-neighbour retrieval over a FAISS index."],
+  },
+  {
+    link: "github.com/JSebastianIEU/qr_forge",
     name: "QR Forge",
     meta: T ? "Open source · 2026 · FastAPI, React, Docker, Azure" : "Open source · 2026 · FastAPI, React, Docker, Azure",
     bullets: T
@@ -152,35 +168,38 @@ const entry = (e) => `
 const proj = (p) => `
   <div class="entry">
     <div class="row"><span class="role">${esc(p.name)}</span></div>
-    <div class="row"><span class="org meta">${esc(p.meta)}</span></div>
+    <div class="row"><span class="org meta">${esc(p.meta)}</span><span class="plink"><a href="https://${p.link}">${esc(p.link)}</a></span></div>
     <ul>${p.bullets.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
   </div>`;
 
 const html = `<!doctype html><html lang="${CFG.lang}"><head><meta charset="utf-8"><style>
-@page { size: A4; margin: 11mm 13mm; }
+@font-face{font-family:Carlito;font-weight:400;font-style:normal;src:url(data:font/woff2;base64,${F.r}) format("woff2");}
+@font-face{font-family:Carlito;font-weight:700;font-style:normal;src:url(data:font/woff2;base64,${F.b}) format("woff2");}
+@font-face{font-family:Carlito;font-weight:400;font-style:italic;src:url(data:font/woff2;base64,${F.i}) format("woff2");}
+@page { size: A4; margin: 11mm 12mm; }
 * { box-sizing: border-box; }
-body { font-family: Calibri, Carlito, "Helvetica Neue", Arial, sans-serif; font-size: 9.1pt; line-height: 1.26; color: #000; margin: 0; }
-h1 { font-size: 17pt; text-align: center; margin: 0 0 2pt; letter-spacing: .4pt; font-weight: 700; }
-.contact { text-align: center; font-size: 8.9pt; margin-bottom: 1.5pt; }
+body { font-family: Carlito, Calibri, Arial, sans-serif; font-size: 10.2pt; line-height: 1.38; color: #000; margin: 0; }
+h1 { font-size: 18pt; text-align: center; margin: 0 0 2pt; letter-spacing: .4pt; font-weight: 700; }
+.contact { text-align: center; font-size: 8.8pt; margin-bottom: 1pt; white-space: nowrap; }
 .contact a { color: #0645ad; text-decoration: none; }
-h2 { font-size: 9.6pt; font-weight: 700; letter-spacing: .5pt; margin: 6.5pt 0 1pt; padding-bottom: 1.5pt; border-bottom: .8pt solid #000; }
-.entry { margin-bottom: 4pt; }
+h2 { font-size: 10.4pt; font-weight: 700; letter-spacing: .5pt; margin: 8pt 0 2pt; padding-bottom: 1.5pt; border-bottom: .8pt solid #000; }
+.entry { margin-bottom: 5.5pt; }
 .entry:last-child { margin-bottom: 0; }
 .row { display: flex; justify-content: space-between; align-items: baseline; gap: 8pt; }
 .role { font-weight: 700; }
 .org { font-weight: 700; }
 .meta { font-weight: 400; font-style: italic; color: #333; }
-.loc, .date { font-weight: 700; white-space: nowrap; font-size: 9.1pt; }
+.loc, .date { font-weight: 700; white-space: nowrap; font-size: 9.8pt; }
+.plink { font-size: 8.6pt; white-space: nowrap; }
+.plink a { color: #0645ad; text-decoration: none; }
 ul { margin: 1.5pt 0 0; padding-left: 12pt; }
-li { margin-bottom: .8pt; }
+li { margin-bottom: 1.4pt; }
 p.sum { margin: 2pt 0 0; text-align: justify; }
 .sk { margin: 1.5pt 0 0; }
 .sk b { font-weight: 700; }
 </style></head><body>
 <h1>${D.name}</h1>
-<div class="contact">${D.city}</div>
-<div class="contact">${D.phone} &nbsp;|&nbsp; <a href="mailto:${D.email}">${D.email}</a> &nbsp;|&nbsp; <a href="https://${D.site}">${D.site}</a></div>
-<div class="contact"><a href="https://${D.li}">LinkedIn</a> &nbsp;|&nbsp; <a href="https://${D.gh}">GitHub</a></div>
+<div class="contact">${D.city} &nbsp;·&nbsp; ${D.phone} &nbsp;·&nbsp; <a href="mailto:${D.email}">${D.email}</a> &nbsp;·&nbsp; <a href="https://${D.site}">${D.site}</a> &nbsp;·&nbsp; <a href="https://${D.li}">${D.li}</a> &nbsp;·&nbsp; <a href="https://${D.gh}">${D.gh}</a></div>
 
 <h2>${L.summary}</h2>
 <p class="sum">${esc(summary)}</p>
