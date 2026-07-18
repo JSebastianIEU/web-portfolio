@@ -153,6 +153,11 @@ export type TranslationCopy = {
       valuesValue: string;
     };
   };
+  experience: {
+    label: string;
+    title: string;
+    subcopy: string;
+  };
   skills: {
     label: string;
   };

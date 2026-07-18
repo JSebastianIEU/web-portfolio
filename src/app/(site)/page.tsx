@@ -6,6 +6,7 @@ import { ArrowDown, Download } from "lucide-react";
 import SiteChrome from "@/components/layout/SiteChrome";
 import BetweenSectionsCta from "@/components/sections/Common/BetweenSectionsCta";
 import { AboutSection } from "@/components/sections/About";
+import { ExperienceSection } from "@/components/sections/Experience";
 import ContactInvite from "@/components/sections/Contact/ContactInvite";
 import { useI18n } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
@@ -248,6 +249,7 @@ export default function Home() {
         </section>
 
         <AboutSection />
+        <ExperienceSection />
         <BetweenSectionsCta onEnterLink={enterLink} onLeaveLink={leaveLink} />
         <SkillsSection />
         <ProjectsSection />

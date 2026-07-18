@@ -209,6 +209,11 @@ export const translations: Translations = {
         valuesValue: "Human-centered · Systems-minded",
       },
     },
+    experience: {
+      label: "Experience",
+      title: "Where I've been building",
+      subcopy: "Client work running in production, my own venture, and selected competitions.",
+    },
     skills: {
       label: "Skills",
     },
@@ -428,6 +433,11 @@ export const translations: Translations = {
         valuesLabel: "Valores",
         valuesValue: "Centrado en las personas · Visión de sistemas",
       },
+    },
+    experience: {
+      label: "Experiencia",
+      title: "Dónde he construido",
+      subcopy: "Trabajo de cliente en producción, mi propia venture y competiciones seleccionadas.",
     },
     skills: {
       label: "Habilidades",
