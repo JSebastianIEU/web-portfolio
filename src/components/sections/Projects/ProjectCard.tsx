@@ -83,41 +83,39 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
 
         <div className="flex flex-wrap gap-2 text-xs font-semibold">
           <div className="flex items-center gap-2">
+            {/* Only show a link icon for links this project actually has — no
+                grayed-out placeholders (e.g. IE Tower has no Medium article). */}
             {[
-              { href: project.links.github, label: copy.cards.github },
-              { href: project.links.caseStudy, label: copy.cards.caseStudy },
-            ].map((link) => {
-              const hasLink = Boolean(link.href);
-              return (
+              { href: project.links.github, label: copy.cards.github, icon: "/logos/github.svg" },
+              { href: project.links.caseStudy, label: copy.cards.caseStudy, icon: "/logos/medium.svg" },
+            ]
+              .filter((link) => Boolean(link.href))
+              .map((link) => (
                 <a
                   key={link.label}
-                  href={link.href || "#"}
-                  target={hasLink ? "_blank" : undefined}
-                  rel={hasLink ? "noreferrer" : undefined}
-                  data-cursor={hasLink ? "pointer" : undefined}
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  data-cursor="pointer"
                   className="w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200"
                   style={{
                     border: isDark ? "1px solid rgba(255,255,255,0.3)" : "1px solid rgba(120,120,120,0.4)",
                     background: isDark ? "rgba(100,100,100,0.3)" : "rgba(140,140,140,0.5)",
-                    opacity: hasLink ? 1 : 0.4,
                   }}
                   onMouseEnter={(e) => {
-                    if (!hasLink) return;
                     e.currentTarget.style.background = isDark ? "rgba(100,100,100,0.5)" : "rgba(140,140,140,0.7)";
                     e.currentTarget.style.transform = "scale(1.15)";
                     e.currentTarget.style.boxShadow = isDark ? "0 8px 16px rgba(0,0,0,0.3)" : "0 8px 16px rgba(0,0,0,0.15)";
                   }}
                   onMouseLeave={(e) => {
-                    if (!hasLink) return;
                     e.currentTarget.style.background = isDark ? "rgba(100,100,100,0.3)" : "rgba(140,140,140,0.5)";
                     e.currentTarget.style.transform = "scale(1)";
                     e.currentTarget.style.boxShadow = "none";
                   }}
-                  aria-label={hasLink ? link.label : `${link.label} not available`}
-                  onClick={hasLink ? undefined : (e) => e.preventDefault()}
+                  aria-label={link.label}
                 >
                   <Image
-                    src={link.label === copy.cards.github ? "/logos/github.svg" : "/logos/medium.svg"}
+                    src={link.icon}
                     alt={link.label}
                     width={20}
                     height={20}
@@ -125,8 +123,7 @@ export default function ProjectCard({ project, onOpen, isDark, displayType, disp
                     style={{ filter: "grayscale(100%) brightness(0.2) invert(1)" }}
                   />
                 </a>
-              );
-            })}
+              ))}
           </div>
         </div>
       </div>

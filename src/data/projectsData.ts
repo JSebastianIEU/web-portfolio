@@ -127,6 +127,7 @@ export const projectsData: Project[] = [
   {
     id: "qr-forge",
     slug: "qr-forge",
+    thumbnail: "/images/projects/qr-forge/thumb.webp",
     title: "QR Forge",
     titleES: "QR Forge",
     subtitle: "Production-ready QR generator: FastAPI + React, hardened with a full DevOps pipeline.",
@@ -170,6 +171,7 @@ export const projectsData: Project[] = [
   {
     id: "tiktok-semantic-engagement",
     slug: "tiktok-semantic-engagement",
+    thumbnail: "/images/projects/tiktok/thumb.webp",
     title: "TikTok Semantic Engagement",
     titleES: "Engagement semántico en TikTok",
     subtitle: "Do captions that mean similar things perform similarly? A study across 22,647 posts.",
@@ -213,6 +215,7 @@ export const projectsData: Project[] = [
   {
     id: "ie-tower-vpr",
     slug: "ie-tower-vpr",
+    thumbnail: "/images/projects/ie-tower/thumb.webp",
     title: "IE Tower Visual Place Recognition",
     titleES: "Reconocimiento visual de lugares en IE Tower",
     subtitle: "Photo of any indoor spot → which floor of the building it's on, via image embeddings + FAISS.",

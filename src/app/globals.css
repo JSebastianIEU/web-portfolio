@@ -204,177 +204,125 @@ body {
   }
 }
 
-/* Sticker cluster (About). Each sticker is: wrapper (position + z + entrance
-   stagger) > TiltCard (existing tilt mechanism, per-sticker) > body (base
-   rotation + hover lift) > two stacked imgs (neon/paper) crossfaded by theme.
-   Rotation lives on the body and tilt on the tilt-card so the transforms
-   compose instead of fighting. Only the hovered sticker moves. */
-.sticker-wrap {
-  position: absolute;
-  /* Depth comes in as a var so :hover can outrank it (an inline z-index would
-     beat the hover rule and back stickers could never lift above the front). */
-  z-index: var(--z, 1);
-}
-
-.sticker-wrap:hover {
-  z-index: 60;
-}
-
-.sticker-body {
+/* About portrait: a single torn-paper photo that crumples and flattens with
+   the scroll. The crease texture is blended over the photo (masked to its
+   silhouette so it never spills past the cutout) and fades out as the paper
+   flattens; scale + rotate scrub the crumple. Crumpled while the photo is
+   entering or leaving, flat while it sits centred in view. All scroll-driven
+   CSS (animation-timeline: view()) — no scroll listeners. */
+.portrait-crumple {
   position: relative;
-  display: grid;
-  transform: rotate(var(--rot, 0deg));
-  transition:
-    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 250ms ease;
+  isolation: isolate;
+  transform-origin: center;
+  will-change: transform;
 }
 
-.sticker-wrap:hover .sticker-body {
-  transform: rotate(0deg) scale(1.04);
+/* Soft backdrop halo behind the cutout so it reads as a framed print. On dark
+   it lights the silhouette (the black shirt would otherwise vanish); on light
+   it's a faint warm-violet wash. */
+.portrait-glow {
+  position: absolute;
+  z-index: 0;
+  inset: -10% -16%;
+  border-radius: 50%;
+  pointer-events: none;
 }
 
-.sticker-body > img {
-  grid-area: 1 / 1;
+.portrait-crumple[data-skin="paper"] .portrait-glow {
+  background: radial-gradient(58% 54% at 50% 42%, rgba(167, 139, 250, 0.13), rgba(167, 139, 250, 0) 70%);
+}
+
+.portrait-crumple[data-skin="neon"] .portrait-glow {
+  background: radial-gradient(
+    56% 52% at 50% 42%,
+    rgba(167, 139, 250, 0.3),
+    rgba(56, 189, 248, 0.1) 46%,
+    rgba(167, 139, 250, 0) 72%
+  );
+}
+
+.portrait-photo {
+  position: relative;
+  z-index: 1;
+  display: block;
   width: 100%;
   height: auto;
-  transition: opacity 200ms ease;
+  filter: drop-shadow(0 14px 30px rgba(15, 23, 42, 0.3));
+  transition: filter 300ms ease;
 }
 
-/* Both skins are transparent cutouts now (the paper PNGs had their outer
-   black flood-filled away), so both shadows follow the silhouette. */
-.sticker-neon {
-  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.4));
+/* Dark: a violet rim around the torn-paper edge ties it to the site's neon. */
+.portrait-crumple[data-skin="neon"] .portrait-photo {
+  filter: drop-shadow(0 0 2px rgba(167, 139, 250, 0.6)) drop-shadow(0 0 14px rgba(167, 139, 250, 0.22))
+    drop-shadow(0 16px 36px rgba(0, 0, 0, 0.55));
 }
 
-.sticker-paper {
-  filter: drop-shadow(0 10px 20px rgba(15, 23, 42, 0.32));
-}
-
-/* Hover, dark skin: the cutout's rim lights up in its own neon color. */
-.sticker-cluster[data-skin="neon"] .sticker-wrap:hover .sticker-neon {
-  filter: brightness(1.06) drop-shadow(0 0 5px var(--neon, #67e8f9))
-    drop-shadow(0 0 16px color-mix(in srgb, var(--neon, #67e8f9) 55%, transparent))
-    drop-shadow(0 14px 28px rgba(0, 0, 0, 0.5));
-}
-
-/* Hover, light skin: just lift the shadow. */
-.sticker-cluster[data-skin="paper"] .sticker-wrap:hover .sticker-paper {
-  filter: drop-shadow(0 18px 32px rgba(15, 23, 42, 0.42));
-}
-
-/* While one sticker is hovered, its neighbors recede. */
-.sticker-cluster[data-skin="neon"]:has(.sticker-wrap:hover) .sticker-wrap:not(:hover) .sticker-body {
-  filter: brightness(0.45) saturate(0.75);
-}
-
-.sticker-cluster[data-skin="paper"]:has(.sticker-wrap:hover) .sticker-wrap:not(:hover) .sticker-body {
-  filter: brightness(0.8) saturate(0.85);
-}
-
-/* Sparks: a few tiny motes that twinkle along the lit rim (dark skin only). */
-.spark {
+.portrait-wrinkle {
   position: absolute;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--neon, #67e8f9);
-  box-shadow: 0 0 6px 1px var(--neon, #67e8f9);
-  opacity: 0;
+  inset: 0;
+  z-index: 2;
   pointer-events: none;
-  z-index: 5;
+  background: url("/textures/crumple.webp") center / cover no-repeat;
+  mix-blend-mode: soft-light;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  opacity: 0; /* flat by default; scroll scrubs it up at the crumpled extremes */
 }
 
-@keyframes sparkTwinkle {
+/* Dark: overlay reads the creases a touch stronger against the darker photo. */
+.portrait-crumple[data-skin="neon"] .portrait-wrinkle {
+  mix-blend-mode: overlay;
+}
+
+/* Hover lifts the light only (no transform, so it never fights the crumple). */
+.portrait-crumple:hover .portrait-photo {
+  filter: drop-shadow(0 22px 42px rgba(15, 23, 42, 0.4)) brightness(1.03);
+}
+
+.portrait-crumple[data-skin="neon"]:hover .portrait-photo {
+  filter: brightness(1.05) drop-shadow(0 0 7px rgba(167, 139, 250, 0.6))
+    drop-shadow(0 0 22px rgba(167, 139, 250, 0.35)) drop-shadow(0 18px 40px rgba(0, 0, 0, 0.55));
+}
+
+@keyframes portraitCrumple {
+  0% {
+    transform: scale(0.72) rotate(-5deg);
+  }
+  44%,
+  56% {
+    transform: scale(1) rotate(0deg);
+  }
+  100% {
+    transform: scale(0.72) rotate(5deg);
+  }
+}
+
+@keyframes portraitWrinkle {
   0%,
   100% {
-    opacity: 0;
-    transform: scale(0.4);
-  }
-  50% {
     opacity: 0.9;
-    transform: scale(1);
   }
-}
-
-.sticker-cluster[data-skin="neon"] .sticker-wrap:hover .spark {
-  animation: sparkTwinkle 1.5s ease-in-out infinite;
-  animation-delay: var(--d, 0ms);
-}
-
-/* Theme crossfade: both layers stay mounted, only opacity moves. */
-.sticker-cluster[data-skin="neon"] .sticker-paper,
-.sticker-cluster[data-skin="paper"] .sticker-neon {
-  opacity: 0;
-}
-
-/* Entrance stagger, keyed off the section's existing reveal state. This is
-   the fallback for browsers without scroll-driven animations. */
-@keyframes stickerIn {
-  from {
+  44%,
+  56% {
     opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.reveal[data-reveal-state="visible"] .sticker-wrap {
-  animation: stickerIn 440ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  animation-delay: var(--stagger, 0ms);
-}
-
-/* Scrapbook entrance: each cutout starts off-page (its own direction and a
-   crooked angle, per-sticker --enter-* vars) and glides into place driven by
-   the scroll position itself - scrub back up and they retreat. Composited
-   transform/opacity only. */
-@keyframes stickerScrap {
-  from {
-    opacity: 0;
-    transform: translate(var(--enter-x, 0px), var(--enter-y, 24px)) rotate(var(--enter-rot, 8deg))
-      scale(0.9);
-  }
-  60% {
-    opacity: 1;
-  }
-  to {
-    opacity: 1;
-    transform: translate(0, 0) rotate(0deg) scale(1);
   }
 }
 
 @supports (animation-timeline: view()) {
-  .sticker-wrap,
-  .reveal[data-reveal-state="visible"] .sticker-wrap {
-    animation: stickerScrap ease-out both;
-    animation-delay: 0s;
-    animation-timeline: view();
-    animation-range: entry 0% cover 42%;
+  @media (prefers-reduced-motion: no-preference) {
+    .portrait-crumple {
+      animation: portraitCrumple linear both;
+      animation-timeline: view();
+      animation-range: entry 20% exit 80%;
+    }
+    .portrait-wrinkle {
+      animation: portraitWrinkle linear both;
+      animation-timeline: view();
+      animation-range: entry 20% exit 80%;
+    }
   }
-}
-
-@media (max-width: 767px) {
-  /* Tighter quarters: calm the hand-placed look so faces keep breathing room. */
-  .sticker-body {
-    transform: rotate(calc(var(--rot, 0deg) * 0.5));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sticker-wrap,
-  .reveal[data-reveal-state="visible"] .sticker-wrap {
-    animation: none;
-  }
-  .sticker-body,
-  .sticker-wrap:hover .sticker-body {
-    transform: rotate(var(--rot, 0deg));
-    transition: none;
-  }
-  .sticker-cluster[data-skin="neon"] .sticker-wrap:hover .spark {
-    animation: none;
-  }
-  /* The theme crossfade on the imgs stays enabled on purpose. */
 }
 
 /* Route morph (View Transitions API): the current page recedes and the next

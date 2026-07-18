@@ -1,158 +1,44 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import TiltCard from "@/components/ui/TiltCard";
 import { useTheme } from "@/components/providers/theme-provider";
 import { useI18n } from "@/components/providers/language-provider";
 
 /**
- * Tuning table for the sticker cluster. Positions are % of the cluster box
- * (aspect 4/5); width is % of the box width and height follows each image's
- * own ratio. z stacks front-to-back as linkedin > vangogh > meditando >
- * colombia; tilt is the per-sticker TiltCard max (front stickers respond
- * more); stagger is the entrance delay, back to front; neon is the rim color
- * the sticker glows with on dark-mode hover.
+ * The About portrait: a single torn-paper photo of Sebastian that crumples and
+ * flattens with the scroll. As the section climbs into view the paper
+ * uncrumples into a clean photo; as it scrolls past, it crumples again. The
+ * crease shading is a diffuse-lit noise texture (public/textures/crumple.webp)
+ * blended over the photo and masked to its silhouette, faded out as the paper
+ * flattens — and the whole motion is scroll-driven CSS (animation-timeline:
+ * view()), no scroll listeners, consistent with the site's paint rules.
  *
- * The composition leans on colombia's flag as overlap real estate: meditando
- * sits right on top of it, vangogh clips its upper corner, linkedin rides
- * over meditando's leg. Face-safety map (container coords, at rest):
- * colombia x68-90/y4-21, vangogh x16-29/y3-14, meditando x62-73/y38-48,
- * linkedin x26-49/y40-57 - nothing in front of a face covers it. If you
- * retune positions, re-check that rule before shipping.
+ * Only the LinkedIn studio portrait remains (the other cutouts were dropped).
+ * The torn-paper skin is used in both themes: its ragged white edge frames the
+ * cutout so the dark shirt doesn't melt into a dark background (the old neon
+ * cutout left a floating face). A soft backdrop glow behind it — warm in light,
+ * violet in dark — makes the single photo read as an intentional framed print.
  */
-const STICKERS = [
-  {
-    id: "colombia",
-    neonSrc: "/stickers/neon colombia.webp", // literal space in the filename, encoded below
-    paperSrc: "/stickers/papercolombia.webp",
-    neonSize: { w: 462, h: 620 },
-    paperSize: { w: 478, h: 620 },
-    alt: "Sebastian seated in a cowboy hat, holding a large Colombian flag",
-    altES: "Sebastián sentado con sombrero, sosteniendo una bandera de Colombia",
-    neon: "#facc15",
-    layout: { left: "30%", top: "0%", width: "70%", rot: "5deg", z: 10, tilt: 4, stagger: "0ms" },
-    enter: { x: "70vw", y: "-6vh", rot: "20deg" },
-  },
-  {
-    id: "meditando",
-    neonSrc: "/stickers/neonmeditando.webp",
-    paperSrc: "/stickers/papermeditando.webp",
-    neonSize: { w: 620, h: 586 },
-    paperSize: { w: 620, h: 586 },
-    alt: "Sebastian meditating cross-legged in a lotus pose, smiling",
-    altES: "Sebastián meditando con las piernas cruzadas en pose de loto, sonriendo",
-    neon: "#22d3ee",
-    layout: { left: "34%", top: "36%", width: "74%", rot: "4deg", z: 20, tilt: 5.5, stagger: "60ms" },
-    enter: { x: "58vw", y: "14vh", rot: "-14deg" },
-  },
-  {
-    id: "vangogh",
-    neonSrc: "/stickers/neonvangogh.webp",
-    paperSrc: "/stickers/papervanghog.webp", // "vanghog" is the real filename
-    neonSize: { w: 512, h: 620 },
-    paperSize: { w: 518, h: 620 },
-    alt: "Sebastian in a Van Gogh t-shirt pointing both hands up",
-    altES: "Sebastián con una camiseta de Van Gogh señalando hacia arriba con ambas manos",
-    neon: "#f472b6",
-    layout: { left: "-2%", top: "-2%", width: "50%", rot: "-7deg", z: 30, tilt: 7, stagger: "120ms" },
-    enter: { x: "-70vw", y: "-8vh", rot: "-22deg" },
-  },
-  {
-    id: "linkedin",
-    neonSrc: "/stickers/neonlinkedin.webp",
-    paperSrc: "/stickers/paperlinkedin.webp",
-    neonSize: { w: 429, h: 620 },
-    paperSize: { w: 446, h: 620 },
-    alt: "Studio portrait of Sebastian smiling",
-    altES: "Retrato de estudio de Sebastián sonriendo",
-    neon: "#a78bfa",
-    layout: { left: "14%", top: "38%", width: "46%", rot: "-6deg", z: 40, tilt: 9, stagger: "180ms" },
-    enter: { x: "-56vw", y: "12vh", rot: "14deg" },
-  },
-];
+const SRC = "/stickers/paperlinkedin.webp";
 
-/* Twinkle positions for the hover sparks, relative to each sticker box. */
-const SPARKS = [
-  { left: "14%", top: "10%" },
-  { left: "86%", top: "26%" },
-  { left: "68%", top: "82%" },
-];
-
-/**
- * Interactive sticker cutouts replacing the static About portrait. Four photos,
- * two skins each: neon cutouts for dark mode, torn-paper stickers for light
- * mode (their baked black backdrop is flood-filled away so they read as real
- * pegatinas). Both skins stay mounted and crossfade on theme change so the
- * composition never moves. Each sticker reuses the existing TiltCard mechanism
- * scaled per depth; on dark-mode hover the sticker's rim lights up in its own
- * neon color with a few twinkling sparks while its neighbors recede.
- */
 export default function StickerCluster() {
   const { theme } = useTheme();
   const { lang } = useI18n();
   const isDark = theme === "dark";
-  const activeKey = isDark ? "neonSrc" : "paperSrc";
+  const alt = lang === "es" ? "Retrato de estudio de Sebastián sonriendo" : "Studio portrait of Sebastian smiling";
 
   return (
     <div
-      className="sticker-cluster relative w-[min(88vw,380px)] md:w-full md:max-w-sm lg:max-w-md mx-auto md:mx-0"
-      style={{ aspectRatio: "4 / 5" }}
+      className="portrait-crumple relative w-[min(78vw,340px)] md:w-full md:max-w-md mx-auto md:mx-0"
       data-skin={isDark ? "neon" : "paper"}
     >
-      {/* Preload the active skin so the first paint (and first toggle back) is clean. */}
-      {STICKERS.map((s) => (
-        <link key={`preload-${s.id}`} rel="preload" as="image" href={encodeURI(s[activeKey])} />
-      ))}
-
-      {STICKERS.map((s) => (
-        <div
-          key={s.id}
-          className="sticker-wrap"
-          style={{
-            left: s.layout.left,
-            top: s.layout.top,
-            width: s.layout.width,
-            "--z": s.layout.z,
-            "--stagger": s.layout.stagger,
-            "--neon": s.neon,
-            "--enter-x": s.enter.x,
-            "--enter-y": s.enter.y,
-            "--enter-rot": s.enter.rot,
-          } as React.CSSProperties}
-        >
-          <TiltCard max={s.layout.tilt}>
-            <div className="sticker-body" style={{ "--rot": s.layout.rot } as React.CSSProperties}>
-              {/* Active skin loads eagerly with the page (plus the preload
-                  links above); only the inactive theme's skin stays lazy. */}
-              <img
-                className="sticker-neon"
-                src={encodeURI(s.neonSrc)}
-                alt={lang === "es" ? s.altES : s.alt}
-                width={s.neonSize.w}
-                height={s.neonSize.h}
-                loading={isDark ? "eager" : "lazy"}
-              />
-              <img
-                className="sticker-paper"
-                src={encodeURI(s.paperSrc)}
-                alt=""
-                aria-hidden="true"
-                width={s.paperSize.w}
-                height={s.paperSize.h}
-                loading={isDark ? "lazy" : "eager"}
-              />
-              {SPARKS.map((sp, i) => (
-                <span
-                  key={i}
-                  aria-hidden="true"
-                  className="spark"
-                  style={{ left: sp.left, top: sp.top, "--d": `${i * 380 + s.layout.z * 8}ms` } as React.CSSProperties}
-                />
-              ))}
-            </div>
-          </TiltCard>
-        </div>
-      ))}
+      <link rel="preload" as="image" href={SRC} />
+      {/* Soft backdrop glow so the cutout reads as a framed photo, not a stray
+          sticker — especially on dark, where the black shirt would vanish. */}
+      <span className="portrait-glow" aria-hidden="true" />
+      <img className="portrait-photo" src={SRC} alt={alt} width={446} height={620} loading="eager" />
+      {/* Crease shading, masked to the photo so it never spills past the cutout. */}
+      <span className="portrait-wrinkle" aria-hidden="true" style={{ maskImage: `url("${SRC}")`, WebkitMaskImage: `url("${SRC}")` }} />
     </div>
   );
 }
