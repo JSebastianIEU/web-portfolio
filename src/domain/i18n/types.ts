@@ -53,7 +53,6 @@ export type TranslationCopy = {
       viewDetails: string;
       newTab: string;
       back: string;
-      skipToDemo: string;
     };
     modal: {
       whatBuilt: string;

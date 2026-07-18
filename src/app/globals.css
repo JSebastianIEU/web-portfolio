@@ -952,6 +952,47 @@ body {
   }
 }
 
+/* TikTok recommender ch.07 -- the daily cost columns.
+
+   Each column grows out of the baseline. transform-box: fill-box makes scaleY
+   resolve against the rect's own box instead of the SVG user-space origin, so
+   the bar rises from the axis rather than sliding out of the top-left corner.
+
+   The month sweeps left to right by SHIFTING the animation range per column
+   (--i), the same idiom as .exp-bullet. animation-delay would be a no-op here:
+   view() is a progress timeline, not a time-based one, and every column shares
+   one vertical extent, so their natural geometric stagger is zero.
+
+   min() clamps the drift at the 23rd column, so the latest band is
+   entry 18.4% cover 41.4% -- still inside the entrance window the rest of this
+   file uses (entry 0-14%, cover 24-42%) and done before the stage pins, which
+   is when a view() timeline inside .story-stage stalls.
+
+   Without support, or under reduced motion, the rects render at full height:
+   the hidden state exists only as the from-keyframe of an attached animation. */
+@keyframes tkColGrow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .tk-col {
+      transform-box: fill-box;
+      transform-origin: bottom center;
+      /* Order matters: the animation shorthand resets timeline and range. */
+      animation: tkColGrow linear both;
+      animation-timeline: view();
+      animation-range: entry calc(3% + min(var(--i, 0), 22) * 0.7%)
+        cover calc(26% + min(var(--i, 0), 22) * 0.7%);
+    }
+  }
+}
+
 /* Contact wizard: each step slides in when it mounts (keyed by step index). */
 @keyframes wizardStepIn {
   from {
@@ -1313,5 +1354,359 @@ body {
   .preview-img,
   .preview-overlay {
     transition: none !important;
+  }
+}
+
+/* === TikTok recommender, chapter 03: the collapse ======================
+   The v1 wall-clock bar retreats onto the 60 s marker while the four cuts
+   that bought that retreat fade back beside it.
+
+   Both animations ride the CHAPTER's view timeline, not their own. The
+   diagram lives in a sticky stage, so a view() on the element itself stalls
+   the moment the stage pins -- a range this long would freeze half-played.
+   The chapter box keeps travelling, so it is the correct driver (same
+   reasoning as .dataset-mosaic above). The ranges sit in "contain", i.e.
+   while the chapter fully covers the scrollport and the reader is working
+   through the prose beside the pinned stage.
+
+   Stagger comes from shifting each cut's range by its index (--i), never
+   from animation-delay, which does nothing on a progress-based timeline.
+   min() clamps at 3, the current last index, so a fifth cut would share the
+   last band instead of running off the end of the chapter.
+
+   Resting state is the BEFORE picture: full-length rose bar, all four cuts
+   at full opacity. Nothing is hidden, so a browser without scroll-driven
+   animations and a reduced-motion reader both get a complete, readable
+   diagram -- the dashed ghost outline and the 60 s marker carry the same
+   argument statically. --tkf-end is written by the component from the
+   geometry, so the bar always lands flush on the marker. */
+@keyframes tkfCollapse {
+  from {
+    transform: scaleX(1);
+    fill: #fb7185;
+  }
+  to {
+    transform: scaleX(var(--tkf-end, 0.19));
+    fill: #22d3ee;
+  }
+}
+
+@keyframes tkfCut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    /* Fades but never disappears: the list of what was removed has to stay
+       readable at every scroll position, including on the way back up. The
+       travel is small on purpose -- the rows are 12 units apart and must not
+       slide into each other. */
+    opacity: 0.35;
+    transform: translateY(2.5px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .tkf-collapse {
+      /* fill-box so scaleX resolves inside the rect's own box, not the whole
+         SVG viewport. */
+      transform-box: fill-box;
+      transform-origin: left center;
+      /* Order matters: the shorthand resets timeline and range. */
+      animation: tkfCollapse linear both;
+      animation-timeline: --chapter;
+      animation-range: contain 8% contain 62%;
+    }
+
+    .tkf-cut {
+      animation: tkfCut linear both;
+      animation-timeline: --chapter;
+      animation-range: contain calc(6% + min(var(--i, 0), 3) * 10%)
+        contain calc(30% + min(var(--i, 0), 3) * 10%);
+    }
+  }
+}
+
+/* === Chapter 01 outcome fan: each trajectory draws itself ==============
+   The traces are normalised with pathLength="1" and stroke-dasharray:1, so a
+   single dash pattern draws every path whatever its real arc length, and
+   scroll scrubs stroke-dashoffset from 1 to 0. The class sits on the <path>
+   itself, not on a wrapper, so nothing depends on SVG property inheritance
+   and a shape added to the group later cannot silently vanish.
+
+   Stagger is done by shifting each element's animation-range by its index
+   (--i), the same idiom as .exp-bullet, never by animation-delay, which is
+   meaningless on a progress-based timeline. The FAN array is ordered
+   floor-first, so the flops draw before the single outlier leaves the ground.
+
+   The step is 1% and min() clamps at 13, so with 14 traces the widest band is
+   entry 13% cover 37%: still inside the entrance band used everywhere else in
+   this file (entry 0-14%, cover 24-42%) and therefore finished before
+   .story-stage pins at top:14vh on desktop. A sticky subject stops advancing
+   its view() timeline once pinned, so a range running past the pin would
+   leave the last traces frozen half-drawn.
+
+   No hidden state: the from-keyframes only apply while the animation is
+   attached, so browsers without scroll-driven animations and reduced-motion
+   readers get the finished fan, fully drawn, at full opacity. */
+@keyframes blindTraceDraw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes blindFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* Order matters: the animation shorthand resets timeline and range. */
+    .blind-trace {
+      animation: blindTraceDraw linear both;
+      animation-timeline: view();
+      animation-range: entry calc(min(var(--i, 0), 13) * 1%)
+        cover calc(24% + min(var(--i, 0), 13) * 1%);
+    }
+
+    /* The landing dot is a fill, untouched by the dash pattern, so it gets its
+       own fade timed to close just after its trace arrives. */
+    .blind-dot {
+      animation: blindFadeIn linear both;
+      animation-timeline: view();
+      animation-range: entry calc(8% + min(var(--i, 0), 13) * 1%)
+        cover calc(28% + min(var(--i, 0), 13) * 1%);
+    }
+
+    /* The uncertainty bracket lands on a picture that is already complete. */
+    .blind-marker {
+      animation: blindFadeIn linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 40%;
+    }
+  }
+}
+
+/* === TikTok analyzer fan-out ==========================================
+   One video into eight parallel branches and back into a single feature
+   representation. The branches are simultaneous and the reveal has to say
+   so, so the diagram animates as THREE groups instead of eight siblings:
+   eight siblings would each start their scrub at a different scroll
+   position purely because they sit at different heights, and the fan would
+   unroll top to bottom, reading as a sequence.
+
+   All three hang off --chapter, the timeline already declared on
+   .story-chapter, rather than view(). Two reasons, and both are load
+   bearing. A view() on an element inside the sticky stage stalls the
+   moment the stage pins -- the same trap already documented on
+   .dataset-mosaic. And these three groups have three different bounding
+   boxes (the wires, the taller card stack, the short centred merge), so
+   identical percentages on view() would fire at three different scroll
+   positions, quietly restoring the positional stagger the grouping exists
+   to prevent. One box, one timeline, eight wires arriving together.
+
+   transform-origin and transform-box are set inline from the JSX, where
+   the geometry constants live, so a ninth branch cannot silently desync
+   the pivot from the drawing. Nothing here carries hidden state outside a
+   keyframe, so the reduced-motion and no-support paths render the finished
+   diagram rather than an invisible one. */
+@keyframes tkfanUnfurl {
+  from {
+    opacity: 0.15;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes tkfanGateIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tkfanNodesIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes tkfanMergeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* The fan unfurls out of the source node, all eight wires together. */
+    .tkfan-wires {
+      animation: tkfanUnfurl linear both;
+      animation-timeline: --chapter;
+      animation-range: entry 25% entry 70%;
+    }
+    /* The pool boundary fades rather than scaling: it is a vertical line,
+       and a scaleX would squash its stroke to a hairline for the whole
+       reveal. That is why it is not a child of .tkfan-wires. */
+    .tkfan-gate {
+      animation: tkfanGateIn linear both;
+      animation-timeline: --chapter;
+      animation-range: entry 30% entry 75%;
+    }
+    /* The eight branch cards pop as one group, never in sequence. */
+    .tkfan-nodes {
+      animation: tkfanNodesIn linear both;
+      animation-timeline: --chapter;
+      animation-range: entry 35% entry 85%;
+    }
+    /* Convergence lands last: the representation is the conclusion. */
+    .tkfan-merge {
+      animation: tkfanMergeIn linear both;
+      animation-timeline: --chapter;
+      animation-range: entry 45% entry 100%;
+    }
+  }
+}
+
+/* === Split-timeline stagger (TikTok chapter 04) =======================
+   Both timelines in this chapter run left to right, so there is no
+   vertical offset for view() to stagger from - every element would cross
+   the scrollport edge at the same instant. animation-delay cannot fix
+   that: on a progress based timeline a delay is a no-op. So each element
+   shifts its own animation-range by its --i index, the same trick the
+   .exp-bullet rules use.
+
+   min() clamps the drift at 13 steps, putting the last element's end at
+   cover 39% - inside the cover 40% ceiling every other .tk-* rule in
+   this file respects. Past that point the sticky stage has pinned and
+   the view() timeline stops advancing, so anything scheduled beyond it
+   would never finish. Do not raise the clamp.
+
+   No element carries hidden state: opacity 0 and the zero scales exist
+   only inside the from-keyframes, so with no scroll-driven animation
+   support, and for reduced-motion readers, the graph renders finished.
+   Lines, groups and type fade rather than scale - a vertical line has a
+   zero-width fill-box, and squashed text looks cheap. */
+@keyframes tkFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tkTickIn {
+  from {
+    opacity: 0;
+    transform: scaleY(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes tkSeqIn {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Bands, rules, annotations and in-SVG type: fade in reading order. */
+    .tk-fade {
+      /* Order matters: the animation shorthand resets timeline and range. */
+      animation: tkFadeIn linear both;
+      animation-timeline: view();
+      animation-range: entry calc(4% + min(var(--i, 0), 13) * 1%)
+        cover calc(26% + min(var(--i, 0), 13) * 1%);
+    }
+    /* Row ticks: rise out of the lane, left to right, three at a time. */
+    .tk-tick {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: tkTickIn linear both;
+      animation-timeline: view();
+      animation-range: entry calc(4% + min(var(--i, 0), 13) * 1%)
+        cover calc(26% + min(var(--i, 0), 13) * 1%);
+    }
+    /* Split blocks: extend from their own left edge, one after another. */
+    .tk-seq {
+      transform-box: fill-box;
+      transform-origin: left center;
+      animation: tkSeqIn linear both;
+      animation-timeline: view();
+      animation-range: entry calc(4% + min(var(--i, 0), 13) * 1%)
+        cover calc(26% + min(var(--i, 0), 13) * 1%);
+    }
+  }
+}
+
+/* TikTok metric divergence: the three panels arrive one after the other, so
+   the reveal order narrates the finding -- NDCG up, then MRR down, then
+   Recall down.
+
+   Each panel is a plain div wrapping its own small svg, and the class goes on
+   the div, never on an svg <g>. A <g> has no principal CSS box, so view()
+   resolves to an inactive timeline there and the element can sit stuck at the
+   opacity:0 start of the keyframes -- hidden state with no reveal.
+
+   The panels sit only about 60 CSS pixels apart, too small a vertical offset
+   for the natural geometric stagger of a per-element view() timeline to read
+   as deliberate, so the offset comes from shifting each panel's range by its
+   index (--i). Never animation-delay: it is a no-op on a progress-based
+   timeline. Same idiom as the .exp-bullet block above. min() clamps the drift
+   so a fourth metric would share the last band instead of pushing the start
+   past the entrance band used everywhere else in this file (entry 0-14%,
+   cover 24-42%); the widest band here is entry 14% cover 38%. */
+@keyframes tkPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .tk-panel {
+      /* Order matters: the animation shorthand resets timeline and range. */
+      animation: tkPanelIn linear both;
+      animation-timeline: view();
+      animation-range: entry calc(4% + min(var(--i, 0), 2) * 5%)
+        cover calc(28% + min(var(--i, 0), 2) * 5%);
+    }
   }
 }

@@ -7,7 +7,7 @@ import type { Project } from "@/domain/projects";
 import BackToProjects from "./BackToProjects";
 import ProjectBadge from "./ProjectBadge";
 import SkipToDemo from "./story/SkipToDemo";
-import { projectScrollytelling } from "./stories";
+import { projectScrollytelling, storyDemoAnchor } from "./stories";
 
 type ProjectDetailProps = {
   project: Project;
@@ -28,6 +28,7 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
   // Projects with a story tell it instead of listing bullets; the rest keep
   // the generic highlights/architecture layout.
   const Story = projectScrollytelling[project.id];
+  const demoAnchor = storyDemoAnchor[project.id];
 
   const chipStyle = {
     border: isDark ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(15,23,42,0.14)",
@@ -57,7 +58,13 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
           <p className="text-sm md:text-base" style={{ color: isDark ? "rgba(226,232,240,0.82)" : "rgba(15,23,42,0.78)" }}>
             {subtitle}
           </p>
-          {Story && <SkipToDemo target="try-it" label={copy.cards.skipToDemo} isDark={isDark} />}
+          {Story && demoAnchor && (
+            <SkipToDemo
+              target={demoAnchor.id}
+              label={lang === "es" ? demoAnchor.es : demoAnchor.en}
+              isDark={isDark}
+            />
+          )}
         </div>
 
         {Story ? (

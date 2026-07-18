@@ -28,3 +28,17 @@ export const projectScrollytelling: Record<string, ComponentType<ProjectStoryPro
   "tiktok-semantic-engagement": TikTokScrollytelling,
   "tiktok-recommender": TikTokRecommenderStory,
 };
+
+/**
+ * Which stories have a demo far enough down to be worth jumping to, where its
+ * anchor lives, and what to call it.
+ *
+ * A story whose demo already sits at the top is deliberately absent: a skip
+ * button that scrolls nowhere, or that promises a "simulator" the page does
+ * not have, is worse than no button. The label used to be one global string,
+ * which is how the TikTok stories ended up offering a simulator.
+ */
+export const storyDemoAnchor: Record<string, { id: string; en: string; es: string }> = {
+  "ie-tower-vpr": { id: "try-it", en: "Skip to the simulator", es: "Ir al simulador" },
+  "tiktok-semantic-engagement": { id: "try-it", en: "Try the recommender", es: "Probar el recomendador" },
+};

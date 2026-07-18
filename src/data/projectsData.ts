@@ -127,9 +127,7 @@ export const projectsData: Project[] = [
       github: "",
       caseStudy: "https://boletapp.co/pitch",
       video: "",
-      // No live link on purpose: boletapp.co is the pitch page, not a running
-      // product, and a "Try it" CTA pointing there would mislead.
-      live: "",
+      live: "https://boletapp.co",
     },
   },
   {

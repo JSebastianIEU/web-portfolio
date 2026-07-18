@@ -52,7 +52,6 @@ export const translations: Translations = {
         viewDetails: "View details for {project}",
         newTab: "opens in a new tab",
         back: "Back to projects",
-        skipToDemo: "Skip to the demo",
       },
       modal: {
         whatBuilt: "What I built",
@@ -282,7 +281,6 @@ export const translations: Translations = {
         viewDetails: "Ver detalles de {project}",
         newTab: "abre en una pestaña nueva",
         back: "Volver a proyectos",
-        skipToDemo: "Ir al simulador",
       },
       modal: {
         whatBuilt: "Lo que construí",
