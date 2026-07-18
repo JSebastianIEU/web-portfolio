@@ -14,17 +14,16 @@ import { useI18n } from "@/components/providers/language-provider";
  * view()), no scroll listeners, consistent with the site's paint rules.
  *
  * Only the LinkedIn studio portrait remains (the other cutouts were dropped).
- * The torn-paper skin is used in both themes: its ragged white edge frames the
- * cutout so the dark shirt doesn't melt into a dark background (the old neon
- * cutout left a floating face). A soft backdrop glow behind it — warm in light,
- * violet in dark — makes the single photo read as an intentional framed print.
+ * Each theme keeps its own skin — the neon cutout on dark, the torn-paper one
+ * on light. A soft backdrop glow behind it (a violet halo on dark, a warm wash
+ * on light) plus a violet rim on the dark cutout light the silhouette so it
+ * reads as an intentional framed photo rather than a floating head.
  */
-const SRC = "/stickers/paperlinkedin.webp";
-
 export default function StickerCluster() {
   const { theme } = useTheme();
   const { lang } = useI18n();
   const isDark = theme === "dark";
+  const src = isDark ? "/stickers/neonlinkedin.webp" : "/stickers/paperlinkedin.webp";
   const alt = lang === "es" ? "Retrato de estudio de Sebastián sonriendo" : "Studio portrait of Sebastian smiling";
 
   return (
@@ -32,13 +31,14 @@ export default function StickerCluster() {
       className="portrait-crumple relative w-[min(78vw,340px)] md:w-full md:max-w-md mx-auto md:mx-0"
       data-skin={isDark ? "neon" : "paper"}
     >
-      <link rel="preload" as="image" href={SRC} />
-      {/* Soft backdrop glow so the cutout reads as a framed photo, not a stray
-          sticker — especially on dark, where the black shirt would vanish. */}
+      {/* Preload only the active skin so the first paint is clean. */}
+      <link rel="preload" as="image" href={src} />
+      {/* Soft backdrop halo so the cutout reads as a framed photo, not a stray
+          sticker — especially on dark, where it lights the silhouette. */}
       <span className="portrait-glow" aria-hidden="true" />
-      <img className="portrait-photo" src={SRC} alt={alt} width={446} height={620} loading="eager" />
-      {/* Crease shading, masked to the photo so it never spills past the cutout. */}
-      <span className="portrait-wrinkle" aria-hidden="true" style={{ maskImage: `url("${SRC}")`, WebkitMaskImage: `url("${SRC}")` }} />
+      <img className="portrait-photo" src={src} alt={alt} width={446} height={620} loading="eager" />
+      {/* Crease shading, masked to the live photo so it never spills past the cutout. */}
+      <span className="portrait-wrinkle" aria-hidden="true" style={{ maskImage: `url("${src}")`, WebkitMaskImage: `url("${src}")` }} />
     </div>
   );
 }
