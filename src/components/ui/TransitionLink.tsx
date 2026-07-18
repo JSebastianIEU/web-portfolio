@@ -23,7 +23,27 @@ export default function TransitionLink({ href, onClick, children, ...rest }: Tra
 
     const url = typeof href === "string" ? href : href.pathname ?? "";
     if (!url.startsWith("/")) return; // external: let the browser handle it
-    if (url.includes("#")) return; // in-page anchors scroll, they don't morph
+
+    // In-page anchors scroll, they don't morph. They also must NOT go through
+    // the router: pushing "/#about" while already on "/" makes App Router
+    // re-run its own scroll handling and it lands hundreds of pixels past the
+    // section ("halfway"). A native scrollIntoView honours scroll-margin-top
+    // and scroll-behavior, and lands exactly.
+    if (url.includes("#")) {
+      const [rawPath, hash] = url.split("#");
+      const path = rawPath.replace(/\/$/, "") || "/";
+      const here = window.location.pathname.replace(/\/$/, "") || "/";
+      if (path !== here) return; // cross-route anchor: let <Link> do its thing
+
+      const target = hash && document.getElementById(hash);
+      if (!target) return;
+
+      event.preventDefault();
+      target.scrollIntoView();
+      // Keep the URL (and Back) in sync without triggering a navigation.
+      window.history.pushState(null, "", `#${hash}`);
+      return;
+    }
 
     const doc = document as Document & {
       startViewTransition?: (cb: () => Promise<void> | void) => void;

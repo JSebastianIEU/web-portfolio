@@ -1069,9 +1069,39 @@ body {
 }
 
 /* Anchor targets clear the floating header capsule when a CTA/nav link jumps
-   to them (e.g. the hero "View projects" → #projects). */
-:is(#hero, #about, #skills, #projects, #contact) {
-  scroll-margin-top: 6rem;
+   to them (e.g. the hero "View projects" → #projects).
+   Kept small on purpose: every section already carries generous top padding,
+   so a large margin here stacks on top of it and the jump lands with a screen
+   of dead space above the heading ("halfway"). 2rem clears the capsule and
+   lets each section's own padding do the breathing. */
+:is(#hero, #about, #experience, #skills, #projects, #contact) {
+  scroll-margin-top: 2rem;
+}
+
+/* Experience org stickers: a slow drift as the entry crosses the viewport, so
+   the marks feel pinned-on rather than laid out. Scroll-driven (no listener),
+   and the tilt lives in --tilt so the static fallback keeps it. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .exp-sticker {
+      animation: expStickerDrift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+
+    @keyframes expStickerDrift {
+      from {
+        transform: translateY(18px) rotate(var(--tilt, 0deg));
+        opacity: 0;
+      }
+      22% {
+        opacity: var(--sticker-opacity, 0.9);
+      }
+      to {
+        transform: translateY(-22px) rotate(var(--tilt, 0deg));
+      }
+    }
+  }
 }
 
 /* Global grid system.

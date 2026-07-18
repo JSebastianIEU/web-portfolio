@@ -23,6 +23,16 @@ export type ExperienceEntry = {
   bulletsES?: string[];
   /** Optional internal link to the project page that backs this entry. */
   href?: string;
+  /** Full-colour mark, used on light. */
+  logo?: string;
+  /** Pure-white silhouette of the same mark, used on dark. */
+  logoWhite?: string;
+  /**
+   * How the floating sticker sits next to the entry: rendered height in px,
+   * how far in from the right edge (%) and its tilt. Hand-picked per logo so
+   * the cluster reads scattered but each mark still belongs to its own entry.
+   */
+  sticker?: { height: number; right: string; top: number; tilt: string };
 };
 
 export const experience: ExperienceEntry[] = [
@@ -37,6 +47,9 @@ export const experience: ExperienceEntry[] = [
     locationES: "Madrid · Remoto",
     kind: "role",
     href: "/projects/craig-ai",
+    logo: "/logos/strategos.webp",
+    logoWhite: "/logos/strategos-white.webp",
+    sticker: { height: 82, right: "7%", top: -14, tilt: "-6deg" },
     bullets: [
       "Sole engineer on Craig, an AI ordering agent live for a Dublin print shop.",
       "LLMs and multi-agent systems in real business workflows. Direct report to the CEO.",
@@ -57,6 +70,9 @@ export const experience: ExperienceEntry[] = [
     locationES: "Colombia",
     kind: "venture",
     href: "/projects/boletapp",
+    logo: "/logos/boletapp.svg",
+    logoWhite: "/logos/boletapp-dark.svg",
+    sticker: { height: 34, right: "16%", top: 10, tilt: "4.5deg" },
     bullets: [
       "Live anti-fraud ticketing platform: rotating HMAC QR and an offline-first door scanner.",
       "One crypto engine in TypeScript and Python, kept bit-for-bit identical by shared tests.",
@@ -76,6 +92,9 @@ export const experience: ExperienceEntry[] = [
     location: "Madrid",
     locationES: "Madrid",
     kind: "hackathon",
+    logo: "/logos/accenture.webp",
+    logoWhite: "/logos/accenture-white.webp",
+    sticker: { height: 74, right: "10%", top: -6, tilt: "-3deg" },
     bullets: [
       "First edition: 100+ students from 20 universities.",
       "RAG solution turning legal documents into plain language (Justice 2030 Spain).",

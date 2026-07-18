@@ -6,8 +6,8 @@ export const projectsData: Project[] = [
     slug: "craig-ai",
     title: "Craig",
     titleES: "Craig",
-    subtitle: "AI agent that quotes, charges and manages end-to-end orders for a print shop.",
-    subtitleES: "Agente de IA que cotiza, cobra y gestiona pedidos completos para una imprenta.",
+    subtitle: "AI agent that quotes, charges and manages print-shop orders.",
+    subtitleES: "Agente de IA que cotiza, cobra y gestiona pedidos de imprenta.",
     description:
       "Craig serves a Dublin print shop's customers over web chat and email: it gathers specs through interactive UI (chips, sliders, to-scale size cards), prices jobs exactly from the live catalogue — never guessing — and runs the full cycle: approval, payment links, production tracking on a kanban board, artwork reminder sequences and post-delivery reviews. It turns inquiries into paid orders with zero human touch for standard cases.",
     descriptionES:
@@ -71,8 +71,8 @@ export const projectsData: Project[] = [
     logo: "/logos/boletapp.svg",
     logoDark: "/logos/boletapp-dark.svg",
     preview: "/images/previews/boletapp.webp",
-    subtitle: "Anti-fraud ticketing platform for nightclubs and concerts in Colombia.",
-    subtitleES: "Plataforma de boletería antifraude para discotecas y conciertos en Colombia.",
+    subtitle: "Anti-fraud ticketing for nightlife and concerts in Colombia.",
+    subtitleES: "Boletería antifraude para vida nocturna y conciertos en Colombia.",
     description:
       "Boletapp is an end-to-end ticketing and access-control platform for nightlife and large events: white-label sales pages, checkout with local payment methods, door scanning, and a live operations dashboard. It closes the industry's revenue leak — tickets forwarded over WhatsApp that get scanned twice, untraceable promoter commissions, and unpaid table reservations — with cryptographically verifiable tickets and automated payouts.",
     descriptionES:
@@ -134,8 +134,8 @@ export const projectsData: Project[] = [
     thumbnail: "/images/projects/qr-forge/thumb.webp",
     title: "QR Forge",
     titleES: "QR Forge",
-    subtitle: "Production-ready QR generator: FastAPI + React, hardened with a full DevOps pipeline.",
-    subtitleES: "Generador de QR listo para producción: FastAPI + React, con pipeline DevOps completo.",
+    subtitle: "Production-ready QR generator with a full DevOps pipeline.",
+    subtitleES: "Generador de QR listo para producción, con pipeline DevOps completo.",
     description:
       "A free, unlimited QR generator (UI + API) built on FastAPI with a React SPA. Beyond the product — branded PNG/SVG codes with color, padding, radius and size controls, plus authenticated history and profiles — the focus is DevOps hardening: tested to ~92% coverage, containerized, and shipped to Azure through CI/CD.",
     descriptionES:
@@ -178,8 +178,8 @@ export const projectsData: Project[] = [
     thumbnail: "/images/projects/tiktok/thumb.webp",
     title: "TikTok Semantic Engagement",
     titleES: "Engagement semántico en TikTok",
-    subtitle: "Do captions that mean similar things perform similarly? A study across 22,647 posts.",
-    subtitleES: "¿Los captions que significan lo similar rinden parecido? Un estudio sobre 22,647 posts.",
+    subtitle: "Do similar captions get similar engagement? 22,647 posts analysed.",
+    subtitleES: "¿Captions similares rinden parecido? 22,647 posts analizados.",
     description:
       "A data-driven investigation into whether semantically similar TikTok captions form neighborhoods with more consistent engagement than random groups — and whether that structure can power an explainable hashtag recommender. Across 22,647 posts and 12 independent tests, the answer holds: semantic neighborhoods show 10.5%–13% lower engagement variance than chance.",
     descriptionES:
@@ -222,8 +222,8 @@ export const projectsData: Project[] = [
     thumbnail: "/images/projects/ie-tower/thumb.webp",
     title: "IE Tower Visual Place Recognition",
     titleES: "Reconocimiento visual de lugares en IE Tower",
-    subtitle: "Photo of any indoor spot → which floor of the building it's on, via image embeddings + FAISS.",
-    subtitleES: "Una foto de cualquier lugar interior → en qué piso del edificio está, con embeddings + FAISS.",
+    subtitle: "A photo of any indoor spot → which floor it's on.",
+    subtitleES: "Una foto de cualquier lugar interior → en qué piso está.",
     description:
       "A modular visual place recognition pipeline for IE Tower: given a photo of an indoor location, it returns the most likely floor across 25 labels (21 above-ground floors plus 4 basements) along with the closest gallery frames. Every stage is a standalone, idempotent script and every artifact is reproducible; the backbone, retrieval metric and split strategy are all swap-in parameters.",
     descriptionES:

@@ -7,6 +7,7 @@ export type NavLink = {
 export const navLinks: NavLink[] = [
   { id: "hero", href: "/#hero", labelKey: "nav.home" },
   { id: "about", href: "/#about", labelKey: "nav.about" },
+  { id: "experience", href: "/#experience", labelKey: "nav.experience" },
   { id: "skills", href: "/#skills", labelKey: "nav.skills" },
   { id: "projects", href: "/#projects", labelKey: "nav.projects" },
   // Contact points at the wizard route, not the homepage section, so the

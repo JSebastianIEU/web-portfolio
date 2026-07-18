@@ -52,8 +52,39 @@ export default function ExperienceSection() {
             const location = es ? item.locationES || item.location : item.location;
             const bullets = es ? item.bulletsES || item.bullets : item.bullets;
 
+            const logo = isDark ? item.logoWhite || item.logo : item.logo;
+
             return (
               <li key={item.id} className="relative">
+                {/* The org mark, floated into the empty space to the right of the
+                    bullets (which cap at 62ch). Each sticker is anchored to its
+                    own entry, so the cluster stays chronological while the tilts
+                    and offsets keep it from reading as a tidy column. Hidden
+                    below lg, where that space doesn't exist. */}
+                {logo && item.sticker && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={logo}
+                    alt=""
+                    aria-hidden
+                    className="exp-sticker hidden lg:block absolute pointer-events-none select-none w-auto"
+                    style={{
+                      ["--tilt" as string]: item.sticker.tilt,
+                      ["--sticker-opacity" as string]: isDark ? 0.92 : 0.8,
+                      right: item.sticker.right,
+                      top: item.sticker.top,
+                      height: item.sticker.height,
+                      transform: `rotate(${item.sticker.tilt})`,
+                      opacity: isDark ? 0.92 : 0.8,
+                      // Same violet halo as the LinkedIn portrait in dark, so the
+                      // white silhouettes read as lit stickers rather than holes.
+                      filter: isDark
+                        ? "drop-shadow(0 0 2px rgba(167,139,250,0.6)) drop-shadow(0 0 14px rgba(167,139,250,0.22)) drop-shadow(0 12px 26px rgba(0,0,0,0.5))"
+                        : "drop-shadow(0 8px 18px rgba(15,23,42,0.16))",
+                    }}
+                  />
+                )}
+
                 {/* Rail dot */}
                 <span
                   aria-hidden

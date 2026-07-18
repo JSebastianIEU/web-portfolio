@@ -6,6 +6,7 @@ export type TranslationCopy = {
   nav: {
     home: string;
     about: string;
+    experience: string;
     skills: string;
     projects: string;
     contact: string;
