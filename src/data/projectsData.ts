@@ -14,7 +14,7 @@ export const projectsData: Project[] = [
       "Alex es un comercial de una agencia de transporte ficticia. Una empresa de camiones llama por una carga; Alex verifica el número MC de quien llama, describe la carga, negocia la tarifa en inglés o en español y cuelga solo cuando termina la llamada. La regla de diseño es \"el LLM negocia, el código decide\": el modelo nunca ve los límites de precio. Cada cifra que dice sale de un \"desk\" en Python que verifica a quien llama, sube una escalera de ofertas paso a paso y solo cierra montos que ya ofreció, y un segundo filtro revisa cada frase antes de que se diga en voz alta.",
     category: "professional",
     codePrivate: false,
-    preview: "/images/projects/alex/preview.webp",
+    preview: "/images/projects/alex/preview-landing.webp",
     type: "personal",
     status: "live-demo",
     role: "Built & shipped end-to-end",
