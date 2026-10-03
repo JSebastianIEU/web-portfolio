@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState, useSyncExternalStore, type MouseEvent } from "react";
-import { ArrowDown, Download, Phone } from "lucide-react";
+import { ArrowDown, Download } from "lucide-react";
 import SiteChrome from "@/components/layout/SiteChrome";
 import BetweenSectionsCta from "@/components/sections/Common/BetweenSectionsCta";
 import { AboutSection } from "@/components/sections/About";
@@ -228,14 +228,7 @@ export default function Home() {
               {dictionary.hero.tagline}
             </p>
 
-            {/* Latest: the newest, most relevant project, called out in one line. */}
-            <p className="text-[13px] md:text-sm max-w-[48ch] leading-relaxed" style={{ color: muted }}>
-              <span className="font-semibold" style={{ color: highlightColor }}>
-                {dictionary.hero.latest}
-              </span>
-            </p>
-
-            {/* CTAs: primary drives to the proof (#projects); then Alex, contact, CV. */}
+            {/* CTAs: primary drives to the proof (#projects); then contact + CV. */}
             <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
               <a
                 href="#projects"
@@ -246,17 +239,6 @@ export default function Home() {
               >
                 {dictionary.hero.ctaProjects}
                 <ArrowDown size={17} aria-hidden />
-              </a>
-              <a
-                href="https://talk-to-alex.web.app"
-                target="_blank"
-                rel="noreferrer"
-                data-cursor="pointer"
-                className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm md:text-base font-semibold transition-transform hover:scale-[1.04]"
-                style={pillOutline}
-              >
-                <Phone size={16} aria-hidden />
-                {dictionary.hero.ctaAlex}
               </a>
               <TransitionLink
                 href="/contact"

@@ -139,8 +139,6 @@ export type TranslationCopy = {
     name: string;
     role: string;
     tagline: string;
-    latest: string;
-    ctaAlex: string;
     ctaProjects: string;
     ctaContact: string;
   };
