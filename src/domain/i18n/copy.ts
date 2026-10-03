@@ -12,6 +12,7 @@ export const translations: Translations = {
     },
     statuses: {
       live: "Live",
+      "live-demo": "Live demo",
       paused: "Paused",
       prototype: "Prototype",
       "in-progress": "In progress",
@@ -30,8 +31,8 @@ export const translations: Translations = {
       subcopy: "One product live with a paying client, one pre-launch, plus open-source builds and write-ups with the code in the open.",
       groups: {
         professional: {
-          title: "Real-world work",
-          subcopy: "Products running in production — client work and my own ventures. Code is private, but you can try them live.",
+          title: "Featured work",
+          subcopy: "Products running in production and live demos you can try.",
         },
         openSource: {
           title: "Open source & writing",
@@ -40,6 +41,7 @@ export const translations: Translations = {
       },
       cards: {
         caseStudy: "Case Study",
+        seeCase: "See the case",
         demoVideo: "Demo Video",
         github: "GitHub",
         liveDemo: "Live Demo",
@@ -191,6 +193,8 @@ export const translations: Translations = {
       name: "Juan Sebastian Peña",
       role: "AI & Data Engineer · Madrid",
       tagline: "I build client products end-to-end — one is in production today, taking real orders.",
+      latest: "Latest: Alex, a voice AI agent that negotiates freight rates by phone.",
+      ctaAlex: "Talk to Alex",
       ctaProjects: "View projects",
       ctaContact: "Let's talk",
     },
@@ -220,6 +224,7 @@ export const translations: Translations = {
       label: "Skills",
       title: "What I build with",
       subcopy: "The stack behind Craig, Boletapp and the open-source work — from the data and the models to the interface people actually touch.",
+      also: "Also: LiveKit, WebRTC, Deepgram, Cartesia, Next.js, Google Cloud (Cloud Run), Firebase, Vitest.",
     },
     footer: {
       tagline: "AI, Data & Intelligent Systems",
@@ -241,6 +246,7 @@ export const translations: Translations = {
     },
     statuses: {
       live: "Activo",
+      "live-demo": "Demo en vivo",
       paused: "Pausado",
       prototype: "Prototipo",
       "in-progress": "En progreso",
@@ -259,8 +265,8 @@ export const translations: Translations = {
       subcopy: "Un producto en producción con cliente pagando, otro pre-lanzamiento, más builds open source y publicaciones con el código a la vista.",
       groups: {
         professional: {
-          title: "Trabajo real",
-          subcopy: "Productos corriendo en producción — trabajo para clientes y empresas propias. El código es privado, pero puedes probarlos en vivo.",
+          title: "Trabajo destacado",
+          subcopy: "Productos en producción y demos en vivo que puedes probar.",
         },
         openSource: {
           title: "Open source y publicaciones",
@@ -269,6 +275,7 @@ export const translations: Translations = {
       },
       cards: {
         caseStudy: "Case Study",
+        seeCase: "Ver el caso",
         demoVideo: "Video demo",
         github: "GitHub",
         liveDemo: "Demo en vivo",
@@ -420,6 +427,8 @@ export const translations: Translations = {
       name: "Juan Sebastian Peña",
       role: "Ingeniero de IA y Datos · Madrid",
       tagline: "Construyo productos de cliente de punta a punta — uno está en producción hoy, tomando pedidos reales.",
+      latest: "Lo último: Alex, un agente de voz con IA que negocia tarifas de transporte por teléfono.",
+      ctaAlex: "Habla con Alex",
       ctaProjects: "Ver proyectos",
       ctaContact: "Hablemos",
     },
@@ -449,6 +458,7 @@ export const translations: Translations = {
       label: "Habilidades",
       title: "Con lo que construyo",
       subcopy: "El stack detrás de Craig, Boletapp y el trabajo open source — desde los datos y los modelos hasta la interfaz que la gente realmente toca.",
+      also: "También: LiveKit, WebRTC, Deepgram, Cartesia, Next.js, Google Cloud (Cloud Run), Firebase, Vitest.",
     },
     footer: {
       tagline: "IA, Datos y Sistemas Inteligentes",

@@ -34,11 +34,6 @@ export const skillNodes: SkillNode[] = [
   { id: "html", nameEN: "HTML", nameES: "HTML", category: "frontend", iconSrc: "/logos/html.svg", tier: "primary" },
   { id: "react", nameEN: "React", nameES: "React", category: "frontend", iconSrc: "/logos/react.svg", tier: "primary" },
   { id: "tailwind", nameEN: "Tailwind CSS", nameES: "Tailwind CSS", category: "frontend", iconSrc: "/logos/tailwind.svg", tier: "primary" },
-  { id: "adobecreativecloud", nameEN: "Creative Cloud", nameES: "Creative Cloud", category: "frontend", iconSrc: "/logos/adobecreativecloud.svg", tier: "secondary" },
-  { id: "adobeillustrator", nameEN: "Illustrator", nameES: "Illustrator", category: "frontend", iconSrc: "/logos/adobeillustrator.svg", tier: "secondary" },
-  { id: "adobelightroom", nameEN: "Lightroom", nameES: "Lightroom", category: "frontend", iconSrc: "/logos/adobelightroom.svg", tier: "secondary" },
-  { id: "adobephotoshop", nameEN: "Photoshop", nameES: "Photoshop", category: "frontend", iconSrc: "/logos/adobephotoshop.svg", tier: "secondary" },
-  { id: "adobepremier", nameEN: "Premiere", nameES: "Premiere", category: "frontend", iconSrc: "/logos/adobepremier.svg", tier: "secondary" },
   { id: "prettier", nameEN: "Prettier", nameES: "Prettier", category: "frontend", iconSrc: "/logos/prettier.svg", tier: "secondary" },
 
   // Data & ML

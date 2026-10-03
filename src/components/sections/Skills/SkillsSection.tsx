@@ -68,6 +68,14 @@ export default function SkillsSection() {
           links={skillCrossLinks}
           srList={srList}
         />
+        {/* Voice and cloud stack that lives on the Alex project rather than in
+            the icon graph, so it stays visible without hunting for brand logos. */}
+        <p
+          className="text-xs md:text-sm leading-relaxed text-center max-w-[70ch] mx-auto"
+          style={{ color: theme === "dark" ? "rgba(148,163,184,0.85)" : "rgba(71,85,105,0.85)" }}
+        >
+          {t("skills.also")}
+        </p>
       </div>
     </SectionShell>
   );

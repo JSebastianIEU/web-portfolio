@@ -1,4 +1,4 @@
-export type ProjectStatus = "live" | "prototype" | "in-progress" | "paused" | "published";
+export type ProjectStatus = "live" | "live-demo" | "prototype" | "in-progress" | "paused" | "published";
 
 export type ProjectType = "personal" | "enterprise" | "hackathon" | "startup" | "team";
 
@@ -49,5 +49,8 @@ export type Project = {
   architecture: string[];
   architectureES?: string[];
   thumbnail?: string;
+  /** Real screenshots for the detail page's media section. When absent, the
+   *  section is hidden (no empty placeholders). */
+  media?: { src: string; altEN: string; altES: string }[];
   links: ProjectLinkSet;
 };

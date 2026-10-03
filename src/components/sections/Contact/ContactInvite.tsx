@@ -27,7 +27,12 @@ export default function ContactInvite({ enterLink, leaveLink }: Props) {
   const copy = dictionary.contact;
 
   const actions = contactActions
-    .map((action) => ({ ...action, href: siteConfig[action.hrefKey] }))
+    .map((action) => {
+      const value = siteConfig[action.hrefKey];
+      // The email is stored as a bare address; it must be a mailto: link.
+      const href = action.hrefKey === "email" && value ? `mailto:${value}` : value;
+      return { ...action, href };
+    })
     .filter((action) => Boolean(action.href));
 
   const hover = { onMouseEnter: enterLink, onMouseLeave: leaveLink };

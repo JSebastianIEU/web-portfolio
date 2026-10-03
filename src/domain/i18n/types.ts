@@ -13,6 +13,7 @@ export type TranslationCopy = {
   };
   statuses: {
     live: string;
+    "live-demo": string;
     paused: string;
     prototype: string;
     "in-progress": string;
@@ -41,6 +42,7 @@ export type TranslationCopy = {
     };
     cards: {
       caseStudy: string;
+      seeCase: string;
       demoVideo: string;
       github: string;
       liveDemo: string;
@@ -137,6 +139,8 @@ export type TranslationCopy = {
     name: string;
     role: string;
     tagline: string;
+    latest: string;
+    ctaAlex: string;
     ctaProjects: string;
     ctaContact: string;
   };
@@ -164,6 +168,7 @@ export type TranslationCopy = {
     label: string;
     title: string;
     subcopy: string;
+    also: string;
   };
   footer: {
     tagline: string;

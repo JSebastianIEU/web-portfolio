@@ -26,7 +26,12 @@ export default function FeaturedProjectCard({
   copy,
   lang,
 }: FeaturedProjectCardProps) {
-  const badgeTone = project.status === "live" || project.status === "published" ? "accent" : project.status === "paused" ? "warning" : "neutral";
+  const badgeTone =
+    project.status === "live" || project.status === "live-demo" || project.status === "published"
+      ? "accent"
+      : project.status === "paused"
+      ? "warning"
+      : "neutral";
   const org = lang === "es" ? project.orgES || project.org : project.org;
   const role = lang === "es" ? project.roleES || project.role : project.role;
   const title = lang === "es" ? project.titleES || project.title : project.title;
@@ -140,6 +145,33 @@ export default function FeaturedProjectCard({
               {copy.cards.liveDemo} {copy.cards.soon}
             </span>
           )}
+          {/* Public code gets a GitHub link where a client project shows a
+              "private code" note instead. */}
+          {project.links.github && (
+            <a
+              href={project.links.github}
+              target="_blank"
+              rel="noreferrer"
+              data-cursor="pointer"
+              className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 transition-transform duration-150 hover:scale-[1.04]"
+              style={{
+                border: isDark ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(15,23,42,0.16)",
+                color: isDark ? "rgba(248,250,252,0.92)" : "rgba(15,23,42,0.9)",
+              }}
+            >
+              {copy.cards.github}
+            </a>
+          )}
+          <button
+            type="button"
+            onClick={onOpen}
+            data-cursor="pointer"
+            className="inline-flex items-center gap-1 text-[13px] font-semibold transition-transform hover:translate-x-0.5"
+            style={{ color: "#22d3ee", cursor: "none" }}
+          >
+            {copy.cards.seeCase}
+            <ArrowUpRight size={14} aria-hidden />
+          </button>
           {project.codePrivate && (
             <span
               className="inline-flex items-center gap-1 text-[11px] font-medium"

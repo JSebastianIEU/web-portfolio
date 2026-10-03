@@ -24,7 +24,13 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
   const description = lang === "es" ? project.descriptionES || project.description : project.description;
   const title = lang === "es" ? project.titleES || project.title : project.title;
   const subtitle = lang === "es" ? project.subtitleES || project.subtitle : project.subtitle;
-  const badgeTone = project.status === "live" || project.status === "published" ? "accent" : project.status === "paused" ? "warning" : "neutral";
+  const badgeTone =
+    project.status === "live" || project.status === "live-demo" || project.status === "published"
+      ? "accent"
+      : project.status === "paused"
+      ? "warning"
+      : "neutral";
+  const media = project.media ?? [];
   // Projects with a story tell it instead of listing bullets; the rest keep
   // the generic highlights/architecture layout.
   const Story = projectScrollytelling[project.id];
@@ -50,7 +56,13 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
           <div className="flex items-center gap-2 flex-wrap">
             <ProjectBadge label={typeLabel} tone="neutral" isDark={isDark} />
             <ProjectBadge label={statusLabel} tone={badgeTone as "accent" | "neutral" | "warning"} isDark={isDark} />
-            {project.role && <ProjectBadge label={project.role} tone="neutral" isDark={isDark} />}
+            {project.role && (
+              <ProjectBadge
+                label={lang === "es" ? project.roleES || project.role : project.role}
+                tone="neutral"
+                isDark={isDark}
+              />
+            )}
           </div>
           <div className="text-2xl md:text-3xl font-semibold leading-tight" style={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
             {title}
@@ -116,32 +128,27 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
           </div>
         </div>
 
-        {!Story && (
-        <div className="space-y-3">
-          <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
-            {copy.detail.media}
-          </h4>
-          <div className="grid md:grid-cols-2 gap-3">
-            <div
-              className="rounded-xl border border-dashed p-4 text-sm text-center"
-              style={{
-                borderColor: isDark ? "rgba(255,255,255,0.2)" : "rgba(15,23,42,0.2)",
-                color: isDark ? "rgba(226,232,240,0.72)" : "rgba(15,23,42,0.72)",
-              }}
-            >
-              {copy.detail.videoPlaceholder}
-            </div>
-            <div
-              className="rounded-xl border border-dashed p-4 text-sm text-center"
-              style={{
-                borderColor: isDark ? "rgba(255,255,255,0.2)" : "rgba(15,23,42,0.2)",
-                color: isDark ? "rgba(226,232,240,0.72)" : "rgba(15,23,42,0.72)",
-              }}
-            >
-              {copy.detail.imagePlaceholder}
+        {/* Real screenshots when the project has them; nothing otherwise, so a
+            project without media shows no empty placeholder boxes. */}
+        {!Story && media.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
+              {copy.detail.media}
+            </h4>
+            <div className="grid md:grid-cols-2 gap-3">
+              {media.map((item) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={item.src}
+                  src={item.src}
+                  alt={lang === "es" ? item.altES : item.altEN}
+                  loading="lazy"
+                  className="w-full h-auto rounded-xl border"
+                  style={{ borderColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.12)" }}
+                />
+              ))}
             </div>
           </div>
-        </div>
         )}
 
         <div className="flex flex-wrap gap-3">
