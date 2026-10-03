@@ -21,32 +21,32 @@ const strategosTitle = CFG.intern
   : "AI Software Engineer";
 
 const summary = T
-  ? "Ingeniero de software que construye y opera productos de IA de punta a punta. Único ingeniero de un agente LLM en producción que cotiza y cobra a clientes reales, y fundador técnico de una plataforma de boletería antifraude. Trabajo con evaluación medible: métricas, splits temporales y tests, no solo demos."
-  : "Software engineer who builds and operates AI products end-to-end. Sole engineer on a production LLM agent that quotes and charges real customers, and technical founder of an anti-fraud ticketing platform. I work with measurable evaluation \u2014 metrics, temporal splits and tests, not just demos.";
+  ? "Ingeniero de software que construye y despliega agentes de IA de punta a punta, del modelo al cliente. Único ingeniero de un agente LLM en producción que cotiza y cobra a clientes reales, creador de un agente de voz que negocia tarifas de transporte por teléfono y fundador técnico de una plataforma de boletería antifraude. Mantengo a los LLMs dentro de límites escritos en código y lo demuestro con medición: tests, evaluaciones adversariales y latencia en llamadas reales."
+  : "Software engineer who builds and ships AI agents end-to-end, from the model to the customer. Sole engineer on a production LLM agent that quotes and charges real customers, builder of a voice agent that negotiates freight rates by phone, and technical founder of an anti-fraud ticketing platform. I keep LLMs inside guardrails written in code and prove it with measurement: tests, adversarial evaluations and latency on real calls.";
 
 const experience = [
   {
     role: strategosTitle,
     org: "Strategos AI",
     loc: T ? "Madrid · Remoto" : "Madrid · Remote",
-    date: T ? "Feb 2026 – Actualidad" : "Feb 2026 – Present",
+    date: T ? "Feb 2026 - Actualidad" : "Feb 2026 - Present",
     bullets: T
       ? [
-          "Único ingeniero de Craig, un agente de IA en producción para una imprenta de Dublín que cotiza, cobra y gestiona pedidos de punta a punta.",
-          "Diseño y opero flujos multi-agente con LLMs sobre procesos de negocio reales. Reporte directo al CEO; los fundadores no son técnicos.",
-          "Responsable de todo el stack: agente, API, modelo de datos, despliegue y operación. En producción de forma continua desde febrero de 2026.",
+          "Único ingeniero de Craig, un agente de IA en producción para una imprenta de Dublín que cotiza, cobra y gestiona pedidos de punta a punta por chat web y correo.",
+          "El LLM nunca inventa un precio: llamadas a herramientas estrictas contra un motor de precios determinista (6 estrategias) y unas 15 validaciones en el servidor sobre cada respuesta.",
+          "Responsable de todo el stack: diseño del agente, backend en FastAPI, modelo de datos en Postgres, pagos (Stripe), despliegue en Cloud Run y operación. Reporto directamente al CEO y convierto los requisitos de fundadores no técnicos en funcionalidades en producción. En producción desde febrero de 2026.",
         ]
       : [
-          "Sole engineer on Craig, a production AI agent for a Dublin print shop that quotes, charges and manages customer orders end-to-end.",
-          "Design and operate LLM multi-agent workflows against real business processes. Direct report to the CEO; the founders are non-technical.",
-          "Own the whole stack: agent design, API, data model, deployment and operation. Continuously in production since February 2026.",
+          "Sole engineer on Craig, a production AI agent for a Dublin print shop that quotes, charges and manages customer orders end-to-end over web chat and email.",
+          "The LLM never invents a price: strict tool calling against a deterministic pricing engine (6 strategies) and about 15 server-side validation gates on every reply.",
+          "Own the whole stack: agent design, FastAPI backend, Postgres data model, payments (Stripe), deployment on Cloud Run and operation. Report directly to the CEO and turn the non-technical founders' requirements into shipped features. In production since February 2026.",
         ],
   },
   {
     role: T ? "Fundador técnico" : "Technical Founder",
     org: "Boletapp",
     loc: "Colombia",
-    date: T ? "2026 – En curso" : "2026 – Present",
+    date: T ? "2026 - En curso" : "2026 - Present",
     bullets: T
       ? [
           "Plataforma de boletería antifraude (construida, en pruebas, sin lanzar): QR derivados por HMAC que rotan constantemente y scanner de puerta offline-first que valida sin conexión.",
@@ -60,7 +60,7 @@ const experience = [
         ],
   },
   {
-    role: T ? "GenAI Mavericks — hackathon (1 semana)" : "GenAI Mavericks — hackathon (1 week)",
+    role: T ? "GenAI Mavericks - hackathon (1 semana)" : "GenAI Mavericks - hackathon (1 week)",
     org: "Accenture",
     loc: "Madrid",
     date: "2025",
@@ -76,9 +76,27 @@ const experience = [
 
 const projects = [
   {
+    link: "github.com/JSebastianIEU/voice-freight-negotiator",
+    name: T ? "Alex: agente de voz que negocia fletes" : "Alex: voice AI freight negotiator",
+    meta: "2026 · Python, LiveKit, GPT-4.1 mini, Next.js, GCP · talk-to-alex.web.app",
+    bullets: T
+      ? [
+          "Agente de voz en tiempo real que verifica a quien llama y negocia tarifas de transporte por teléfono en inglés y español; demo en vivo con llamada guiada.",
+          "Límites de precio aplicados en código, no en el prompt: en 10 ataques adversariales x 3 rondas, el margen regalado bajó de $197 a $72 de $500 y las filtraciones del límite de 4/30 a 0/30.",
+          "1,39 s de respuesta mediana en llamadas reales; espera de turno reducida de 3 s a 1,2 s y LLM elegido por tiempo medido hasta el primer token (705 ms frente a 2.153 ms).",
+          "183 tests con 91% de cobertura, CI en cada PR y despliegue automático en Cloud Run con Workload Identity Federation.",
+        ]
+      : [
+          "Real-time voice agent that verifies the caller and negotiates freight rates by phone in English and Spanish; live demo with a guided call.",
+          "Price limits enforced in code, not in the prompt: across 10 adversarial attacks x 3 rounds, margin given away fell from $197 to $72 of $500 and limit leaks from 4/30 to 0/30.",
+          "1.39 s median response on real calls; turn waiting cut from 3 s to 1.2 s and the LLM chosen by measured time to first token (705 ms vs 2,153 ms).",
+          "183 tests at 91% coverage, CI on every PR, automatic deploys to Cloud Run with Workload Identity Federation.",
+        ],
+  },
+  {
     link: "github.com/PredictiveSocialMedia/Tik-Tok-Recommendation-System",
     name: T ? "Plataforma de recomendación de TikTok" : "TikTok Recommendation Platform",
-    meta: T ? "Equipo de 7 · Ene–Abr 2026 · Python, FastAPI, React" : "Team of 7 · Jan–Apr 2026 · Python, FastAPI, React",
+    meta: T ? "Equipo de 7 · Ene-Abr 2026 · Python, FastAPI, React" : "Team of 7 · Jan-Apr 2026 · Python, FastAPI, React",
     bullets: T
       ? [
           "98 de 282 commits, 22 pull requests abiertos y 9 PRs de compañeros revisados por mí.",
@@ -93,23 +111,15 @@ const projects = [
   },
   {
     link: "github.com/JSebastianIEU/tiktok-semantic-engagement",
-    name: T ? "Engagement semántico en TikTok — publicado en Towards AI" : "Semantic Engagement on TikTok — published in Towards AI",
+    name: T ? "Engagement semántico en TikTok - publicado en Towards AI" : "Semantic Engagement on TikTok - published in Towards AI",
     meta: T ? "2026 · Python, transformers, FAISS" : "2026 · Python, transformers, FAISS",
     bullets: T
       ? [
           "¿Los captions con significado parecido rinden parecido? Sobre 22.647 posts, 12 tests de Mann-Whitney U muestran entre 10,5% y 13% menos varianza de engagement que las líneas base aleatorias.",
         ]
       : [
-          "Do semantically similar captions perform similarly? Across 22,647 posts, 12 Mann-Whitney U tests show 10.5–13% lower engagement variance than random baselines.",
+          "Do semantically similar captions perform similarly? Across 22,647 posts, 12 Mann-Whitney U tests show 10.5-13% lower engagement variance than random baselines.",
         ],
-  },
-  {
-    link: "github.com/JSebastianIEU/ie-tower-visual-place-recognition",
-    name: T ? "Reconocimiento visual de lugares — IE Tower" : "Visual Place Recognition — IE Tower",
-    meta: T ? "2026 · Python, DINOv2, FAISS, PyTorch" : "2026 · Python, DINOv2, FAISS, PyTorch",
-    bullets: T
-      ? ["Dada la foto de cualquier punto interior, predice en qué planta está, con embeddings de imagen y recuperación por vecinos cercanos sobre un índice FAISS."]
-      : ["Given a photo of any indoor spot in the building, predicts which floor it is on, using image embeddings and nearest-neighbour retrieval over a FAISS index."],
   },
   {
     link: "github.com/JSebastianIEU/qr_forge",
@@ -128,15 +138,17 @@ const projects = [
 const skills = T
   ? [
       ["Lenguajes", "Python, TypeScript, JavaScript, SQL, Java, C"],
-      ["IA y ML", "LLMs y sistemas multi-agente, RAG, transformers y embeddings, FAISS, PyTorch, scikit-learn, visión por computador"],
-      ["Backend y datos", "FastAPI, PostgreSQL, SQLModel, Alembic, pandas"],
-      ["Infraestructura y frontend", "Docker, GitHub Actions, Azure, GCP, Prometheus, React, Next.js, Tailwind"],
+      ["IA y voz", "agentes LLM y llamadas a herramientas, guardrails y evaluación, RAG, embeddings, LiveKit, WebRTC, voz a texto y texto a voz (Deepgram, Cartesia), PyTorch, scikit-learn"],
+      ["Backend y datos", "FastAPI, Node.js, PostgreSQL, SQLModel, Alembic, pandas, APIs REST y webhooks"],
+      ["Frontend", "React, Next.js, Tailwind"],
+      ["Cloud y DevOps", "GCP (Cloud Run, Firebase), Azure, Docker, GitHub Actions, Prometheus, pytest, Vitest"],
     ]
   : [
       ["Languages", "Python, TypeScript, JavaScript, SQL, Java, C"],
-      ["AI & ML", "LLMs and multi-agent systems, RAG, transformers and embeddings, FAISS, PyTorch, scikit-learn, computer vision"],
-      ["Backend & data", "FastAPI, PostgreSQL, SQLModel, Alembic, pandas"],
-      ["Infrastructure & frontend", "Docker, GitHub Actions, Azure, GCP, Prometheus, React, Next.js, Tailwind"],
+      ["AI and voice", "LLM agents and tool calling, guardrails and evaluation, RAG, embeddings, LiveKit, WebRTC, speech to text and text to speech (Deepgram, Cartesia), PyTorch, scikit-learn"],
+      ["Backend and data", "FastAPI, Node.js, PostgreSQL, SQLModel, Alembic, pandas, REST APIs and webhooks"],
+      ["Frontend", "React, Next.js, Tailwind"],
+      ["Cloud and DevOps", "GCP (Cloud Run, Firebase), Azure, Docker, GitHub Actions, Prometheus, pytest, Vitest"],
     ];
 
 const L = {
@@ -176,27 +188,27 @@ const html = `<!doctype html><html lang="${CFG.lang}"><head><meta charset="utf-8
 @font-face{font-family:Carlito;font-weight:400;font-style:normal;src:url(data:font/woff2;base64,${F.r}) format("woff2");}
 @font-face{font-family:Carlito;font-weight:700;font-style:normal;src:url(data:font/woff2;base64,${F.b}) format("woff2");}
 @font-face{font-family:Carlito;font-weight:400;font-style:italic;src:url(data:font/woff2;base64,${F.i}) format("woff2");}
-@page { size: A4; margin: 11mm 12mm; }
+@page { size: A4; margin: 10mm 12mm; }
 * { box-sizing: border-box; }
-body { font-family: Carlito, Calibri, Arial, sans-serif; font-size: 10.2pt; line-height: 1.30; color: #000; margin: 0; }
-h1 { font-size: 18pt; text-align: center; margin: 0 0 2pt; letter-spacing: .4pt; font-weight: 700; }
-.contact { text-align: center; font-size: 8.8pt; margin-bottom: 1pt; white-space: nowrap; }
-.contact.city { font-size: 9.6pt; margin-bottom: 2pt; }
+body { font-family: Carlito, Calibri, Arial, sans-serif; font-size: 9.4pt; line-height: 1.14; color: #000; margin: 0; }
+h1 { font-size: 16pt; text-align: center; margin: 0 0 1pt; letter-spacing: .4pt; font-weight: 700; }
+.contact { text-align: center; font-size: 8.6pt; margin-bottom: 1pt; white-space: nowrap; }
+.contact.city { font-size: 9.2pt; margin-bottom: 1.5pt; }
 .contact a { color: #0645ad; text-decoration: none; }
-h2 { font-size: 10.4pt; font-weight: 700; letter-spacing: .5pt; margin: 6.2pt 0 1.5pt; padding-bottom: 1.5pt; border-bottom: .8pt solid #000; }
-.entry { margin-bottom: 4.2pt; }
+h2 { font-size: 10pt; font-weight: 700; letter-spacing: .5pt; margin: 3.8pt 0 1.2pt; padding-bottom: 1.2pt; border-bottom: .8pt solid #000; }
+.entry { margin-bottom: 2.4pt; }
 .entry:last-child { margin-bottom: 0; }
 .row { display: flex; justify-content: space-between; align-items: baseline; gap: 8pt; }
 .role { font-weight: 700; }
 .org { font-weight: 700; }
 .meta { font-weight: 400; font-style: italic; color: #333; }
-.loc, .date { font-weight: 700; white-space: nowrap; font-size: 9.8pt; }
-.plink { font-size: 8.6pt; white-space: nowrap; }
+.loc, .date { font-weight: 700; white-space: nowrap; font-size: 9pt; }
+.plink { font-size: 8.2pt; white-space: nowrap; }
 .plink a { color: #0645ad; text-decoration: none; }
-ul { margin: 1.5pt 0 0; padding-left: 12pt; }
-li { margin-bottom: 1.1pt; }
-p.sum { margin: 2pt 0 0; text-align: justify; }
-.sk { margin: 1.5pt 0 0; }
+ul { margin: 1.2pt 0 0; padding-left: 12pt; }
+li { margin-bottom: 0.4pt; }
+p.sum { margin: 1.5pt 0 0; text-align: justify; }
+.sk { margin: 1pt 0 0; }
 .sk b { font-weight: 700; }
 </style></head><body>
 <h1>${D.name}</h1>
