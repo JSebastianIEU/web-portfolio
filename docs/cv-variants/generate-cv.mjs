@@ -21,8 +21,8 @@ const strategosTitle = CFG.intern
   : "AI Software Engineer";
 
 const summary = T
-  ? "Ingeniero de software que construye y despliega agentes de IA de punta a punta, del modelo al cliente. Único ingeniero de un agente LLM en producción que cotiza y cobra a clientes reales, creador de un agente de voz que negocia tarifas de transporte por teléfono y fundador técnico de una plataforma de boletería antifraude. Mantengo a los LLMs dentro de límites escritos en código y lo demuestro con medición: tests, evaluaciones adversariales y latencia en llamadas reales."
-  : "Software engineer who builds and ships AI agents end-to-end, from the model to the customer. Sole engineer on a production LLM agent that quotes and charges real customers, builder of a voice agent that negotiates freight rates by phone, and technical founder of an anti-fraud ticketing platform. I keep LLMs inside guardrails written in code and prove it with measurement: tests, adversarial evaluations and latency on real calls.";
+  ? "Ingeniero de software que construye y despliega agentes de IA de punta a punta, del modelo al cliente. Único ingeniero de un agente LLM en producción que cotiza y cobra a clientes reales, creador de un agente de voz que negocia tarifas de transporte y fundador técnico de una plataforma de boletería antifraude. Mantengo a los LLMs dentro de límites escritos en código y lo demuestro con medición: tests, evaluaciones adversariales y latencia en sesiones de voz en vivo."
+  : "Software engineer who builds and ships AI agents end-to-end, from the model to the customer. Sole engineer on a production LLM agent that quotes and charges real customers, builder of a voice agent that negotiates freight rates, and technical founder of an anti-fraud ticketing platform. I keep LLMs inside guardrails written in code and prove it with measurement: tests, adversarial evaluations and latency in live voice sessions.";
 
 const experience = [
   {
@@ -81,15 +81,15 @@ const projects = [
     meta: "2026 · Python, LiveKit, GPT-4.1 mini, Next.js, GCP · talk-to-alex.web.app",
     bullets: T
       ? [
-          "Agente de voz en tiempo real que verifica a quien llama y negocia tarifas de transporte por teléfono en inglés y español; demo en vivo con llamada guiada.",
+          "Agente de voz en tiempo real que verifica a quien llama y negocia tarifas de transporte en inglés y español; demo de voz en vivo en el navegador, guiada.",
           "Límites de precio aplicados en código, no en el prompt: en 10 ataques adversariales x 3 rondas, el margen regalado bajó de $197 a $72 de $500 y las filtraciones del límite de 4/30 a 0/30.",
-          "1,39 s de respuesta mediana en llamadas reales; espera de turno reducida de 3 s a 1,2 s y LLM elegido por tiempo medido hasta el primer token (705 ms frente a 2.153 ms).",
+          "1,39 s de respuesta mediana en sesiones de voz en vivo; espera de turno reducida de 3 s a 1,2 s y LLM elegido por tiempo medido hasta el primer token (705 ms frente a 2.153 ms).",
           "183 tests con 91% de cobertura, CI en cada PR y despliegue automático en Cloud Run con Workload Identity Federation.",
         ]
       : [
-          "Real-time voice agent that verifies the caller and negotiates freight rates by phone in English and Spanish; live demo with a guided call.",
+          "Real-time voice agent that verifies the caller and negotiates freight rates in English and Spanish; a guided live voice demo in the browser.",
           "Price limits enforced in code, not in the prompt: across 10 adversarial attacks x 3 rounds, margin given away fell from $197 to $72 of $500 and limit leaks from 4/30 to 0/30.",
-          "1.39 s median response on real calls; turn waiting cut from 3 s to 1.2 s and the LLM chosen by measured time to first token (705 ms vs 2,153 ms).",
+          "1.39 s median response in live voice sessions; turn waiting cut from 3 s to 1.2 s and the LLM chosen by measured time to first token (705 ms vs 2,153 ms).",
           "183 tests at 91% coverage, CI on every PR, automatic deploys to Cloud Run with Workload Identity Federation.",
         ],
   },
