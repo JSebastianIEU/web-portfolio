@@ -64,9 +64,23 @@ export const projectsData: Project[] = [
       { src: "/images/projects/alex/architecture.webp", altEN: "End-to-end architecture of one voice turn: STT (Deepgram Nova-3), turn detection, LLM (GPT-4.1 mini), TTS (Cartesia Sonic), the Python desk, and the browser caller over WebRTC.", altES: "Arquitectura de extremo a extremo de un turno de voz: STT (Deepgram Nova-3), detección de turno, LLM (GPT-4.1 mini), TTS (Cartesia Sonic), el desk en Python y el navegador que llama por WebRTC." },
       { src: "/images/projects/alex/before-after.webp", altEN: "Bar chart, same ten attacks against the same model: margin given away per attack, averaging $197 with the limits in the prompt versus $72 with the desk enforcing them in code.", altES: "Gráfico de barras, los mismos diez ataques contra el mismo modelo: margen regalado por ataque, $197 de media con los límites en el prompt frente a $72 con el desk aplicándolos en código." },
     ],
+    articles: [
+      {
+        title: "How to Stop an AI Agent From Giving Away Your Money in a Negotiation",
+        titleES: "Cómo evitar que un agente de IA regale tu dinero en una negociación (en inglés)",
+        outlet: "Towards AI",
+        url: "https://pub.towardsai.net/how-to-stop-an-ai-agent-from-giving-away-your-money-in-a-negotiation-58fddcba461a",
+      },
+      {
+        title: "What It Takes to Build a Voice Agent That Can Hold a Phone Call",
+        titleES: "Qué hace falta para construir un agente de voz que sostenga una llamada (en inglés)",
+        outlet: "Towards AI",
+        url: "https://pub.towardsai.net/what-it-takes-to-build-a-voice-agent-that-can-hold-a-phone-call-f7bbc4668964",
+      },
+    ],
     links: {
       github: "https://github.com/JSebastianIEU/voice-freight-negotiator",
-      caseStudy: "",
+      caseStudy: "https://pub.towardsai.net/how-to-stop-an-ai-agent-from-giving-away-your-money-in-a-negotiation-58fddcba461a",
       video: "",
       live: "https://talk-to-alex.web.app",
     },

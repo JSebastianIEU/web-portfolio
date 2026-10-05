@@ -52,5 +52,7 @@ export type Project = {
   /** Real screenshots for the detail page's media section. When absent, the
    *  section is hidden (no empty placeholders). */
   media?: { src: string; altEN: string; altES: string }[];
+  /** Published write-ups about the project, listed on the detail page. */
+  articles?: { title: string; titleES?: string; outlet: string; url: string }[];
   links: ProjectLinkSet;
 };

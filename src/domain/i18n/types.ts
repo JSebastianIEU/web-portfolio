@@ -72,6 +72,7 @@ export type TranslationCopy = {
       architecture: string;
       stack: string;
       media: string;
+      articles: string;
       videoPlaceholder: string;
       imagePlaceholder: string;
       nextProject: string;
