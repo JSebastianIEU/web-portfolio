@@ -9,14 +9,14 @@ export const projectsData: Project[] = [
     subtitle: "Voice AI agent that negotiates freight rates, and can't be talked past its price limits.",
     subtitleES: "Agente de voz con IA que negocia tarifas de transporte, y al que no se le puede convencer de pasar sus límites de precio.",
     description:
-      "Alex is a carrier sales rep for a fictional freight brokerage. It runs as a live voice demo in the browser: you play a trucking company talking about a load, and Alex verifies the caller's MC number, describes the load, negotiates the rate in English or Spanish and ends the conversation on its own when it is done. The design rule is \"the LLM negotiates, the code decides\": the model never sees the price limits. Every figure it says comes from a Python \"desk\" that verifies the caller, climbs a ladder of offers one step at a time and books only amounts it offered, and a second filter checks every sentence before it is spoken.",
+      "Alex is a carrier sales rep for a fictional freight brokerage. It ran as a live voice demo in the browser, and the demo video shows a full call: you play a trucking company talking about a load, and Alex verifies the caller's MC number, describes the load, negotiates the rate in English or Spanish and ends the conversation on its own when it is done. The design rule is \"the LLM negotiates, the code decides\": the model never sees the price limits. Every figure it says comes from a Python \"desk\" that verifies the caller, climbs a ladder of offers one step at a time and books only amounts it offered, and a second filter checks every sentence before it is spoken.",
     descriptionES:
-      "Alex es un comercial de una agencia de transporte ficticia. Funciona como una demo de voz en vivo en el navegador: tú haces de empresa de camiones hablando por una carga, y Alex verifica el número MC de quien habla, describe la carga, negocia la tarifa en inglés o en español y cierra la conversación solo cuando termina. La regla de diseño es \"el LLM negocia, el código decide\": el modelo nunca ve los límites de precio. Cada cifra que dice sale de un \"desk\" en Python que verifica a quien llama, sube una escalera de ofertas paso a paso y solo cierra montos que ya ofreció, y un segundo filtro revisa cada frase antes de que se diga en voz alta.",
+      "Alex es un comercial de una agencia de transporte ficticia. Funcionó como una demo de voz en vivo en el navegador, y el video demo muestra una llamada completa: tú haces de empresa de camiones hablando por una carga, y Alex verifica el número MC de quien habla, describe la carga, negocia la tarifa en inglés o en español y cierra la conversación solo cuando termina. La regla de diseño es \"el LLM negocia, el código decide\": el modelo nunca ve los límites de precio. Cada cifra que dice sale de un \"desk\" en Python que verifica a quien llama, sube una escalera de ofertas paso a paso y solo cierra montos que ya ofreció, y un segundo filtro revisa cada frase antes de que se diga en voz alta.",
     category: "professional",
     codePrivate: false,
     preview: "/images/projects/alex/preview-landing.webp",
     type: "personal",
-    status: "live-demo",
+    status: "published",
     role: "Built & shipped end-to-end",
     roleES: "Construido y desplegado de punta a punta",
     timeframe: "2026",
@@ -81,8 +81,8 @@ export const projectsData: Project[] = [
     links: {
       github: "https://github.com/JSebastianIEU/voice-freight-negotiator",
       caseStudy: "https://pub.towardsai.net/how-to-stop-an-ai-agent-from-giving-away-your-money-in-a-negotiation-58fddcba461a",
-      video: "",
-      live: "https://talk-to-alex.web.app",
+      video: "/videos/alex-demo.mp4",
+      live: "",
     },
   },
   {

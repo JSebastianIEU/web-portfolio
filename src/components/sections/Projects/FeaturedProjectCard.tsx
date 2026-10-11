@@ -35,7 +35,9 @@ export default function FeaturedProjectCard({
   const org = lang === "es" ? project.orgES || project.org : project.org;
   const role = lang === "es" ? project.roleES || project.role : project.role;
   const title = lang === "es" ? project.titleES || project.title : project.title;
-  const liveHref = project.links.live;
+  // A project whose live demo was taken offline points the main button at its video.
+  const liveHref = project.links.live || project.links.video;
+  const liveLabel = project.links.live ? copy.cards.tryIt : copy.cards.demoVideo;
   const logo = isDark ? project.logoDark || project.logo : project.logo;
   const showPreview = Boolean(project.preview && liveHref);
 
@@ -124,14 +126,14 @@ export default function FeaturedProjectCard({
               target="_blank"
               rel="noreferrer"
               data-cursor="pointer"
-              aria-label={`${copy.cards.tryIt} — ${title} (${copy.cards.newTab})`}
+              aria-label={`${liveLabel} — ${title} (${copy.cards.newTab})`}
               className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 transition-transform duration-150 hover:scale-[1.04]"
               style={{
                 background: isDark ? "#f8fafc" : "#0f172a",
                 color: isDark ? "#0f172a" : "#f8fafc",
               }}
             >
-              {copy.cards.tryIt}
+              {liveLabel}
               <ArrowUpRight size={15} aria-hidden />
             </a>
           ) : (
