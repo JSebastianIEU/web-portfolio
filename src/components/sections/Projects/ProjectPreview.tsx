@@ -61,21 +61,7 @@ export default function ProjectPreview({ src, href, label, isDark, video }: Proj
           pixels at the frame edges instead of transparency — otherwise the
           border washes out. A 16px bleed covers blur(6px)'s ~2σ reach. */}
       <div className="absolute -inset-4">
-        {video ? (
-          <video
-            ref={videoRef}
-            poster={src}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            className="preview-img absolute inset-0 h-full w-full object-cover object-top transition-[filter,transform] duration-300 ease-out group-hover/preview:blur-[6px] group-hover/preview:scale-105"
-          >
-            <source src={`${video}.webm`} type="video/webm" />
-            <source src={`${video}.mp4`} type="video/mp4" />
-          </video>
-        ) : (
+        {!video && (
         <Image
           src={src}
           alt=""
@@ -85,6 +71,24 @@ export default function ProjectPreview({ src, href, label, isDark, video }: Proj
         />
         )}
       </div>
+
+      {/* The clip is already framed 16:9 like the box: no bleed and no zoom, so the
+          whole hero stays visible; only the hover blur applies. */}
+      {video && (
+          <video
+          ref={videoRef}
+          poster={src}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          className="preview-img absolute inset-0 h-full w-full object-cover transition-[filter] duration-300 ease-out group-hover/preview:blur-[4px]"
+        >
+          <source src={`${video}.webm`} type="video/webm" />
+          <source src={`${video}.mp4`} type="video/mp4" />
+        </video>
+      )}
 
       {/* Dot screen — subtle translucent black dots layered over the blur. */}
       <div
