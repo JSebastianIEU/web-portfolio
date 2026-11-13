@@ -138,6 +138,9 @@ export default function BoletappStory({ isDark, lang }: Props) {
               <li key={s}>{s}</li>
             ))}
           </ul>
+          <a href="/boletapp" className="bp-meta-video bp-meta-replica" data-cursor="pointer">
+            {es ? "Abrir la réplica navegable" : "Open the browsable replica"}
+          </a>
           <button type="button" className="bp-meta-video" onClick={goToVideo} data-cursor="pointer">
             {es ? "Ver el video (1:27)" : "Watch the video (1:27)"}
           </button>

@@ -36,7 +36,7 @@ export default function FeaturedProjectCard({
   const role = lang === "es" ? project.roleES || project.role : project.role;
   const title = lang === "es" ? project.titleES || project.title : project.title;
   const liveHref = project.links.live;
-  const liveLabel = project.status === "closed" ? copy.cards.archivedSite : copy.cards.tryIt;
+  const liveLabel = project.status === "closed" ? copy.cards.siteReplica : copy.cards.tryIt;
   const logo = isDark ? project.logoDark || project.logo : project.logo;
   const showPreview = Boolean(project.preview && liveHref);
 

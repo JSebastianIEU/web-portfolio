@@ -10,7 +10,9 @@ Bilingüe: todo texto con `es ? "…" : "…"` como en `IeTowerScrollytelling.ts
 - El QR antifraude se describe SOLO como «QR rotativo con HMAC» / "HMAC-based rotating QR". Nada de períodos de derivación,
   formatos de payload, nombres de claves, algoritmos de KMS, ni pasos replicables. Lo mismo para todo el stack: qué y por qué,
   nunca el paso a paso (la empresa puede reactivarse).
-- Repo privado: sin enlace a GitHub. El sitio vivo (boletapp.co) se enlaza como "Visit the archived site" solo si responde.
+- Repo privado: sin enlace a GitHub. Nada enlaza a boletapp.co: el sitio se ve en la réplica navegable `/boletapp`
+  (export estático en `public/boletapp`, rama local `replica/portafolio` del repo de Boletapp, `apps/web/replica/construir.sh`),
+  con datos ficticios, sin red ni pagos, y los links que no son de la réplica inertes.
 - Estado final honesto: «En producción de julio a noviembre de 2026. Apps aprobadas en App Store y Google Play. Cerré la empresa
   en noviembre de 2026.» / "In production from July to November 2026, with apps approved on the App Store and Google Play.
   I closed the company in November 2026."

@@ -1929,6 +1929,16 @@ body {
   transform: translateY(-1px);
 }
 
+/* Link to the browsable replica (public/boletapp): gold, sits before the video button. */
+.bp-meta-replica {
+  color: #06070c;
+  background: #f4b91a;
+}
+
+.bp-meta-replica + .bp-meta-video {
+  margin-left: 0;
+}
+
 .bp-meta-video:focus-visible,
 .bp-shot-btn:focus-visible,
 .bp-switch:focus-visible {

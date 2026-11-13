@@ -197,7 +197,7 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
               style={linkChipStyle}
               data-cursor="pointer"
             >
-              {project.status === "closed" ? copy.cards.archivedSite : copy.cards.liveDemo}
+              {project.status === "closed" ? copy.cards.siteReplica : copy.cards.liveDemo}
             </a>
           )}
           <Link

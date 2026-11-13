@@ -200,7 +200,8 @@ export const projectsData: Project[] = [
     links: {
       github: "",
       video: "/videos/boletapp/product.mp4",
-      live: "https://boletapp.co",
+      // Réplica navegable del sitio (public/boletapp), servida por el propio portafolio.
+      live: "/boletapp",
     },
   },
   {

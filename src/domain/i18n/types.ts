@@ -47,7 +47,7 @@ export type TranslationCopy = {
       demoVideo: string;
       github: string;
       liveDemo: string;
-      archivedSite: string;
+      siteReplica: string;
       soon: string;
       offline: string;
       privateCode: string;
