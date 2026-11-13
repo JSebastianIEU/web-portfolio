@@ -35,9 +35,14 @@ export default function FeaturedProjectCard({
   const org = lang === "es" ? project.orgES || project.org : project.org;
   const role = lang === "es" ? project.roleES || project.role : project.role;
   const title = lang === "es" ? project.titleES || project.title : project.title;
-  // A project whose live demo was taken offline points the main button at its video.
+  // A project whose live demo was taken offline points the main button at its video;
+  // a closed project points it at its replica.
   const liveHref = project.links.live || project.links.video;
-  const liveLabel = project.links.live ? copy.cards.tryIt : copy.cards.demoVideo;
+  const liveLabel = !project.links.live
+    ? copy.cards.demoVideo
+    : project.status === "closed"
+      ? copy.cards.siteReplica
+      : copy.cards.tryIt;
   const logo = isDark ? project.logoDark || project.logo : project.logo;
   const showPreview = Boolean(project.preview && liveHref);
 

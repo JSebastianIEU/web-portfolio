@@ -1,0 +1,145 @@
+1:"$Sreact.fragment"
+a:I[122,[],""]
+:HL["/boletapp/_next/static/media/0b78ff376f6b9734-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/boletapp/_next/static/media/723e11e5093b8e80.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/boletapp/_next/static/media/b0c7b462dd73fa63-s.p.ttf","font",{"crossOrigin":"","type":"font/ttf"}]
+:HL["/boletapp/_next/static/css/0bb7fef195bb29bb.css","style"]
+:HL["/boletapp/_next/static/css/6946a36644e9a779.css","style"]
+2:Tf37,((cfg) => {
+  const D = Date;
+  const off = cfg.ahoraMs - D.now();
+  const ahora = () => D.now() + off;
+  window.Date = new Proxy(D, {
+    construct: (t, a) => (a.length ? Reflect.construct(t, a) : new t(ahora())),
+    apply: () => new D(ahora()).toString(),
+    get: (t, p) => (p === "now" ? ahora : Reflect.get(t, p)),
+  });
+
+  let toastEl = null;
+  let toastTimer = 0;
+  function aviso() {
+    if (!toastEl) {
+      toastEl = document.createElement("div");
+      toastEl.className = "bp-replica-toast";
+      toastEl.setAttribute("role", "status");
+      toastEl.setAttribute("aria-live", "polite");
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = "Réplica: esta parte no está disponible";
+    toastEl.setAttribute("data-on", "");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toastEl.removeAttribute("data-on");
+    }, 2400);
+  }
+  window.__bpReplicaAviso = aviso;
+
+  const fetchReal = window.fetch.bind(window);
+  window.fetch = (input, init) => {
+    const url = typeof input === "string" ? input : input?.url || String(input);
+    let u;
+    try {
+      u = new URL(url, location.href);
+    } catch (e) {
+      u = null;
+    }
+    if (u && u.origin === location.origin && u.pathname.indexOf("/api/") !== 0) {
+      // El prefetch de <Link> pide el .txt de cada link visible: los que no son de la réplica
+      // (/ayuda, /ingresar...) no existen y ensuciarían la consola con 404 reales.
+      if (/\.txt$/.test(u.pathname)) {
+        const pagina = u.pathname
+          .replace(/\.txt$/, "")
+          .replace(/\/index$/, "")
+          .replace(/\/?$/, "/");
+        if (cfg.paginas.indexOf(pagina) < 0) return Promise.resolve(new Response("", { status: 404 }));
+      }
+      return fetchReal(input, init);
+    }
+    const metodo = (init?.method || input?.method || "GET").toUpperCase();
+    if (metodo !== "GET" && metodo !== "HEAD") aviso();
+    return Promise.resolve(
+      new Response(JSON.stringify({ detail: "Réplica: esta parte no está disponible." }), {
+        status: 503,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+  };
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon = () => true;
+  }
+  window.open = () => {
+    aviso();
+    return null;
+  };
+
+  function permitido(u) {
+    if (u.origin !== location.origin) return false;
+    const p = u.pathname.replace(/\/?$/, "/");
+    if (p.indexOf("/projects/") === 0) return true;
+    return cfg.paginas.indexOf(p) >= 0;
+  }
+  function alClic(e) {
+    const a = e.target?.closest ? e.target.closest("a[href]") : null;
+    if (!a) return;
+    const href = a.getAttribute("href") || "";
+    // Anclas de la misma página: solo si el destino existe (#instagram, #google-maps no).
+    const ancla = href.charAt(0) === "#";
+    if (ancla && href.length > 1 && document.getElementById(href.slice(1))) return;
+    let u;
+    try {
+      u = new URL(a.href, location.href);
+    } catch (err) {
+      u = null;
+    }
+    if (!ancla && u && permitido(u) && !a.hasAttribute("download")) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (e.type === "click") aviso();
+  }
+  window.addEventListener("click", alClic, true);
+  window.addEventListener("auxclick", alClic, true);
+  window.addEventListener(
+    "submit",
+    (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      aviso();
+    },
+    true,
+  );
+})({"base":"/boletapp","paginas":["/boletapp/","/boletapp/organizadores/","/boletapp/rrpp/","/boletapp/sobre/","/boletapp/descubrir/","/boletapp/e/noche-pacifica-noche-de-clave/","/boletapp/e/noche-pacifica-perreo-neon-4/","/boletapp/e/noche-pacifica-altura-crossover/","/boletapp/e/noche-pacifica-cobalto-02/","/boletapp/e/noche-pacifica-marea-alta/","/boletapp/e/noche-pacifica-cerro-verde/","/boletapp/o/noche-pacifica/","/boletapp/o/noche-pacifica/san-antonio/"],"ahoraMs":1794513600000});
+0:{"P":null,"b":"llrps9ScjV068dKKfaZbu","p":"/boletapp","c":["","e","noche-pacifica-cerro-verde"],"i":false,"f":[[["",{"children":["(fan)",{"children":["e",{"children":[["slug","noche-pacifica-cerro-verde","d"],{"children":["__PAGE__",{}]}]}]}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/boletapp/_next/static/css/0bb7fef195bb29bb.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","link","1",{"rel":"stylesheet","href":"/boletapp/_next/static/css/6946a36644e9a779.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"es-CO","className":"__variable_f27976 __variable_9309de __variable_67f3a9","suppressHydrationWarning":true,"children":[["$","head",null,{"children":[["$","script",null,{"dangerouslySetInnerHTML":{"__html":"$2"}}],"$L3"]}],"$L4"]}]]}],{"children":["(fan)","$L5",{"children":["e","$L6",{"children":[["slug","noche-pacifica-cerro-verde","d"],"$L7",{"children":["__PAGE__","$L8",{},null,false]},null,false]},null,false]},null,false]},null,false],"$L9",false]],"m":"$undefined","G":["$a",[]],"s":false,"S":true}
+c:I[2754,[],""]
+d:I[1240,["103","static/chunks/103-04b2e080ba093181.js","673","static/chunks/673-5e4998ede346614f.js","39","static/chunks/app/error-c46ee58b45198ad8.js"],"default"]
+e:I[9024,[],""]
+f:I[8103,["103","static/chunks/103-04b2e080ba093181.js","673","static/chunks/673-5e4998ede346614f.js","448","static/chunks/448-7414b3f64056838b.js","940","static/chunks/940-cbfb7fa42b3baa99.js","560","static/chunks/560-a4ba28885b6e82c8.js","522","static/chunks/app/(marketing)/page-fb47034d9ab60226.js"],""]
+10:I[7256,["103","static/chunks/103-04b2e080ba093181.js","673","static/chunks/673-5e4998ede346614f.js","943","static/chunks/943-8bb3c95bef5fce21.js","324","static/chunks/324-b055e4b14f679889.js","280","static/chunks/280-c2106db6c4e8cfd8.js","433","static/chunks/433-a498cbdd10085e22.js","786","static/chunks/app/(fan)/layout-9d0bb77eab227910.js"],"FanShell"]
+12:I[9771,[],"OutletBoundary"]
+14:I[218,[],"AsyncMetadataOutlet"]
+16:I[9771,[],"ViewportBoundary"]
+18:I[9771,[],"MetadataBoundary"]
+19:"$Sreact.suspense"
+b:T5c4,
+.bp-replica-cinta{position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom) + 92px);z-index:90;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 24px);padding:6px 6px 6px 12px;border-radius:999px;background:rgba(6,7,12,.82);color:rgba(255,255,255,.78);font:500 11px/1.2 var(--font-geist-sans),system-ui,sans-serif;letter-spacing:.01em;box-shadow:0 6px 24px rgba(0,0,0,.25),inset 0 0 0 1px rgba(255,255,255,.1);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.bp-replica-cinta a{flex:none;padding:5px 10px;border-radius:999px;background:#F4B91A;color:#06070C;font-weight:600;text-decoration:none}
+.bp-replica-cinta a:hover{background:#ffd04d}
+.bp-replica-cinta a:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.bp-replica-largo{display:none}
+@media (min-width:1024px){.bp-replica-cinta{left:16px;bottom:16px}.bp-replica-largo{display:inline}.bp-replica-corto{display:none}}
+.bp-replica-toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);z-index:2147483647;transform:translate(-50%,-12px);opacity:0;pointer-events:none;padding:10px 16px;border-radius:12px;background:#06070C;color:#fff;font:500 13px/1.3 var(--font-geist-sans),system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.3);transition:opacity .2s,transform .2s;max-width:calc(100vw - 32px);text-align:center}
+.bp-replica-toast[data-on]{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){.bp-replica-toast{transition:none}}
+3:["$","style",null,{"children":"$b"}]
+4:["$","body",null,{"className":"bg-white font-sans text-ink-900 antialiased","children":[["$","$Lc",null,{"parallelRouterKey":"children","error":"$d","errorStyles":[],"errorScripts":[],"template":["$","$Le",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","section",null,{"className":"bp-grain flex min-h-screen items-center bg-cobalt-600 py-28 text-white","children":["$","div",null,{"className":"bp-container","children":["$","div",null,{"className":"max-w-xl","children":[["$","p",null,{"className":"font-mono text-xs font-medium uppercase tracking-[0.16em] text-gold-300","children":"Error 404"}],["$","h1",null,{"className":"mt-3 text-3xl font-semibold tracking-tight sm:text-4xl","children":"No encontramos esta página."}],["$","p",null,{"className":"mt-4 text-lg leading-relaxed text-white/75","children":"El enlace no existe o se movió. Vuelve al inicio y sigues desde ahí."}],["$","div",null,{"className":"mt-8","children":["$","$Lf",null,{"href":"/","children":["Volver al inicio",["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-arrow-right size-4","children":[["$","path","1ays0h",{"d":"M5 12h14"}],["$","path","xquz4c",{"d":"m12 5 7 7-7 7"}],"$undefined"]}]],"ref":null,"className":"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,color,box-shadow,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:translate-y-px [&_svg]:size-4 [&_svg]:shrink-0 bg-cobalt-600 text-white shadow-sm hover:bg-cobalt-700 h-12 px-6 text-base"}]}]]}]}]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}],["$","aside",null,{"className":"bp-replica-cinta","aria-label":"Aviso de réplica","children":[["$","span",null,{"className":"bp-replica-largo","children":"Réplica de boletapp.co · proyecto de Juan Sebastián Peña"}],["$","span",null,{"className":"bp-replica-corto","children":"Réplica de boletapp.co"}],["$","a",null,{"href":"/projects/boletapp","children":"Volver al proyecto"}]]}]]}]
+5:["$","$1","c",{"children":[null,["$","$L10",null,{"loggedIn":false,"children":["$","$Lc",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$Le",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]}]]}]
+6:["$","$1","c",{"children":[null,["$","$Lc",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$Le",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+7:["$","$1","c",{"children":[null,["$","$Lc",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$Le",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+8:["$","$1","c",{"children":["$L11",null,["$","$L12",null,{"children":["$L13",["$","$L14",null,{"promise":"$@15"}]]}]]}]
+9:["$","$1","h",{"children":[null,[["$","$L16",null,{"children":"$L17"}],["$","meta",null,{"name":"next-size-adjust","content":""}]],["$","$L18",null,{"children":["$","div",null,{"hidden":true,"children":["$","$19",null,{"fallback":null,"children":"$L1a"}]}]}]]}]
+1b:I[630,["103","static/chunks/103-04b2e080ba093181.js","673","static/chunks/673-5e4998ede346614f.js","943","static/chunks/943-8bb3c95bef5fce21.js","448","static/chunks/448-7414b3f64056838b.js","324","static/chunks/324-b055e4b14f679889.js","280","static/chunks/280-c2106db6c4e8cfd8.js","578","static/chunks/578-89ed69b8fd0d34ce.js","899","static/chunks/899-5654d7f148d7aff2.js","466","static/chunks/466-ec44f502e580b6e1.js","447","static/chunks/app/(fan)/e/%5Bslug%5D/page-a6aa5f109504be56.js"],"Checkout"]
+11:["$","$L1b",null,{"event":{"id":"4e498551-d0bb-5ca2-a9b4-3d457d2ac8c6","slug":"noche-pacifica-cerro-verde","title":"Festival Cerro Verde","venueName":"Patio Pacífico","city":"Cali","startsAtMs":1796151600000,"endsAtMs":1796187600000,"status":"on_sale","description":"Un día entero de música del Pacífico al aire libre, con marimba, champeta y afrobeats. Trae protector solar y ropa cómoda.","orgName":"Noche Pacífica","orgSlug":"noche-pacifica","venueSlug":"san-antonio","venueOrgSlug":null,"venueOrgName":null,"brandColor":"#0E7C66","orgLogoUrl":null,"reservedTerm":"palco","ticketTypes":[{"id":"86b8236b-b8ba-51f4-8e8f-522174b2f47c","name":"Fase 1","kind":"early_bird","priceCents":6000000,"currency":"COP","colorId":"Cielo","metal":false,"description":null,"phaseStatus":"open","opensAfterName":null,"opensWhen":null,"opensAtMs":null,"partySize":null,"bundleNames":[],"available":18,"soldOut":false,"onSale":true,"salesStartAtMs":null,"salesEndAtMs":null,"maxPerOrder":10,"releaseGroupId":"4ca19ae0-71e4-53fe-a90e-7d9da8606605","releaseGroupName":null,"releaseGroupCapacity":null,"releaseIndex":0,"remainingAtPrice":18,"nextReleaseName":"Fase 2","nextPriceCents":8000000,"nextOpensWhen":"sold_out","nextOpensAtMs":null},{"id":"540f0664-b7e9-5380-8484-d5d7e8dd3127","name":"Fase 2","kind":"general","priceCents":8000000,"currency":"COP","colorId":"Cielo","metal":false,"description":null,"phaseStatus":"upcoming","opensAfterName":"Fase 1","opensWhen":"sold_out","opensAtMs":null,"partySize":null,"bundleNames":[],"available":900,"soldOut":false,"onSale":false,"salesStartAtMs":null,"salesEndAtMs":null,"maxPerOrder":10,"releaseGroupId":"4ca19ae0-71e4-53fe-a90e-7d9da8606605","releaseGroupName":null,"releaseGroupCapacity":null,"releaseIndex":1,"remainingAtPrice":null,"nextReleaseName":null,"nextPriceCents":null,"nextOpensWhen":null,"nextOpensAtMs":null},{"id":"92c1ef87-86fe-5b7f-97dd-375eedd278c0","name":"Fase 3","kind":"general","priceCents":10000000,"currency":"COP","colorId":"Cielo","metal":false,"description":null,"phaseStatus":"upcoming","opensAfterName":"Fase 1","opensWhen":"after","opensAtMs":null,"partySize":null,"bundleNames":[],"available":1500,"soldOut":false,"onSale":false,"salesStartAtMs":null,"salesEndAtMs":null,"maxPerOrder":10,"releaseGroupId":"4ca19ae0-71e4-53fe-a90e-7d9da8606605","releaseGroupName":null,"releaseGroupCapacity":null,"releaseIndex":2,"remainingAtPrice":null,"nextReleaseName":null,"nextPriceCents":null,"nextOpensWhen":null,"nextOpensAtMs":null},{"id":"eb357816-29bc-5bd6-bd10-97927af32602","name":"VIP Tarima","kind":"general","priceCents":18000000,"currency":"COP","colorId":"Dorado","metal":false,"description":null,"phaseStatus":null,"opensAfterName":null,"opensWhen":null,"opensAtMs":null,"partySize":null,"bundleNames":[],"available":272,"soldOut":false,"onSale":true,"salesStartAtMs":null,"salesEndAtMs":null,"maxPerOrder":10,"releaseGroupId":null,"releaseGroupName":null,"releaseGroupCapacity":null,"releaseIndex":null,"remainingAtPrice":null,"nextReleaseName":null,"nextPriceCents":null,"nextOpensWhen":null,"nextOpensAtMs":null},{"id":"b5b9a8cc-f4a5-57fb-8070-d249610aa2ae","name":"Pase Full (Fase 2 + VIP)","kind":"general","priceCents":24000000,"currency":"COP","colorId":"Magenta","metal":false,"description":null,"phaseStatus":null,"opensAfterName":null,"opensWhen":null,"opensAtMs":null,"partySize":null,"bundleNames":["Fase 2","VIP Tarima"],"available":272,"soldOut":false,"onSale":false,"salesStartAtMs":null,"salesEndAtMs":null,"maxPerOrder":10,"releaseGroupId":null,"releaseGroupName":null,"releaseGroupCapacity":null,"releaseIndex":null,"remainingAtPrice":null,"nextReleaseName":null,"nextPriceCents":null,"nextOpensWhen":null,"nextOpensAtMs":null}],"address":"Carrera 10 #3-45, San Antonio","lat":3.4485,"lng":-76.5397,"mapsUrl":null,"ageRestriction":null,"dressCode":null,"genres":["Salsa choke","Champeta","Afrobeats"],"lineup":[{"name":"Son del Litoral","role":"Cabeza de cartel"},{"name":"Marimba del Puerto","role":"Artista invitado"},{"name":"DJ Currulao","role":"Artista invitado"}],"faq":[{"a":"Sí, por la reventa oficial desde tu cuenta.","q":"¿Puedo revender mi boleta?"},{"a":"Muestra el QR de tu boleta en la puerta.","q":"¿Cómo entro?"}],"posterUrl":"/boletapp/afiches/festival-montanas.webp","posterUrls":["/boletapp/afiches/festival-montanas.webp"],"venueMap":null,"featured":false,"feeTiers":[{"minUnitPriceCents":0,"pct":0,"fixedCents":0}],"feePct":0,"feeFixedCents":0,"requireFullTable":false,"requiresIdAtDoor":false,"qrStatic":true,"timeTbd":false,"ended":false,"onlineSalesEndAtMs":null,"onlineSalesClosed":false,"maxTicketsPerBuyer":null,"extras":[{"id":"d7850ba9-407a-5211-9ab8-851b8ef23446","name":"Parqueadero","description":null,"priceCents":2000000,"imageUrl":null,"maxPerOrder":10,"available":384,"soldOut":false}],"waitingRoomEnabled":false,"demo":false}}]
+17:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#1457D9"}],["$","meta","3",{"name":"color-scheme","content":"light"}]]
+13:null
+1c:I[3797,[],"IconMark"]
+15:{"metadata":[["$","title","0",{"children":"Festival Cerro Verde · Patio Pacífico"}],["$","meta","1",{"name":"description","content":"Un día entero de música del Pacífico al aire libre, con marimba, champeta y afrobeats. Trae protector solar y ropa cómoda."}],["$","meta","2",{"name":"robots","content":"noindex, nofollow"}],["$","link","3",{"rel":"icon","href":"/boletapp/icon.svg?05e7593513b8a674","type":"image/svg+xml","sizes":"any"}],["$","link","4",{"rel":"apple-touch-icon","href":"/boletapp/apple-icon.png?bf8df87fb341726f","type":"image/png","sizes":"180x180"}],["$","$L1c","5",{}]],"error":null,"digest":"$undefined"}
+1a:"$15:metadata"

@@ -1,0 +1,241 @@
+/* Replica of the "Lo que se viene" 3D gallery of boletapp.co. Product skin: always dark. */
+
+.card {
+  position: relative;
+  width: 100%;
+  height: 620px;
+  border-radius: 28px;
+  overflow: hidden;
+  isolation: isolate;
+  background: #06070c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  container-type: inline-size;
+  view-timeline-name: --bp-cylinder;
+  user-select: none;
+}
+@media (max-width: 640px) {
+  .card {
+    height: 460px;
+  }
+}
+
+.glow {
+  --p: 40px;
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 75%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 60%, rgba(20, 87, 217, 0.32), transparent 62%);
+}
+
+/* Whole gallery rises in (Escalonado/Item y=96 in the original). Opacity lives OUTSIDE the
+   3D context on purpose: opacity below 1 would flatten preserve-3d. */
+.reveal {
+  position: absolute;
+  inset: 0;
+}
+
+.scene {
+  --w: 6rem;
+  --h: calc(var(--w) * 1.25);
+  --r: max(calc(var(--w) * 2.05), 40cqw);
+  position: absolute;
+  inset: 0;
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+@container (min-width: 640px) {
+  .scene {
+    --w: 7.5rem;
+    perspective: 1100px;
+  }
+}
+@container (min-width: 1000px) {
+  .scene {
+    --w: 9.5rem;
+    perspective: 1800px;
+  }
+}
+
+/* Headline plane at z=0, centred on the top edge of the front cards (0.85 card heights up). */
+.headline {
+  position: absolute;
+  inset: auto 0;
+  top: calc(50% - var(--h) * 0.85);
+  display: grid;
+  place-items: center;
+  transform: translateZ(0) translateY(-50%);
+  pointer-events: none;
+}
+/* Narrow cards: the headline wraps to two lines, so lift it until it rests on the front cards. */
+@container (max-width: 639px) {
+  .headline {
+    top: calc(50% - var(--h) * 1.2);
+  }
+}
+.parallax {
+  --p: 24px;
+  width: 100%;
+}
+.title {
+  margin: 0;
+  padding-inline: 16px;
+  text-align: center;
+  text-wrap: balance;
+  text-transform: uppercase;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-style: italic;
+  font-weight: 800;
+  font-size: clamp(2.6rem, 12.5cqw, 8.5rem);
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+}
+.word {
+  display: inline-block;
+  white-space: pre;
+}
+
+.layer,
+.scroll {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.panel {
+  position: absolute;
+  left: calc(50% - var(--w) / 2);
+  top: calc(50% - var(--h) / 2);
+  width: var(--w);
+  height: var(--h);
+  overflow: hidden;
+  border-radius: 12px;
+  transition: scale 500ms ease-out;
+}
+.panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: box-shadow 500ms ease-out;
+}
+.panel:hover {
+  scale: 1.04;
+}
+.panel:hover::after {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+.poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.shade {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+}
+.caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 6px;
+}
+.name {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.meta {
+  display: none;
+  margin: 4px 0 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@container (min-width: 640px) {
+  .caption {
+    padding: 12px;
+  }
+  .name {
+    font-size: 13px;
+  }
+  .meta {
+    display: block;
+  }
+}
+@container (min-width: 1000px) {
+  .name {
+    font-size: 14px;
+  }
+}
+
+/* --- Motion. Reveal: the gallery rises 96px, the headline words go blurred to sharp
+   (1.4 s each, 140 ms apart). Hiding is instant: it only resets for the next entrance. --- */
+@media (prefers-reduced-motion: no-preference) {
+  .card:not([data-shown]) .reveal {
+    opacity: 0;
+    transform: translateY(96px);
+  }
+  .card[data-shown] .reveal {
+    transition:
+      opacity 900ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card:not([data-shown]) .word {
+    opacity: 0;
+    transform: translateY(0.25em);
+    filter: blur(12px);
+  }
+  .card[data-shown] .word {
+    transition:
+      opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 1.4s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--i, 0) * 140ms);
+  }
+
+  /* Scroll-driven parallax and spin, on the compositor. No support: stays still. */
+  @supports (animation-timeline: view()) {
+    .scroll {
+      animation: scrollSpin linear both;
+      animation-timeline: --bp-cylinder;
+    }
+    .parallax,
+    .glow {
+      animation: drift linear both;
+      animation-timeline: --bp-cylinder;
+    }
+  }
+}
+
+@keyframes scrollSpin {
+  from {
+    transform: rotateY(36deg);
+  }
+  to {
+    transform: rotateY(-36deg);
+  }
+}
+@keyframes drift {
+  from {
+    transform: translate3d(0, calc(var(--p, 0px) * -1), 0);
+  }
+  to {
+    transform: translate3d(0, var(--p, 0px), 0);
+  }
+}

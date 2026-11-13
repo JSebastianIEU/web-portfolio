@@ -17,6 +17,7 @@ export const translations: Translations = {
       prototype: "Prototype",
       "in-progress": "In progress",
       published: "Published",
+      closed: "Closed",
     },
     types: {
       personal: "Personal",
@@ -45,6 +46,7 @@ export const translations: Translations = {
         demoVideo: "Demo Video",
         github: "GitHub",
         liveDemo: "Live Demo",
+        siteReplica: "Explore the site replica",
         soon: "— soon",
         offline: "Offline (infra paused)",
         privateCode: "Private code",
@@ -250,6 +252,7 @@ export const translations: Translations = {
       prototype: "Prototipo",
       "in-progress": "En progreso",
       published: "Publicado",
+      closed: "Cerrado",
     },
     types: {
       personal: "Personal",
@@ -278,6 +281,7 @@ export const translations: Translations = {
         demoVideo: "Video demo",
         github: "GitHub",
         liveDemo: "Demo en vivo",
+        siteReplica: "Ver réplica del sitio",
         soon: "— próximamente",
         offline: "Offline (infra pausada)",
         privateCode: "Código privado",

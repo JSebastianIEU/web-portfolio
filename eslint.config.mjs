@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Réplica de boletapp.co: export estático ya compilado (bundles minificados).
+    "public/boletapp/**",
   ]),
 ]);
 

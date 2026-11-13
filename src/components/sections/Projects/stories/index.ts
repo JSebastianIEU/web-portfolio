@@ -1,5 +1,7 @@
 import type { ComponentType } from "react";
 import type { Locale } from "@/domain/i18n";
+import BoletappStory from "./boletapp/BoletappStory";
+import RotatingTicket from "./boletapp/RotatingTicket";
 import IeTowerSimulator from "./IeTowerSimulator";
 import IeTowerScrollytelling from "./IeTowerScrollytelling";
 import QrForgeStory from "./QrForgeStory";
@@ -18,6 +20,7 @@ export type ProjectStoryProps = {
 export const projectStories: Record<string, ComponentType<ProjectStoryProps>> = {
   "ie-tower-vpr": IeTowerSimulator,
   "tiktok-semantic-engagement": TikTokRecommender,
+  boletapp: RotatingTicket,
 };
 
 /**
@@ -29,6 +32,7 @@ export const projectScrollytelling: Record<string, ComponentType<ProjectStoryPro
   "tiktok-semantic-engagement": TikTokScrollytelling,
   "tiktok-recommender": TikTokRecommenderStory,
   "qr-forge": QrForgeStory,
+  boletapp: BoletappStory,
 };
 
 /**
