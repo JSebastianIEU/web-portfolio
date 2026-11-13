@@ -9,14 +9,14 @@ export const projectsData: Project[] = [
     subtitle: "Voice AI agent that negotiates freight rates, and can't be talked past its price limits.",
     subtitleES: "Agente de voz con IA que negocia tarifas de transporte, y al que no se le puede convencer de pasar sus límites de precio.",
     description:
-      "Alex is a carrier sales rep for a fictional freight brokerage. It runs as a live voice demo in the browser: you play a trucking company talking about a load, and Alex verifies the caller's MC number, describes the load, negotiates the rate in English or Spanish and ends the conversation on its own when it is done. The design rule is \"the LLM negotiates, the code decides\": the model never sees the price limits. Every figure it says comes from a Python \"desk\" that verifies the caller, climbs a ladder of offers one step at a time and books only amounts it offered, and a second filter checks every sentence before it is spoken.",
+      "Alex is a carrier sales rep for a fictional freight brokerage. It ran as a live voice demo in the browser, and the demo video shows a full call: you play a trucking company talking about a load, and Alex verifies the caller's MC number, describes the load, negotiates the rate in English or Spanish and ends the conversation on its own when it is done. The design rule is \"the LLM negotiates, the code decides\": the model never sees the price limits. Every figure it says comes from a Python \"desk\" that verifies the caller, climbs a ladder of offers one step at a time and books only amounts it offered, and a second filter checks every sentence before it is spoken.",
     descriptionES:
-      "Alex es un comercial de una agencia de transporte ficticia. Funciona como una demo de voz en vivo en el navegador: tú haces de empresa de camiones hablando por una carga, y Alex verifica el número MC de quien habla, describe la carga, negocia la tarifa en inglés o en español y cierra la conversación solo cuando termina. La regla de diseño es \"el LLM negocia, el código decide\": el modelo nunca ve los límites de precio. Cada cifra que dice sale de un \"desk\" en Python que verifica a quien llama, sube una escalera de ofertas paso a paso y solo cierra montos que ya ofreció, y un segundo filtro revisa cada frase antes de que se diga en voz alta.",
+      "Alex es un comercial de una agencia de transporte ficticia. Funcionó como una demo de voz en vivo en el navegador, y el video demo muestra una llamada completa: tú haces de empresa de camiones hablando por una carga, y Alex verifica el número MC de quien habla, describe la carga, negocia la tarifa en inglés o en español y cierra la conversación solo cuando termina. La regla de diseño es \"el LLM negocia, el código decide\": el modelo nunca ve los límites de precio. Cada cifra que dice sale de un \"desk\" en Python que verifica a quien llama, sube una escalera de ofertas paso a paso y solo cierra montos que ya ofreció, y un segundo filtro revisa cada frase antes de que se diga en voz alta.",
     category: "professional",
     codePrivate: false,
     preview: "/images/projects/alex/preview-landing.webp",
     type: "personal",
-    status: "live-demo",
+    status: "published",
     role: "Built & shipped end-to-end",
     roleES: "Construido y desplegado de punta a punta",
     timeframe: "2026",
@@ -64,11 +64,25 @@ export const projectsData: Project[] = [
       { src: "/images/projects/alex/architecture.webp", altEN: "End-to-end architecture of one voice turn: STT (Deepgram Nova-3), turn detection, LLM (GPT-4.1 mini), TTS (Cartesia Sonic), the Python desk, and the browser caller over WebRTC.", altES: "Arquitectura de extremo a extremo de un turno de voz: STT (Deepgram Nova-3), detección de turno, LLM (GPT-4.1 mini), TTS (Cartesia Sonic), el desk en Python y el navegador que llama por WebRTC." },
       { src: "/images/projects/alex/before-after.webp", altEN: "Bar chart, same ten attacks against the same model: margin given away per attack, averaging $197 with the limits in the prompt versus $72 with the desk enforcing them in code.", altES: "Gráfico de barras, los mismos diez ataques contra el mismo modelo: margen regalado por ataque, $197 de media con los límites en el prompt frente a $72 con el desk aplicándolos en código." },
     ],
+    articles: [
+      {
+        title: "How to Stop an AI Agent From Giving Away Your Money in a Negotiation",
+        titleES: "Cómo evitar que un agente de IA regale tu dinero en una negociación (en inglés)",
+        outlet: "Towards AI",
+        url: "https://pub.towardsai.net/how-to-stop-an-ai-agent-from-giving-away-your-money-in-a-negotiation-58fddcba461a",
+      },
+      {
+        title: "What It Takes to Build a Voice Agent That Can Hold a Phone Call",
+        titleES: "Qué hace falta para construir un agente de voz que sostenga una llamada (en inglés)",
+        outlet: "Towards AI",
+        url: "https://pub.towardsai.net/what-it-takes-to-build-a-voice-agent-that-can-hold-a-phone-call-f7bbc4668964",
+      },
+    ],
     links: {
       github: "https://github.com/JSebastianIEU/voice-freight-negotiator",
-      caseStudy: "",
-      video: "",
-      live: "https://talk-to-alex.web.app",
+      caseStudy: "https://pub.towardsai.net/how-to-stop-an-ai-agent-from-giving-away-your-money-in-a-negotiation-58fddcba461a",
+      video: "/videos/alex-demo.mp4",
+      live: "",
     },
   },
   {

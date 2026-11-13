@@ -77,7 +77,7 @@ const experience = [
 const projects = [
   {
     link: "github.com/JSebastianIEU/voice-freight-negotiator",
-    name: T ? "Alex: agente de voz que negocia fletes" : "Alex: voice AI freight negotiator",
+    name: T ? "Alex: agente de voz que negocia fletes, dos artículos en Towards AI" : "Alex: voice AI freight negotiator, two articles in Towards AI",
     meta: "2026 · Python, LiveKit, GPT-4.1 mini, Next.js, GCP · talk-to-alex.web.app",
     bullets: T
       ? [

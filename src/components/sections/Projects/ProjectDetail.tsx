@@ -31,6 +31,7 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
       ? "warning"
       : "neutral";
   const media = project.media ?? [];
+  const articles = project.articles ?? [];
   // Projects with a story tell it instead of listing bullets; the rest keep
   // the generic highlights/architecture layout.
   const Story = projectScrollytelling[project.id];
@@ -148,6 +149,31 @@ export default function ProjectDetail({ project, lang, copy, typeLabel, statusLa
                 />
               ))}
             </div>
+          </div>
+        )}
+
+        {articles.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(148,163,184,0.9)" }}>
+              {copy.detail.articles}
+            </h4>
+            <ul className="space-y-2 text-sm" style={{ color: isDark ? "rgba(226,232,240,0.86)" : "rgba(15,23,42,0.8)" }}>
+              {articles.map((article) => (
+                <li key={article.url}>
+                  •{" "}
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-semibold underline underline-offset-4"
+                    data-cursor="pointer"
+                  >
+                    {lang === "es" ? article.titleES || article.title : article.title}
+                  </a>{" "}
+                  <span style={{ color: "rgba(148,163,184,0.9)" }}>· {article.outlet}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 
