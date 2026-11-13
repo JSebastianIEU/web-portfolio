@@ -36,6 +36,8 @@ export type Project = {
   logoDark?: string;
   /** Screenshot of the page `links.live` points at, shown on featured cards. */
   preview?: string;
+  /** Base path (no extension) of a looping preview clip with .mp4 and .webm next to it. */
+  previewVideo?: string;
   type: ProjectType;
   status: ProjectStatus;
   role?: string;

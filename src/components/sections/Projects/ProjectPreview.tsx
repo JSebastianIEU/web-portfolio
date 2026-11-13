@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 
 type ProjectPreviewProps = {
@@ -10,6 +11,8 @@ type ProjectPreviewProps = {
   /** Localized "Visit" label. */
   label: string;
   isDark: boolean;
+  /** Optional looping clip (mp4 + webm with the same base name) shown instead of the screenshot. */
+  video?: string;
 };
 
 /**
@@ -21,7 +24,25 @@ type ProjectPreviewProps = {
  * live" CTA (same href), so exposing it would add a second tab stop and a
  * redundant entry in the screen-reader link list for the same destination.
  */
-export default function ProjectPreview({ src, href, label, isDark }: ProjectPreviewProps) {
+export default function ProjectPreview({ src, href, label, isDark, video }: ProjectPreviewProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // The clip only plays while the card is on screen, and never with reduced motion.
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.pause();
+      return;
+    }
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) void el.play().catch(() => {});
+      else el.pause();
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <a
       href={href}
@@ -40,6 +61,21 @@ export default function ProjectPreview({ src, href, label, isDark }: ProjectPrev
           pixels at the frame edges instead of transparency — otherwise the
           border washes out. A 16px bleed covers blur(6px)'s ~2σ reach. */}
       <div className="absolute -inset-4">
+        {video ? (
+          <video
+            ref={videoRef}
+            poster={src}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            className="preview-img absolute inset-0 h-full w-full object-cover object-top transition-[filter,transform] duration-300 ease-out group-hover/preview:blur-[6px] group-hover/preview:scale-105"
+          >
+            <source src={`${video}.webm`} type="video/webm" />
+            <source src={`${video}.mp4`} type="video/mp4" />
+          </video>
+        ) : (
         <Image
           src={src}
           alt=""
@@ -47,6 +83,7 @@ export default function ProjectPreview({ src, href, label, isDark }: ProjectPrev
           sizes="(max-width: 767px) calc(100vw - 64px), (max-width: 1023px) calc((100vw - 88px) * 0.42), (max-width: 1279px) 413px, (max-width: 1535px) 467px, 521px"
           className="preview-img object-cover object-top transition-[filter,transform] duration-300 ease-out group-hover/preview:blur-[6px] group-hover/preview:scale-105"
         />
+        )}
       </div>
 
       {/* Dot screen — subtle translucent black dots layered over the blur. */}
