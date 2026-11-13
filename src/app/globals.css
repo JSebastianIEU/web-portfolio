@@ -2666,6 +2666,86 @@ body {
   color: #16a34a;
 }
 
+/* boletapp story: App Store listings + store screenshots (chapter 08) */
+.bp-appstore {
+  width: 100%;
+  min-width: 0;
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.bp-appstore-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a93a6;
+}
+.bp-appstore-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #0e1424;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.bp-appstore-tab {
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #8a93a6;
+  transition: background-color 0.2s, color 0.2s;
+}
+.bp-appstore-tab[aria-selected="true"] {
+  background: #1457d9;
+  color: #fff;
+}
+.bp-appstore-tab:focus-visible {
+  outline: 2px solid #f4b91a;
+  outline-offset: 2px;
+}
+.bp-appstore-panel {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.bp-appstore-ficha {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.bp-appstore-shots {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 2px 2px 10px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+}
+.bp-appstore-shots li {
+  flex: 0 0 clamp(120px, 34vw, 180px);
+  scroll-snap-align: start;
+}
+.bp-appstore-shots img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+@media (prefers-reduced-motion: reduce) {
+  .bp-appstore-tab {
+    transition: none;
+  }
+}
+
 /* Chapter 09: infrastructure */
 .bp-infra {
   width: 100%;

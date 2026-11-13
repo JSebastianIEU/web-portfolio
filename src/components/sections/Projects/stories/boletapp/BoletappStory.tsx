@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Globe, LayoutDashboard, ScanLine, Smartphone } from "lucide-react";
 import type { Locale } from "@/domain/i18n";
 import { StoryBeat, StoryChapter, StoryProse, StoryStage, StoryStat } from "../../story/StoryScene";
+import AppStoreShowcase from "./AppStoreShowcase";
 import BoletappCylinder from "./BoletappCylinder";
 import BoletappHeroReplica from "./BoletappHeroReplica";
 import DoorScanner from "./DoorScanner";
@@ -377,6 +378,7 @@ export default function BoletappStory({ isDark, lang }: Props) {
               <span>Google Play</span>
               <em>{es ? "Aprobadas" : "Approved"}</em>
             </div>
+            <AppStoreShowcase es={es} />
           </div>
         </StoryStage>
         <StoryProse>
