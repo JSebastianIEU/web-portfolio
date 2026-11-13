@@ -21,8 +21,8 @@ const strategosTitle = CFG.intern
   : "AI Software Engineer";
 
 const summary = T
-  ? "Ingeniero de software que construye y despliega agentes de IA de punta a punta, del modelo al cliente. Único ingeniero de un agente LLM en producción que cotiza y cobra a clientes reales, creador de un agente de voz que negocia tarifas de transporte y fundador técnico de una plataforma de boletería antifraude. Mantengo a los LLMs dentro de límites escritos en código y lo demuestro con medición: tests, evaluaciones adversariales y latencia en sesiones de voz en vivo."
-  : "Software engineer who builds and ships AI agents end-to-end, from the model to the customer. Sole engineer on a production LLM agent that quotes and charges real customers, builder of a voice agent that negotiates freight rates, and technical founder of an anti-fraud ticketing platform. I keep LLMs inside guardrails written in code and prove it with measurement: tests, adversarial evaluations and latency in live voice sessions.";
+  ? "Ingeniero de software que construye y despliega agentes de IA de punta a punta, del modelo al cliente. Único ingeniero de un agente LLM en producción que cotiza y cobra a clientes reales, creador de un agente de voz que negocia tarifas de transporte y fundador técnico que llevó a producción una plataforma de boletería con web, dos apps publicadas y pagos reales. Mantengo a los LLMs dentro de límites escritos en código y lo demuestro con medición: tests, evaluaciones adversariales y latencia en sesiones de voz en vivo."
+  : "Software engineer who builds and ships AI agents end-to-end, from the model to the customer. Sole engineer on a production LLM agent that quotes and charges real customers, builder of a voice agent that negotiates freight rates, and technical founder who took a ticketing platform to production with a web app, two published mobile apps and real payments. I keep LLMs inside guardrails written in code and prove it with measurement: tests, adversarial evaluations and latency in live voice sessions.";
 
 const experience = [
   {
@@ -43,20 +43,20 @@ const experience = [
         ],
   },
   {
-    role: T ? "Fundador técnico" : "Technical Founder",
+    role: T ? "Fundador técnico y único ingeniero" : "Technical Founder and Sole Engineer",
     org: "Boletapp",
-    loc: "Colombia",
-    date: T ? "2026 - En curso" : "2026 - Present",
+    loc: T ? "Colombia · Remoto" : "Colombia · Remote",
+    date: T ? "Jun 2026 - Nov 2026" : "Jun 2026 - Nov 2026",
     bullets: T
       ? [
-          "Plataforma de boletería antifraude (construida, en pruebas, sin lanzar): QR derivados por HMAC que rotan constantemente y scanner de puerta offline-first que valida sin conexión.",
-          "Un mismo motor criptográfico implementado dos veces, en TypeScript y Python, mantenido idéntico bit a bit mediante test-vectors compartidos.",
-          "El problema que ataca: una boleta reenviada por WhatsApp deja de servir, porque el código cambia solo y solo abre la puerta una vez.",
+          "Construí y operé solo una plataforma de boletería para vida nocturna y conciertos: web en Next.js, API en FastAPI sobre PostgreSQL con aislamiento por organización (RLS), pagos reales y despliegue en Cloud Run y Vercel. En producción de julio a noviembre de 2026.",
+          "Dos apps de tienda desde una sola base de código en Expo/React Native, aprobadas en App Store y Google Play; QR rotativo con HMAC que no sirve como pantallazo y escáner de puerta que valida sin conexión.",
+          "Asistente de IA para organizadores que responde con sus propios datos y no ejecuta cambios sin confirmación; 95 migraciones y más de 1.700 tests. Cerré la empresa de forma ordenada en noviembre de 2026.",
         ]
       : [
-          "Anti-fraud ticketing platform (built, in testing, pre-launch): constantly rotating HMAC-derived QR codes and an offline-first door scanner that validates without connectivity.",
-          "One cryptographic engine implemented twice, in TypeScript and Python, held bit-for-bit identical by shared test vectors.",
-          "The problem it attacks: a ticket forwarded over WhatsApp stops working, because the code rotates on its own and opens the door exactly once.",
+          "Built and ran, alone, a ticketing platform for nightlife and concerts: Next.js web, FastAPI on PostgreSQL with per-organization isolation (RLS), real payments, deployed on Cloud Run and Vercel. In production from July to November 2026.",
+          "Two store apps from one Expo/React Native codebase, approved on the App Store and Google Play; an HMAC-based rotating QR that a screenshot cannot reuse, and a door scanner that validates offline.",
+          "AI assistant for organizers that answers from their own data and never applies changes without confirmation; 95 migrations and 1,700+ tests. Wound the company down in an orderly way in November 2026.",
         ],
   },
   {
@@ -140,15 +140,15 @@ const skills = T
       ["Lenguajes", "Python, TypeScript, JavaScript, SQL, Java, C"],
       ["IA y voz", "agentes LLM y llamadas a herramientas, guardrails y evaluación, RAG, embeddings, LiveKit, WebRTC, voz a texto y texto a voz (Deepgram, Cartesia), PyTorch, scikit-learn"],
       ["Backend y datos", "FastAPI, Node.js, PostgreSQL, SQLModel, Alembic, pandas, APIs REST y webhooks"],
-      ["Frontend", "React, Next.js, Tailwind"],
-      ["Cloud y DevOps", "GCP (Cloud Run, Firebase), Azure, Docker, GitHub Actions, Prometheus, pytest, Vitest"],
+      ["Frontend y móvil", "React, Next.js, React Native (Expo), Tailwind"],
+      ["Cloud y DevOps", "GCP (Cloud Run, Cloud SQL, Firebase), Vercel, Azure, Docker, GitHub Actions, Prometheus, pytest, Vitest"],
     ]
   : [
       ["Languages", "Python, TypeScript, JavaScript, SQL, Java, C"],
       ["AI and voice", "LLM agents and tool calling, guardrails and evaluation, RAG, embeddings, LiveKit, WebRTC, speech to text and text to speech (Deepgram, Cartesia), PyTorch, scikit-learn"],
       ["Backend and data", "FastAPI, Node.js, PostgreSQL, SQLModel, Alembic, pandas, REST APIs and webhooks"],
-      ["Frontend", "React, Next.js, Tailwind"],
-      ["Cloud and DevOps", "GCP (Cloud Run, Firebase), Azure, Docker, GitHub Actions, Prometheus, pytest, Vitest"],
+      ["Frontend and mobile", "React, Next.js, React Native (Expo), Tailwind"],
+      ["Cloud and DevOps", "GCP (Cloud Run, Cloud SQL, Firebase), Vercel, Azure, Docker, GitHub Actions, Prometheus, pytest, Vitest"],
     ];
 
 const L = {
