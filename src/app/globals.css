@@ -2595,7 +2595,7 @@ body {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.75rem 1.5rem;
-  margin-top: 2.5rem;
+  margin-block: 1rem clamp(2rem, 6vh, 4rem);
   padding-top: 2rem;
   border-top: 1px solid var(--border);
 }
@@ -2677,6 +2677,14 @@ body {
   width: 100%;
   height: auto;
   overflow: visible;
+}
+
+/* Sticky stage pins at 14vh: the whole diagram has to fit under that, or its
+   bottom rides past the end of the chapter. The viewBox letterboxes. */
+@media (min-width: 768px) {
+  .bp-infra svg {
+    max-height: calc(100vh - 14vh - 3rem);
+  }
 }
 
 .bp-edges path {

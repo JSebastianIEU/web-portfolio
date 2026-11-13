@@ -423,12 +423,13 @@ export default function BoletappStory({ isDark, lang }: Props) {
               : "Sensitive keys live in Cloud KMS and files in Cloud Storage. Payments, email, SMS and Boletabot's LLM are providers behind the API; GitHub Actions runs the tests and deploys."}
           </StoryBeat>
         </StoryProse>
-        <div className="bp-figures md:col-span-2">
-          {figures.map((f) => (
-            <StoryStat key={f.l} value={f.v} label={f.l} accent={f.a} />
-          ))}
-        </div>
       </StoryChapter>
+      {/* Outside the chapter so the sticky diagram can never ride over it. */}
+      <section className="bp-figures" aria-label={es ? "Cifras del repositorio" : "Repository figures"}>
+        {figures.map((f) => (
+          <StoryStat key={f.l} value={f.v} label={f.l} accent={f.a} />
+        ))}
+      </section>
 
       {/* 10 - The video */}
       <StoryChapter index="10" eyebrow={es ? "El video" : "The video"} id={VIDEO_ANCHOR}>
