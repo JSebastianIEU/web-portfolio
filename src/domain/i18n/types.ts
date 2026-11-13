@@ -18,6 +18,7 @@ export type TranslationCopy = {
     prototype: string;
     "in-progress": string;
     published: string;
+    closed: string;
   };
   types: {
     personal: string;

@@ -144,21 +144,20 @@ export const projectsData: Project[] = [
     subtitle: "Anti-fraud ticketing for nightlife and concerts in Colombia.",
     subtitleES: "Boletería antifraude para vida nocturna y conciertos en Colombia.",
     description:
-      "Boletapp is an end-to-end ticketing and access-control platform for nightlife and large events: white-label sales pages, checkout with local payment methods, door scanning, and an operations dashboard. It targets the industry's revenue leak — tickets forwarded over WhatsApp that get scanned twice, untraceable promoter commissions, and unpaid table reservations — with cryptographically verifiable tickets and automated payouts. Built and in testing; not launched yet.",
+      "Boletapp was an end-to-end ticketing and access-control platform for nightlife and concerts in Colombia: white-label sales pages, checkout with local payment methods, an HMAC-based rotating QR, an offline-first door scanner, an organizer dashboard with an assistant, and two store apps from one codebase. In production from July to November 2026, with apps approved on the App Store and Google Play. I closed the company in November 2026.",
     descriptionES:
-      "Boletapp es una plataforma end-to-end de venta y control de acceso para vida nocturna y eventos masivos: página de venta con marca del organizador, checkout con métodos de pago locales, scanner de puerta y panel de operación. Ataca el hueco de ingresos del sector — boletas reenviadas por WhatsApp que entran varias veces, comisiones de promotores sin trazabilidad y reservados que nadie paga — con boletas criptográficamente verificables y liquidación automática. Construido y en pruebas; todavía sin lanzar.",
+      "Boletapp fue una plataforma end-to-end de boletería y control de acceso para vida nocturna y conciertos en Colombia: páginas de venta con la marca del organizador, checkout con medios de pago locales, QR rotativo con HMAC, scanner de puerta offline-first, panel del organizador con asistente y dos apps de tienda desde una sola base de código. En producción de julio a noviembre de 2026, con apps aprobadas en App Store y Google Play. Cerré la empresa en noviembre de 2026.",
     category: "professional",
     org: "Founder — Colombia",
     orgES: "Fundador — Colombia",
     codePrivate: true,
     type: "startup",
-    // Pre-launch: built, but the company is not registered yet and it has
-    // no users. "live" would be a factual overstatement on a payments product.
-    status: "in-progress",
+    // Ran in production Jul-Nov 2026; the company closed in Nov 2026.
+    status: "closed",
     role: "Technical founder & sole developer",
     roleES: "Fundador técnico y único desarrollador",
     ownedEndToEnd: true,
-    timeframe: "2026 — present",
+    timeframe: "Jun – Nov 2026",
     stack: [
       "Next.js",
       "TypeScript",
@@ -166,9 +165,13 @@ export const projectsData: Project[] = [
       "FastAPI",
       "PostgreSQL + RLS",
       "Cloud Run",
+      "Cloud SQL",
       "Cloud KMS",
       "BigQuery",
       "Wompi",
+      "Expo EAS",
+      "Resend",
+      "Twilio",
       "Turborepo",
     ],
     highlights: [
@@ -195,8 +198,7 @@ export const projectsData: Project[] = [
     ],
     links: {
       github: "",
-      caseStudy: "https://boletapp.co/pitch",
-      video: "",
+      video: "/videos/boletapp/product.mp4",
       live: "https://boletapp.co",
     },
   },

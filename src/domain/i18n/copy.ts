@@ -17,6 +17,7 @@ export const translations: Translations = {
       prototype: "Prototype",
       "in-progress": "In progress",
       published: "Published",
+      closed: "Closed",
     },
     types: {
       personal: "Personal",
@@ -249,6 +250,7 @@ export const translations: Translations = {
       prototype: "Prototipo",
       "in-progress": "En progreso",
       published: "Publicado",
+      closed: "Cerrado",
     },
     types: {
       personal: "Personal",
