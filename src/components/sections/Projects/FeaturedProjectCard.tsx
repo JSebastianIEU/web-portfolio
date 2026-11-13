@@ -198,6 +198,7 @@ export default function FeaturedProjectCard({
           <div className="float-layer rounded-xl">
             <ProjectPreview
               src={project.preview as string}
+              video={project.previewVideo}
               href={liveHref as string}
               label={copy.cards.visit}
               isDark={isDark}
