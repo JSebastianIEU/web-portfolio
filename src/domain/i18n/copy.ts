@@ -29,7 +29,7 @@ export const translations: Translations = {
     projects: {
       label: "Projects",
       title: "Things people can actually use",
-      subcopy: "One product live with a paying client, one pre-launch, plus open-source builds and write-ups with the code in the open.",
+      subcopy: "One product live with a paying client, one I ran in production and wound down, plus open-source builds and write-ups with the code in the open.",
       groups: {
         professional: {
           title: "Featured work",
@@ -194,7 +194,7 @@ export const translations: Translations = {
         { prefix: "I'm ", highlight: "Sebastian Peña", suffix: "" },
       ],
       name: "Juan Sebastian Peña",
-      role: "AI & Data Engineer · Madrid",
+      role: "AI Software Engineer · Madrid",
       tagline: "I build client products end-to-end — one is in production today, taking real orders.",
       ctaProjects: "View projects",
       ctaContact: "Let's talk",
@@ -203,7 +203,7 @@ export const translations: Translations = {
       label: "About",
       headline: "Building clear AI and data-driven systems with strong product judgment.",
       body:
-        "I'm Juan Sebastian Peña — I build and ship AI and data products end-to-end, from zero to production: Craig, a live AI ordering agent, and Boletapp, an anti-fraud ticketing platform. Technical excellence only matters when people can understand and trust it. Alongside that, I'm finishing a degree in Computer Science and AI in Madrid.",
+        "I'm Juan Sebastian Peña — I build and ship AI and data products end-to-end, from zero to production: Craig, a live AI ordering agent, and Boletapp, an anti-fraud ticketing platform. Technical excellence only matters when people can understand and trust it. Alongside that, I'm finishing a degree in Computer Science and AI in Madrid, and I was selected for the Blockchain, XRPL and Policy Gateway by Ripple and IE (January 2027).",
       bullets: [],
       humanLine:
         "Outside of work, salsa and bachata shape how I think about adaptability, collaboration, and connection.",
@@ -264,7 +264,7 @@ export const translations: Translations = {
     projects: {
       label: "Proyectos",
       title: "Cosas que la gente puede usar",
-      subcopy: "Un producto en producción con cliente pagando, otro pre-lanzamiento, más builds open source y publicaciones con el código a la vista.",
+      subcopy: "Un producto en producción con cliente pagando, otro que operé en producción y cerré, más builds open source y publicaciones con el código a la vista.",
       groups: {
         professional: {
           title: "Trabajo destacado",
@@ -429,7 +429,7 @@ export const translations: Translations = {
         { prefix: "Soy ", highlight: "Sebastian Peña", suffix: "" },
       ],
       name: "Juan Sebastian Peña",
-      role: "Ingeniero de IA y Datos · Madrid",
+      role: "AI Software Engineer · Madrid",
       tagline: "Construyo productos de cliente de punta a punta — uno está en producción hoy, tomando pedidos reales.",
       ctaProjects: "Ver proyectos",
       ctaContact: "Hablemos",
@@ -438,7 +438,7 @@ export const translations: Translations = {
       label: "Sobre mí",
       headline: "Construyo sistemas de IA y datos claros con sólido criterio de producto.",
       body:
-        "Soy Juan Sebastian Peña — construyo y llevo a producción productos de IA y datos de punta a punta: Craig, un agente de IA en vivo, y Boletapp, una plataforma de boletería antifraude. La excelencia técnica solo importa cuando la gente puede entenderla y confiar en ella. En paralelo, termino un grado en Ciencias de la Computación e IA en Madrid.",
+        "Soy Juan Sebastian Peña — construyo y llevo a producción productos de IA y datos de punta a punta: Craig, un agente de IA en vivo, y Boletapp, una plataforma de boletería antifraude. La excelencia técnica solo importa cuando la gente puede entenderla y confiar en ella. En paralelo, termino un grado en Ciencias de la Computación e IA en Madrid, y fui seleccionado para el Blockchain, XRPL and Policy Gateway de Ripple e IE (enero de 2027).",
       bullets: [],
       humanLine:
         "Fuera del trabajo, la salsa y la bachata moldean cómo pienso sobre adaptabilidad, colaboración y conexión.",

@@ -2,8 +2,7 @@ import puppeteer from "puppeteer";
 import fs from "fs";
 const F = JSON.parse(fs.readFileSync(new URL("./fonts.json", import.meta.url), "utf8"));
 
-/* Two variables the CV pivots on. `intern` swaps the Strategos title only. */
-const CFG = { intern: process.env.INTERN === "1", lang: process.env.LANG_CV || "en" };
+const CFG = { lang: process.env.LANG_CV || "en" };
 const T = CFG.lang === "es";
 
 const D = {
@@ -16,47 +15,47 @@ const D = {
   gh: "github.com/JSebastianIEU",
 };
 
-const strategosTitle = CFG.intern
-  ? (T ? "AI Software Engineer Intern" : "AI Software Engineer Intern")
-  : "AI Software Engineer";
-
 const summary = T
-  ? "Ingeniero de software que construye y despliega agentes de IA de punta a punta, del modelo al cliente. Único ingeniero de un agente LLM en producción que cotiza y cobra a clientes reales, creador de un agente de voz que negocia tarifas de transporte y fundador técnico que llevó a producción una plataforma de boletería con web, dos apps publicadas y pagos reales. Mantengo a los LLMs dentro de límites escritos en código y lo demuestro con medición: tests, evaluaciones adversariales y latencia en sesiones de voz en vivo."
-  : "Software engineer who builds and ships AI agents end-to-end, from the model to the customer. Sole engineer on a production LLM agent that quotes and charges real customers, builder of a voice agent that negotiates freight rates, and technical founder who took a ticketing platform to production with a web app, two published mobile apps and real payments. I keep LLMs inside guardrails written in code and prove it with measurement: tests, adversarial evaluations and latency in live voice sessions.";
+  ? "Ingeniero de software que construye y despliega agentes de IA de punta a punta, del modelo al cliente. Único ingeniero de un agente LLM en producción que cotiza y cobra a clientes reales, creador de un agente de voz que negocia tarifas de transporte y cofundador técnico que llevó a producción una plataforma de boletería con web, dos apps publicadas y pagos reales. Mantengo a los LLMs dentro de límites escritos en código y lo demuestro con medición: tests, evaluaciones adversariales y latencia en sesiones de voz en vivo."
+  : "Software engineer who builds and ships AI agents end-to-end, from the model to the customer. Sole engineer on a production LLM agent that quotes and charges real customers, builder of a voice agent that negotiates freight rates, and technical co-founder who took a ticketing platform to production with a web app, two published mobile apps and real payments. I keep LLMs inside guardrails written in code and prove it with measurement: tests, adversarial evaluations and latency in live voice sessions.";
 
 const experience = [
   {
-    role: strategosTitle,
+    role: T ? "Ingeniero de Automatización e Integración (prácticas)" : "Automation & Integration Engineer (Intern)",
     org: "Strategos AI",
     loc: T ? "Madrid · Remoto" : "Madrid · Remote",
-    date: T ? "Feb 2026 - Actualidad" : "Feb 2026 - Present",
+    date: "Jun 2026 - Nov 2026",
     bullets: T
       ? [
-          "Único ingeniero de Craig, un agente de IA en producción para una imprenta de Dublín que cotiza, cobra y gestiona pedidos de punta a punta por chat web y correo.",
-          "El LLM nunca inventa un precio: llamadas a herramientas estrictas contra un motor de precios determinista (6 estrategias) y unas 15 validaciones en el servidor sobre cada respuesta.",
-          "Responsable de todo el stack: diseño del agente, backend en FastAPI, modelo de datos en Postgres, pagos (Stripe), despliegue en Cloud Run y operación. Reporto directamente al CEO y convierto los requisitos de fundadores no técnicos en funcionalidades en producción. En producción desde febrero de 2026.",
+          "Único ingeniero de Craig, un agente de IA en producción para una imprenta de Dublín que cotiza, cobra y gestiona pedidos de clientes por chat web, con pagos en Stripe.",
+          "En producción: ~230 conversaciones con clientes y ~160 cotizaciones por ~56.000 €; 12 pedidos pagados, 9 de ellos (75%) aprobados y procesados sin intervención humana.",
+          "El LLM nunca calcula un precio: un agente con llamadas a herramientas (12 herramientas) sobre un motor de precios determinista, con 5 validaciones en el servidor que rechazan cualquier precio que no haya producido una herramienta. Una regla de consistencia de precios redujo los precios incorrectos de 38.743 de 136.392 a 0.",
+          "Responsable de todo el stack (FastAPI, PostgreSQL, Cloud Run, Cloud SQL); convierto los requisitos no técnicos del cliente en funcionalidades en producción, reportando al director general.",
         ]
       : [
-          "Sole engineer on Craig, a production AI agent for a Dublin print shop that quotes, charges and manages customer orders end-to-end over web chat and email.",
-          "The LLM never invents a price: strict tool calling against a deterministic pricing engine (6 strategies) and about 15 server-side validation gates on every reply.",
-          "Own the whole stack: agent design, FastAPI backend, Postgres data model, payments (Stripe), deployment on Cloud Run and operation. Report directly to the CEO and turn the non-technical founders' requirements into shipped features. In production since February 2026.",
+          "Sole engineer on Craig, a production AI agent for a Dublin print shop that quotes, charges and manages customer orders over web chat, with Stripe payments.",
+          "In production: ~230 customer conversations and ~160 quotes worth ~€56k; 12 paid orders, 9 of them (75%) approved and processed with no human intervention.",
+          "The LLM never calculates a price: a tool-calling agent (12 tools) over a deterministic pricing engine, with 5 server-side gates that reject any price no tool produced. A pricing-consistency rule cut incorrect prices from 38,743 of 136,392 to 0.",
+          "Own the whole stack (FastAPI, PostgreSQL, Cloud Run, Cloud SQL) and turn the client's non-technical requirements into shipped features, reporting to the managing director.",
         ],
   },
   {
-    role: T ? "Fundador técnico y único ingeniero" : "Technical Founder and Sole Engineer",
+    role: T ? "Cofundador técnico y único ingeniero" : "Technical Co-founder and Sole Engineer",
     org: "Boletapp",
     loc: T ? "Colombia · Remoto" : "Colombia · Remote",
-    date: T ? "Jun 2026 - Nov 2026" : "Jun 2026 - Nov 2026",
+    date: "Jun 2026 - Nov 2026",
     bullets: T
       ? [
-          "Construí y operé solo una plataforma de boletería para vida nocturna y conciertos: web en Next.js, API en FastAPI sobre PostgreSQL con aislamiento por organización (RLS), pagos reales y despliegue en Cloud Run y Vercel. En producción de julio a noviembre de 2026.",
-          "Dos apps de tienda desde una sola base de código en Expo/React Native, aprobadas en App Store y Google Play; QR rotativo con HMAC que no sirve como pantallazo y escáner de puerta que valida sin conexión.",
-          "Asistente de IA para organizadores que responde con sus propios datos y no ejecuta cambios sin confirmación; 95 migraciones y más de 1.700 tests. Cerré la empresa de forma ordenada en noviembre de 2026.",
+          "Construí solo una plataforma de boletería para vida nocturna y conciertos: web en Next.js, FastAPI sobre PostgreSQL con aislamiento por organización (RLS), pagos reales, Cloud Run y Vercel.",
+          "Piloto con organizadores reales en el Valle del Cauca, incluido un festival de 4 fechas y un primer cliente que pagó; el escáner de puerta funcionó en eventos en vivo con puertas sincronizadas y control de aforo en tiempo real.",
+          "Dos apps de tienda desde una sola base de código en Expo/React Native (App Store y Google Play), códigos QR rotativos con HMAC que hacen inútiles los pantallazos y validación sin conexión en la puerta.",
+          "Asistente de IA para organizadores que responde con sus propios datos y nunca aplica cambios sin confirmación; más de 1.700 tests. Cerrada en noviembre de 2026.",
         ]
       : [
-          "Built and ran, alone, a ticketing platform for nightlife and concerts: Next.js web, FastAPI on PostgreSQL with per-organization isolation (RLS), real payments, deployed on Cloud Run and Vercel. In production from July to November 2026.",
-          "Two store apps from one Expo/React Native codebase, approved on the App Store and Google Play; an HMAC-based rotating QR that a screenshot cannot reuse, and a door scanner that validates offline.",
-          "AI assistant for organizers that answers from their own data and never applies changes without confirmation; 95 migrations and 1,700+ tests. Wound the company down in an orderly way in November 2026.",
+          "Built alone a ticketing platform for nightlife and concerts: Next.js web, FastAPI on PostgreSQL with per-organization isolation (RLS), real payments, Cloud Run and Vercel.",
+          "Piloted with real organizers in Valle del Cauca, including a 4-date festival and a first paying client; the door scanner ran at live events with synced gates and real-time capacity control.",
+          "Two store apps from one Expo/React Native codebase (App Store and Google Play), rotating HMAC QR codes that make screenshots useless, and offline validation at the door.",
+          "AI assistant for organizers that answers from their own data and never applies changes without confirmation; 1,700+ tests. Wound down in November 2026.",
         ],
   },
   {
@@ -66,10 +65,10 @@ const experience = [
     date: "2025",
     bullets: T
       ? [
-          "Primera edición, más de 100 estudiantes de 20 universidades: solución RAG que convierte documentos legales en lenguaje claro (iniciativa Justice 2030 España).",
+          "Primera edición, más de 100 estudiantes de 20 universidades: solución RAG que convierte documentos legales en lenguaje claro (iniciativa Justice 2030 España). Recibí una oferta de trabajo después.",
         ]
       : [
-          "First edition, 100+ students from 20 universities: a RAG solution turning legal documents into plain language (Justice 2030 Spain initiative).",
+          "First edition, 100+ students from 20 universities: a RAG solution turning legal documents into plain language (Justice 2030 Spain initiative). Received a job offer afterwards.",
         ],
   },
 ];
@@ -99,14 +98,12 @@ const projects = [
     meta: T ? "Equipo de 7 · Ene-Abr 2026 · Python, FastAPI, React" : "Team of 7 · Jan-Apr 2026 · Python, FastAPI, React",
     bullets: T
       ? [
-          "98 de 282 commits, 22 pull requests abiertos y 9 PRs de compañeros revisados por mí.",
-          "Responsable de la evaluación: métricas NDCG@k, splits temporales con fronteras point-in-time y 25 tests que validan las métricas contra resultados analíticos conocidos.",
           "Construí el pipeline de análisis de vídeo (8 ramas en paralelo: Whisper, OCR, captioning, keywords): de más de 5 minutos por vídeo a menos de 60 segundos.",
+          "Responsable de la evaluación: métricas NDCG@k, splits temporales con fronteras point-in-time y 25 tests que validan las métricas contra resultados analíticos conocidos.",
         ]
       : [
-          "98 of 282 commits, 22 pull requests opened and 9 of my teammates' PRs reviewed.",
-          "Owned evaluation: NDCG@k ranking metrics, temporal splits respecting point-in-time boundaries, and 25 regression tests validating the metrics against analytically known ground truth.",
           "Built the video analysis pipeline (8 parallel branches: Whisper, OCR, captioning, keywords); cut it from over 5 minutes per video to under 60 seconds.",
+          "Owned evaluation: NDCG@k ranking metrics, temporal splits respecting point-in-time boundaries, and 25 regression tests validating the metrics against analytically known ground truth.",
         ],
   },
   {
@@ -159,10 +156,16 @@ const L = {
   skills: T ? "COMPETENCIAS TÉCNICAS" : "TECHNICAL SKILLS",
   langs: T ? "IDIOMAS" : "LANGUAGES",
   degree: T ? "Grado en Ciencias de la Computación e Inteligencia Artificial" : "BSc in Computer Science and Artificial Intelligence",
-  expected: T ? "Prevista: Jul 2027" : "Expected: Jul 2027",
-  scholarship: T
-    ? "Beca CUBICO Young Talented Leaders (excelencia académica y liderazgo). Machine Learning: 9,5/10."
-    : "CUBICO Young Talented Leaders Scholarship (academic and leadership excellence). Machine Learning: 9.5/10.",
+  expected: T ? "Prevista: May 2027" : "Expected: May 2027",
+  eduBullets: T
+    ? [
+        "Beca CUBICO Young Talented Leaders. Machine Learning: 9,5/10.",
+        "Seleccionado para el Ripple–IE Blockchain, XRPL and Policy Gateway (desde ene 2027).",
+      ]
+    : [
+        "CUBICO Young Talented Leaders Scholarship. Machine Learning: 9.5/10.",
+        "Selected for the Ripple–IE Blockchain, XRPL and Policy Gateway (from Jan 2027).",
+      ],
   school: T ? "Bachillerato Bilingüe Colombiano" : "Colombian Bilingual High School Diploma",
   schoolDate: T ? "Jun 2023" : "Jun 2023",
   langLine: T ? "<b>Español</b> (nativo) · <b>Inglés</b> (bilingüe, uso profesional diario)" : "<b>Spanish</b> (native) · <b>English</b> (bilingual, daily professional use)",
@@ -228,7 +231,7 @@ ${projects.map(proj).join("")}
 <div class="entry">
   <div class="row"><span class="role">IE University</span><span class="loc">Madrid, ${T ? "España" : "Spain"}</span></div>
   <div class="row"><span class="org">${L.degree}</span><span class="date">${L.expected}</span></div>
-  <ul><li>${esc(L.scholarship)}</li></ul>
+  <ul>${L.eduBullets.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
 </div>
 
 <h2>${L.skills}</h2>
@@ -242,14 +245,9 @@ const out = process.env.OUT;
 const b = await puppeteer.launch({ headless: true, executablePath: process.env.CHROME_BIN, args: ["--no-sandbox"] });
 const p = await b.newPage();
 await p.setContent(html, { waitUntil: "load" });
-await p.pdf({ path: out, format: "A4", printBackground: true, preferCSSPageSize: true });
-const m = await p.evaluate(() => {
-  // Altura util de un A4 con margenes de 11mm: (297 - 22) mm a 96dpi.
-  const printable = (297 - 22) * (96 / 25.4);
-  const h = document.documentElement.getBoundingClientRect().height;
-  return { h: Math.round(h), printable: Math.round(printable), over: Math.round(h - printable) };
-});
-const pages = m.over > 0 ? 2 : 1;
-console.log("   alto:", m.h, "px · util:", m.printable, "px · sobra:", m.over, "px");
+const pdf = await p.pdf({ path: out, format: "A4", printBackground: true, preferCSSPageSize: true });
 await b.close();
-console.log(out.split("/").pop(), "· alto aprox:", pages, "pagina(s)");
+// Cuenta las paginas reales del PDF; medir el DOM en pantalla no coincide con la impresion.
+const pages = (Buffer.from(pdf).toString("latin1").match(/\/Type\s*\/Page\b(?!s)/g) || []).length;
+console.log(out.split("/").pop(), "·", pages, "pagina(s)");
+if (pages !== 1) process.exitCode = 1;

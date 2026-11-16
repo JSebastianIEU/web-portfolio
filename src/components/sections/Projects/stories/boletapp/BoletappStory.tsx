@@ -122,7 +122,7 @@ export default function BoletappStory({ isDark, lang }: Props) {
           <dl className="bp-meta-facts">
             <div>
               <dt>{es ? "Rol" : "Role"}</dt>
-              <dd>{es ? "Fundador técnico y único desarrollador" : "Technical founder and sole developer"}</dd>
+              <dd>{es ? "Cofundador técnico y único desarrollador" : "Technical co-founder and sole developer"}</dd>
             </div>
             <div>
               <dt>{es ? "Período" : "Period"}</dt>
