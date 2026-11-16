@@ -3,14 +3,9 @@
  *
  * Every entry here is verifiable and matches LinkedIn — the portfolio links to
  * it, so titles must not drift. Accenture is labelled as what it was (a one-week
- * hackathon), not as employment. Ventures that didn't survive are deliberately
- * absent rather than listed as "present".
- *
- * KNOWN GAP: LinkedIn currently shows the Strategos role as "AI Software
- * Engineer Intern"; an updated title is pending with the employer. Until that
- * lands the two do not match, so the bullets below state the scope in full —
- * sole engineer, money-handling system, direct report to the CEO — and let a
- * reader judge the level from the work rather than from the label.
+ * hackathon), not as employment. A venture that closed keeps its real end date
+ * instead of reading as "present". Titles and dates mirror the CV, except that
+ * the site leaves out the CV's "(Intern)" label on the Strategos title.
  */
 export type ExperienceKind = "role" | "venture" | "hackathon";
 
@@ -19,7 +14,7 @@ export type ExperienceEntry = {
   role: string;
   roleES?: string;
   org: string;
-  /** Human-readable period, e.g. "Feb 2026 — present". */
+  /** Human-readable period, e.g. "Jun 2026 - Nov 2026". */
   period: string;
   periodES?: string;
   location: string;
@@ -58,11 +53,11 @@ export type ExperienceEntry = {
 export const experience: ExperienceEntry[] = [
   {
     id: "strategos",
-    role: "AI Software Engineer",
-    roleES: "AI Software Engineer",
+    role: "Automation & Integration Engineer",
+    roleES: "Ingeniero de Automatización e Integración",
     org: "Strategos AI",
-    period: "Feb 2026 — present",
-    periodES: "Feb 2026 — actualidad",
+    period: "Jun 2026 - Nov 2026",
+    periodES: "Jun 2026 - Nov 2026",
     location: "Madrid · Remote",
     locationES: "Madrid · Remoto",
     kind: "role",
@@ -72,20 +67,20 @@ export const experience: ExperienceEntry[] = [
     sticker: { height: 104, right: "6%", top: -25, tilt: "-6deg", drift: 44, tiltDelta: "2.5deg", scaleFrom: 0.93, scaleTo: 1.06 },
     bullets: [
       "Sole engineer on Craig: an AI ordering agent live for a Dublin print shop that quotes, charges and manages orders end-to-end.",
-      "LLMs and multi-agent systems in real business workflows. Direct report to the CEO; the founders are non-technical.",
+      "LLMs in real business workflows: I turn the client's non-technical requirements into shipped features, reporting to the managing director.",
     ],
     bulletsES: [
       "Único ingeniero de Craig: un agente de IA en producción para una imprenta de Dublín que cotiza, cobra y gestiona pedidos de punta a punta.",
-      "LLMs y sistemas multi-agente en flujos de negocio reales. Reporte directo al CEO; los fundadores no son técnicos.",
+      "LLMs en flujos de negocio reales: convierto los requisitos no técnicos del cliente en funcionalidades en producción, reportando al director general.",
     ],
   },
   {
     id: "boletapp",
-    role: "Technical founder",
-    roleES: "Fundador técnico",
+    role: "Technical co-founder and sole engineer",
+    roleES: "Cofundador técnico y único ingeniero",
     org: "Boletapp",
-    period: "2026 — ongoing",
-    periodES: "2026 — en curso",
+    period: "Jun 2026 - Nov 2026",
+    periodES: "Jun 2026 - Nov 2026",
     location: "Colombia",
     locationES: "Colombia",
     kind: "venture",
@@ -94,11 +89,11 @@ export const experience: ExperienceEntry[] = [
     logoWhite: "/logos/boletapp-dark.svg",
     sticker: { height: 44, right: "15%", top: 5, tilt: "4.5deg", drift: 22, tiltDelta: "1.2deg", scaleFrom: 0.96, scaleTo: 1.03 },
     bullets: [
-      "Anti-fraud ticketing platform, pre-launch: rotating HMAC QR and an offline-first door scanner.",
+      "Anti-fraud ticketing platform with rotating HMAC QR and an offline-first door scanner. In production Jul to Nov 2026, wound down in November 2026.",
       "One crypto engine in TypeScript and Python, kept bit-for-bit identical by shared tests.",
     ],
     bulletsES: [
-      "Plataforma de boletería antifraude, pre-lanzamiento: QR rotativo con HMAC y scanner offline-first.",
+      "Plataforma de boletería antifraude con QR rotativo con HMAC y scanner offline-first. En producción de julio a noviembre de 2026, cerrada en noviembre de 2026.",
       "Un solo motor criptográfico en TypeScript y Python, idéntico bit a bit vía tests compartidos.",
     ],
   },

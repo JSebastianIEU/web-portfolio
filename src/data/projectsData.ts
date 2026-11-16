@@ -106,7 +106,7 @@ export const projectsData: Project[] = [
     role: "Sole engineer — built & shipped end-to-end",
     roleES: "Único ingeniero — de 0 a producción",
     ownedEndToEnd: true,
-    timeframe: "2026 — present",
+    timeframe: "Jun – Nov 2026",
     stack: [
       "Python",
       "FastAPI",
@@ -170,8 +170,8 @@ export const projectsData: Project[] = [
     type: "startup",
     // Ran in production Jul-Nov 2026; the company closed in Nov 2026.
     status: "closed",
-    role: "Technical founder & sole developer",
-    roleES: "Fundador técnico y único desarrollador",
+    role: "Technical co-founder & sole developer",
+    roleES: "Cofundador técnico y único desarrollador",
     ownedEndToEnd: true,
     timeframe: "Jun – Nov 2026",
     stack: [
